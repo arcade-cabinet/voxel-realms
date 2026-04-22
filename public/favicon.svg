@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Arcade Cabinet">
+  <rect width="64" height="64" rx="12" fill="#0a0a0b"/>
+  <path d="M14 18h36l-3 32H17L14 18Z" fill="#18181d" stroke="#06b6d4" stroke-width="3"/>
+  <rect x="21" y="24" width="22" height="12" rx="2" fill="#111827" stroke="#8b5cf6" stroke-width="2"/>
+  <circle cx="25" cy="44" r="3" fill="#ef4444"/>
+  <circle cx="34" cy="44" r="3" fill="#eab308"/>
+  <path d="M44 43h7M47.5 39.5v7" stroke="#84cc16" stroke-width="3" stroke-linecap="round"/>
+</svg>

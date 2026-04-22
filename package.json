@@ -1,0 +1,55 @@
+{
+  "name": "voxel-realms",
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run app src",
+    "test:browser": "vitest run app",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist coverage .vitest-attachments test-screenshots"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.3.1",
+    "@capacitor/device": "^8.0.2",
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.0",
+    "@react-three/rapier": "^1.5.0",
+    "koota": "^0.6.6",
+    "lucide-react": "^0.479.0",
+    "mitt": "^3.0.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "tailwindcss": "^4.2.4",
+    "three": "^0.176.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.12",
+    "@tailwindcss/vite": "^4.2.4",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@types/three": "^0.176.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "@vitest/browser": "^4.1.5",
+    "@vitest/browser-playwright": "^4.1.5",
+    "@vitest/ui": "^4.1.5",
+    "jsdom": "^29.0.2",
+    "typescript": "^6.0.3",
+    "vite": "^7.3.2",
+    "vitest": "^4.1.5"
+  }
+}

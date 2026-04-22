@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+.vitest-attachments
+test-screenshots
+.DS_Store
+*.log
