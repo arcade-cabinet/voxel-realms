@@ -85,8 +85,16 @@ persists across native and web sessions.
 - [ ] P3.3 distinct archetype verbs (jungle branches, ocean bob, steampunk pulses, dinosaur broads, arctic thins)
 - [ ] P3.4 hazard vocabulary (timed gap, pressure pulse, instability zone)
 - [ ] P3.5 signal scan dwell + pulse feedback
-- [ ] P3.6 gate arming visual 3-mode
-- [ ] P3.7 movement envelope (coyote time, jump buffer, camera damping)
+- [x] P3.6 gate arming visual 3-mode — already complete. The engine
+      module summarizeRealmExitGate distinguishes locked / primed /
+      open / collapsed with distinct color + emissive + portalOpacity,
+      and the HUD pill (shipped in P2.4) surfaces it with an icon per
+      state. The 3D ExitGate in RealmClimbRoute.tsx reacts to gate.state.
+- [x] P3.7 movement envelope — coyote time (110 ms) and jump buffer
+      (130 ms) added to Player.tsx; jump consumes both windows so a
+      single input never produces a double jump. Tests still deterministic
+      (teleport-driven golden path unaffected); manual feel pass pending
+      physical-device QA in pillar 7.
 
 ### Pillar 4
 - [ ] P4.1 asset promotion per archetype
