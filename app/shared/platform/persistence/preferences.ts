@@ -2,11 +2,25 @@ import { Preferences } from "@capacitor/preferences";
 
 const REALM_PREFERENCES_KEY = "voxel-realms.preferences.v1";
 
+export interface RealmExpeditionRecord {
+  score: number;
+  totalSignals: number;
+  extractedCount: number;
+  collapsedCount: number;
+  completedCount: number;
+  bestStabilityRemaining: number;
+  rank: string;
+  rankLabel: string;
+  recordedAt: number;
+}
+
 export interface RealmPlayerPreferences {
   audioEnabled: boolean;
   motionReduced: boolean;
   hapticsEnabled: boolean;
   onboardingSeen: boolean;
+  bestExpedition: RealmExpeditionRecord | null;
+  lastExpedition: RealmExpeditionRecord | null;
 }
 
 export const DEFAULT_REALM_PREFERENCES: RealmPlayerPreferences = {
@@ -14,6 +28,8 @@ export const DEFAULT_REALM_PREFERENCES: RealmPlayerPreferences = {
   motionReduced: false,
   hapticsEnabled: true,
   onboardingSeen: false,
+  bestExpedition: null,
+  lastExpedition: null,
 };
 
 const testPreferences = new Map<string, string>();
@@ -43,6 +59,22 @@ export async function updateRealmPreferences(
 ): Promise<RealmPlayerPreferences> {
   const current = await loadRealmPreferences();
   return saveRealmPreferences({ ...current, ...preferences });
+}
+
+export async function recordExpeditionScore(
+  record: Omit<RealmExpeditionRecord, "recordedAt">
+): Promise<RealmPlayerPreferences> {
+  const current = await loadRealmPreferences();
+  const stamped: RealmExpeditionRecord = { ...record, recordedAt: Date.now() };
+  const best =
+    current.bestExpedition && current.bestExpedition.score >= record.score
+      ? current.bestExpedition
+      : stamped;
+  return saveRealmPreferences({
+    ...current,
+    lastExpedition: stamped,
+    bestExpedition: best,
+  });
 }
 
 export async function resetRealmPreferencesForTests(): Promise<void> {

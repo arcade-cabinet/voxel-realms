@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { ExpeditionSummaryCard } from "./ExpeditionSummaryCard";
 
 interface RealmLandingProps {
   onStart: () => void;
@@ -78,6 +79,7 @@ export function RealmLanding({ onStart }: RealmLandingProps) {
         </div>
 
         <aside className="realm-landing__intel" aria-label="Realm briefing">
+          <ExpeditionSummaryCard />
           <div className="realm-landing__beacon">
             <div aria-hidden="true" className="realm-landing__beacon-core" />
             <div>

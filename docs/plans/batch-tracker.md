@@ -74,9 +74,14 @@ persists across native and web sessions.
 - [ ] P2.7 next-realm rollover splash
 - [ ] P2.8 route guidance rework (forward beacon, backtrack de-emphasis)
 
-### Pillar 3 (can start in parallel after #16 merges)
-- [ ] P3.1 progression beat — Expedition Score, persisted
-- [ ] P3.2 failure recovery — retry realm w/ same seed
+### Pillar 3 — branch feat/pillar-3-gameplay-polish
+- [x] P3.1 progression beat — progression.ts (scoreExpedition +
+      rankForScore), persisted via recordExpeditionScore in
+      preferences, RealmCollapsedScreen shows score+rank, landing
+      shows ExpeditionSummaryCard (best / last). 6 unit tests.
+- [x] P3.2 failure recovery — RealmCollapsedScreen "Retry this realm ·
+      Same seed" CTA rebuilds the realm at the same baseSeed +
+      realmIndex + completedRealms ledger. 4 retry-determinism tests.
 - [ ] P3.3 distinct archetype verbs (jungle branches, ocean bob, steampunk pulses, dinosaur broads, arctic thins)
 - [ ] P3.4 hazard vocabulary (timed gap, pressure pulse, instability zone)
 - [ ] P3.5 signal scan dwell + pulse feedback
