@@ -23,11 +23,12 @@ not done — even if every sub-task below is checked.
 
 ## Next action
 
-Pillar 2b on branch `feat/pillar-2b-coach-and-beats`: build the
-first-run coach (P2.3), then the extraction beat (P2.6), next-realm
-rollover splash (P2.7), and route-guidance rework (P2.8). Use
-`@capacitor/preferences` for the `hasPlayed` flag so coach dismissal
-persists across native and web sessions.
+Pillar 3 on a new branch `feat/pillar-3-gameplay-polish`. Start with
+the highest-leverage items: P3.1 progression beat (Expedition Score),
+P3.2 failure recovery (retry realm with same seed), P3.6 gate arming
+visual 3-mode (builds on the HUD pill from P2.4). P2.8 route-guidance
+rework (forward beacon, backtrack de-emphasis) is cosmetic and can
+land later as a visual-identity task in Pillar 4.
 
 ## Guardrails (do not violate)
 
