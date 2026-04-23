@@ -67,10 +67,12 @@ persists across native and web sessions.
 - [ ] merge once green
 - [ ] rebase next branch onto main after merge
 
-### Pillar 2b follow-up (branch feat/pillar-2b-coach-and-beats)
+### Pillar 2b follow-up (branch feat/pillar-2b-coach-and-beats, PR #18)
 - [x] P2.3 first-run coach — FirstRunCoach.tsx + test, persisted via
       Preferences.onboardingSeen with test-env bypass.
-- [ ] P2.6 extraction celebration beat
+- [x] P2.6 extraction celebration beat — ExtractionBeat.tsx (1.8 s
+      deterministic timeline) with archetype + next-archetype preview
+      + 3 unit tests.
 - [ ] P2.7 next-realm rollover splash
 - [ ] P2.8 route guidance rework (forward beacon, backtrack de-emphasis)
 
