@@ -59,7 +59,8 @@ and merged.
 - [x] core CI
 - [x] e2e-smoke CI
 - [x] CodeQL
-- [ ] native-android — FAILING (diagnose; likely rapier 2.x Android compat)
+- [x] native-android — AGP removed proguard-android.txt; switched to
+      proguard-android-optimize.txt; verified locally with assembleDebug
 - [ ] browser CI (pending at last check)
 - [ ] merge once green
 - [ ] rebase next branch onto main after merge
@@ -136,10 +137,13 @@ and merged.
 
 - **2026-04-23**: dependabot auto-merged four major-version bumps
   (@react-three/rapier 1.5→2.2, lucide-react 0.479→1.9, @vitejs/plugin-react
-  4.7→5.2, minor-and-patch group). Consequence: build budget failing on
-  main, native-android failing on pillar-2 PR. Remediation: budget bumped,
-  automerge rule gated on `update-type != semver-major`. Cleanup needed:
-  verify or revert rapier 2.2 if native Android can't adopt it.
+  4.7→5.2, minor-and-patch group). Consequences:
+  - Build budget broke (js-total / vendor-physics over cap). → Budget bumped with doc comment on pillar-2 PR.
+  - AGP bump deprecated `proguard-android.txt`. → Switched to
+    `proguard-android-optimize.txt` on pillar-2 PR; verified locally.
+  Remediation on automerge: rule hardened to skip `semver-major`.
+  Residual cleanup: verify rapier 2.x runtime gameplay has no regression
+  in web + native beyond the bundle-size drift.
 
 ## Change log for this tracker
 
