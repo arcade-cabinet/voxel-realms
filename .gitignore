@@ -9,6 +9,11 @@ test-screenshots
 /*.zip
 raw-assets/
 
+# task-batch runtime state
+.claude/state/
+.claude/reports/
+.claude/settings.local.json
+
 # Playwright
 test-results/
 playwright-report/
