@@ -53,6 +53,16 @@ pnpm run cap:run:ios
 
 ## Docs
 
-- [Game design](docs/game-design.md)
-- [Asset direction](docs/asset-direction.md)
+- [Docs index](docs/README.md)
+- [Design](docs/DESIGN.md)
+- [Rules](docs/RULES.md)
+- [Assets](docs/ASSETS.md)
+- [Visual review](docs/VISUAL_REVIEW.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Testing](docs/TESTING.md)
+- [Deployment](docs/DEPLOYMENT.md)
+- [Release](docs/RELEASE.md)
+- [Production](docs/PRODUCTION.md)
+- [Launch readiness](docs/LAUNCH_READINESS.md)
+- [State and remaining work](docs/STATE.md)
 - [Changelog](CHANGELOG.md)
