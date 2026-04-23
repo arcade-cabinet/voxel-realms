@@ -1,0 +1,105 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/on-write-guard.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/on-stop-report.sh"
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/task-batch-flush.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm run *)",
+      "Bash(pnpm exec *)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm realm:*)",
+      "Bash(pnpm cap:*)",
+      "Bash(pnpm assets:*)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm preview*)",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git fetch*)",
+      "Bash(git branch*)",
+      "Bash(git show*)",
+      "Bash(git ls-files*)",
+      "Bash(git remote*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git push origin *)",
+      "Bash(git checkout -b *)",
+      "Bash(git switch*)",
+      "Bash(git stash*)",
+      "Bash(gh pr list*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr create*)",
+      "Bash(gh pr checks*)",
+      "Bash(gh pr merge*)",
+      "Bash(gh pr ready*)",
+      "Bash(gh pr comment*)",
+      "Bash(gh workflow view*)",
+      "Bash(gh workflow list*)",
+      "Bash(gh run list*)",
+      "Bash(gh run view*)",
+      "Bash(gh run watch*)",
+      "Bash(gh issue list*)",
+      "Bash(gh issue view*)",
+      "Bash(gh api repos/*)",
+      "Bash(gh api /repos/*)",
+      "Bash(jiti scripts/*)",
+      "Bash(node scripts/*)",
+      "Bash(ls*)",
+      "Bash(find *)",
+      "Bash(grep *)",
+      "Bash(rg *)",
+      "Bash(cat docs/*)",
+      "Bash(du *)",
+      "Bash(mkdir *)",
+      "Bash(mv *)",
+      "Bash(cp *)",
+      "Bash(xvfb-run *)"
+    ],
+    "deny": [
+      "Bash(git push --force *)",
+      "Bash(git push -f *)",
+      "Bash(gh pr merge *--admin*)",
+      "Bash(rm -rf /*)",
+      "Bash(rm -rf ~*)"
+    ]
+  },
+  "env": {
+    "VOXEL_REALMS_AUTONOMOUS": "1"
+  }
+}
