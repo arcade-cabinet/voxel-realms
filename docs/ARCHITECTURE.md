@@ -49,13 +49,13 @@ src/games/voxel-realms/
     voxelSimulation.ts          # deterministic terrain and camp contract
     realmClimber.ts             # realm generation and golden-path validation
     realmValidation.ts          # batch validation entrypoint
+    realmPathfinding.ts         # traversability verification
     realmSpatialValidation.ts   # route-space structural checks
     realmFramingValidation.ts   # camera/readability checks
     realmRuntimeTelemetry.ts    # runtime-frame telemetry checks
-    realmYukaPlaythroughAgent.ts# pure-engine Yuka route run
+    realmYukaPlaythroughAgent.ts # pure-engine Yuka route run
+    realmVisualManifest.ts      # browser capture manifest logic
     realmAssetBudget.ts         # runtime model policy and render budgets
-    realmPathfinding.ts         # traversability verification helpers
-    realmVisualManifest.ts      # browser capture manifest generation
   store/
     traits.ts                   # VoxelTrait and RealmTrait lifecycle
     world.ts                    # shared Koota world and entity
