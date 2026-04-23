@@ -12,6 +12,7 @@ import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
 import { World } from "./r3f/World";
+import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
 import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
 import { RealmLanding } from "./ui/RealmLanding";
@@ -52,6 +53,7 @@ function VoxelApp() {
       {state.phase === "playing" && (
         <>
           <HUD />
+          <FirstRunCoach />
           <div
             style={{
               position: "absolute",

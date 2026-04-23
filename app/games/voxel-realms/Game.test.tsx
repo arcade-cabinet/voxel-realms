@@ -1,4 +1,9 @@
 import {
+  DEFAULT_REALM_PREFERENCES,
+  resetRealmPreferencesForTests,
+  saveRealmPreferences,
+} from "@app/shared/platform/persistence/preferences";
+import {
   type BrowserGameScreenshotCapture,
   type BrowserGameViewport,
   captureBrowserGameScreenshot,
@@ -44,13 +49,17 @@ interface VoxelRealmsVisualManifestCapture extends BrowserGameScreenshotCapture 
   extractionState: string | null;
 }
 
-beforeEach(() => {
+beforeEach(async () => {
+  window.__VOXEL_REALMS_TEST__ = true;
+  await resetRealmPreferencesForTests();
+  await saveRealmPreferences({ ...DEFAULT_REALM_PREFERENCES, onboardingSeen: true });
   voxelEntity.set(RealmTrait, createInitialRealmRuntime());
   voxelEntity.set(VoxelTrait, createInitialVoxelState("menu"));
 });
 
 afterEach(() => {
   cleanup();
+  window.__VOXEL_REALMS_TEST__ = false;
 });
 
 test("Voxel Realms reaches gameplay and captures a browser start screenshot", async () => {
