@@ -13,3 +13,8 @@ raw-assets/
 .claude/state/
 .claude/reports/
 .claude/settings.local.json
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/
