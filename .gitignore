@@ -8,3 +8,8 @@ test-screenshots
 *.log
 /*.zip
 raw-assets/
+
+# Playwright
+test-results/
+playwright-report/
+.playwright/

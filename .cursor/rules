@@ -1,0 +1,26 @@
+# Cursor Rules — Voxel Realms
+
+Treat `CLAUDE.md`, `AGENTS.md`, and `STANDARDS.md` at repo root as the authoritative briefing. Treat `docs/DESIGN.md`, `docs/RULES.md`, `docs/ARCHITECTURE.md`, `docs/ASSETS.md`, `docs/TESTING.md` as domain truth.
+
+Key constraints (do not violate):
+
+- pnpm only — never create package-lock.json or yarn.lock.
+- Biome (not ESLint). `pnpm lint` runs Biome.
+- Deterministic engine under `src/games/voxel-realms/engine/` must compile and run without React.
+- No `Math.random()` in the engine outside a seeded RNG context.
+- Mobile-first portrait. Touch targets ≥ 48 px (56 px for thumb-reach).
+- No stubs, TODOs, or `pass` bodies.
+- Conventional Commits. Never `--force` push; `--force-with-lease` only on owned branches.
+- Docs → Tests → Code.
+
+Commands:
+
+```bash
+pnpm install
+pnpm dev
+pnpm test
+pnpm test:browser
+pnpm test:e2e:ci
+pnpm realm:validate -- --sequence-count 10
+pnpm build
+```

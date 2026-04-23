@@ -1,3 +1,9 @@
+---
+title: README
+updated: 2026-04-23
+status: current
+---
+
 # Voxel Realms
 
 Voxel Realms is a mobile-first voxel platforming expedition about climbing unstable, stacked worlds before they collapse.
