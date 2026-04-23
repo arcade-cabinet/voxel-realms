@@ -73,7 +73,9 @@ persists across native and web sessions.
 - [x] P2.6 extraction celebration beat — ExtractionBeat.tsx (1.8 s
       deterministic timeline) with archetype + next-archetype preview
       + 3 unit tests.
-- [ ] P2.7 next-realm rollover splash
+- [x] P2.7 next-realm rollover splash — NextRealmSplash.tsx, per
+      archetype LORE-anchored teasers, fires on realmIndex flip,
+      skips initial mount, 4 unit tests.
 - [ ] P2.8 route guidance rework (forward beacon, backtrack de-emphasis)
 
 ### Pillar 3 (can start in parallel after #16 merges)
