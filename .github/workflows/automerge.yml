@@ -13,13 +13,21 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - name: Approve PR
+      - name: Extract dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@08eff52bf64351f401fb50d4972fa95b9f2c2d1b # v2.4.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Approve PR (minor/patch only)
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh pr review "$PR_URL" --approve
 
-      - name: Enable auto-merge
+      - name: Enable auto-merge (minor/patch only)
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

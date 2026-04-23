@@ -45,11 +45,14 @@ if (!fs.existsSync(distPath)) {
   const copiedPublicBytes = pruneReport?.copiedBytes ?? 0;
 
   addMaxCheck("dist-total", totalDistBytes, 42 * 1024 * 1024);
-  addMaxCheck("js-total", totalJsBytes, 3_800_000);
+  addMaxCheck("js-total", totalJsBytes, 4_100_000);
   addMaxCheck("copied-public-assets", copiedPublicBytes, 30 * 1024 * 1024);
   addMinCheck("pruned-source-assets", prunedBytes, 250 * 1024 * 1024);
 
-  addChunkMaxCheck(jsEntries, "vendor-physics", 2_200_000);
+  // vendor-physics grew when @react-three/rapier bumped 1.5 → 2.2. The new
+  // Rapier bundle is ~2.3 MB; budget is set just above to catch further
+  // drift. Revisit if a future Rapier release shrinks the footprint.
+  addChunkMaxCheck(jsEntries, "vendor-physics", 2_400_000);
   addChunkMaxCheck(jsEntries, "vendor-three", 760_000);
   addChunkMaxCheck(jsEntries, "vendor-r3f", 300_000);
   addChunkMaxCheck(jsEntries, "vendor-react", 300_000);
