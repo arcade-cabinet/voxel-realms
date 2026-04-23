@@ -23,9 +23,11 @@ not done — even if every sub-task below is checked.
 
 ## Next action
 
-Diagnose PR #16 `native-android` failure (likely rapier 2.x Android
-compat after the automerged major bump) and get the rest of PR #16 green
-and merged.
+Pillar 2b on branch `feat/pillar-2b-coach-and-beats`: build the
+first-run coach (P2.3), then the extraction beat (P2.6), next-realm
+rollover splash (P2.7), and route-guidance rework (P2.8). Use
+`@capacitor/preferences` for the `hasPlayed` flag so coach dismissal
+persists across native and web sessions.
 
 ## Guardrails (do not violate)
 
@@ -43,8 +45,8 @@ and merged.
 | — | Batch infrastructure | MERGED | #7 | PRD + hooks + permissions |
 | 1 | Docs & CI/CD alignment | MERGED | #8 | All 13 subtasks done |
 | — | Dependabot churn | MERGED | #11–#15 | Majors slipped through; rule hardened in #16 |
-| 2 | Player journey & onboarding | IN REVIEW | #16 | Slice: P2.1/2.2/2.4/2.5 |
-| 2b | Player journey follow-up | PENDING | — | P2.3 coach, P2.6 extract beat, P2.7 next-realm rollover, P2.8 route guidance |
+| 2 | Player journey & onboarding | MERGED | #16 | Slice: P2.1/2.2/2.4/2.5 |
+| 2b | Player journey follow-up | IN PROGRESS | — | P2.3 coach, P2.6 extract beat, P2.7 next-realm rollover, P2.8 route guidance |
 | 3 | Core gameplay polish | PENDING | — | Progression, hazard vocab, archetype verbs, tuning |
 | 4 | Visual identity & assets | PENDING | — | Marker→model, per-archetype lighting, perf budget |
 | 5 | Mobile UX, controls, persistence | PENDING | — | Touch rework, resume flow, settings, a11y |
@@ -65,8 +67,9 @@ and merged.
 - [ ] merge once green
 - [ ] rebase next branch onto main after merge
 
-### Pillar 2b follow-up (new branch after #16 merges)
-- [ ] P2.3 first-run coach
+### Pillar 2b follow-up (branch feat/pillar-2b-coach-and-beats)
+- [x] P2.3 first-run coach — FirstRunCoach.tsx + test, persisted via
+      Preferences.onboardingSeen with test-env bypass.
 - [ ] P2.6 extraction celebration beat
 - [ ] P2.7 next-realm rollover splash
 - [ ] P2.8 route guidance rework (forward beacon, backtrack de-emphasis)
