@@ -7,25 +7,25 @@ interface RealmLandingProps {
 const REALM_FEATURES = [
   {
     label: "Climb",
-    title: "Vertical worlds",
-    body: "Each ascent is a compact 3D platforming space built from a different realm archetype.",
+    title: "Read the route",
+    body: "Each realm is a finite vertical climb. Follow the beacon — jumps, drops, and ledges are all readable from eye level.",
   },
   {
     label: "Scan",
-    title: "Signal anomalies",
-    body: "Reach strange voxel artifacts, stabilize their signal, and unlock the extraction gate.",
+    title: "Stabilize the mesh",
+    body: "Dwell on anomaly signals to stabilize the gate. At least one scan per realm.",
   },
   {
     label: "Extract",
-    title: "Beat collapse",
-    body: "Move with intent. Hazards and time pressure push the realm toward instability.",
+    title: "Before it falls",
+    body: "The realm collapses on a timer. Reach the exit gate before instability takes the spire down.",
   },
 ] as const;
 
 const REALM_METRICS = [
-  ["5", "realm biomes"],
-  ["3", "capture moments"],
-  ["100%", "route verified"],
+  ["5", "biome archetypes"],
+  ["1", "minute per climb"],
+  ["∞", "expedition sequence"],
 ] as const;
 
 const VOXEL_PARTICLES = Array.from({ length: 18 }, (_, index) => ({
@@ -47,24 +47,32 @@ export function RealmLanding({ onStart }: RealmLandingProps) {
       <section className="realm-landing__panel" aria-labelledby="realm-landing-title">
         <div className="realm-landing__copy">
           <div className="realm-landing__eyebrow">
-            <span>Season One</span>
-            <span>Signal Ascent</span>
+            <span>Expedition log</span>
+            <span>Surveyor protocol v1.0</span>
           </div>
           <p className="realm-landing__brand">Voxel Realms</p>
-          <h1 id="realm-landing-title">Climb worlds that should not touch.</h1>
+          <h1 id="realm-landing-title">
+            Climb the spire. Scan the signals. Extract before it falls.
+          </h1>
           <p className="realm-landing__lead">
-            A voxel platforming expedition through stacked, unstable realms. Read the route, scan
-            the signal, reach the gate, and extract before the climb collapses.
+            A finite, seeded realm climber. Jungle, ocean, steampunk, dinosaur, arctic — each realm
+            is a vertical expedition you can read from eye level, and extract from before
+            instability collapses the climb.
           </p>
 
           <div className="realm-landing__actions">
-            <button className="realm-landing__start" type="button" onClick={onStart}>
+            <button
+              className="realm-landing__start"
+              type="button"
+              onClick={onStart}
+              data-testid="realm-landing-start"
+            >
               <span>Enter Realm</span>
-              <span aria-hidden="true">Start ascent</span>
+              <span aria-hidden="true">Begin expedition</span>
             </button>
             <div className="realm-landing__status" role="status">
               <span />
-              Browser playtest ready
+              Playtest build — mobile-first
             </div>
           </div>
         </div>

@@ -1,13 +1,10 @@
-import {
-  browserTestCanvasGlOptions,
-  GameOverScreen,
-  GameViewport,
-  OverlayButton,
-} from "@app/shared";
+import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
 import {
   createInitialRealmRuntime,
+  createNextRealmRuntime,
   RealmTrait,
+  summarizeRealmExpedition,
   VoxelTrait,
 } from "@logic/games/voxel-realms/store/traits";
 import { voxelEntity, voxelWorld } from "@logic/games/voxel-realms/store/world";
@@ -16,6 +13,7 @@ import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
 import { World } from "./r3f/World";
 import { HUD } from "./ui/HUD";
+import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
 import { RealmLanding } from "./ui/RealmLanding";
 
 const MENU_PREVIEW_DELAY_MS = 900;
@@ -88,10 +86,16 @@ function VoxelApp() {
       )}
 
       {state.phase === "gameover" && (
-        <GameOverScreen
-          title="YOU DIED"
-          subtitle={`Final Score: ${state.score}`}
-          actions={<OverlayButton onClick={handleStart}>Respawn</OverlayButton>}
+        <RealmCollapsedScreen
+          archetype={realmState.activeRealm.archetype.name}
+          signalsScanned={realmState.discoveredAnomalies.length}
+          expedition={summarizeRealmExpedition(realmState)}
+          onContinue={() => {
+            voxelEntity.set(RealmTrait, createNextRealmRuntime(realmState));
+            voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
+            window.dispatchEvent(new Event("voxel:reset-player"));
+          }}
+          onRestart={handleStart}
         />
       )}
     </GameViewport>

@@ -18,6 +18,17 @@ import { useTrait } from "koota/react";
 
 type ControlEvent = "voxel:jump";
 
+function isDebugHudEnabled(): boolean {
+  if (typeof window === "undefined") return false;
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("debug-hud")) return true;
+  try {
+    return window.localStorage?.getItem("voxel-realms.debug-hud") === "1";
+  } catch {
+    return false;
+  }
+}
+
 export function HUD() {
   const state = useTrait(voxelEntity, VoxelTrait);
   const realm = useTrait(voxelEntity, RealmTrait);
@@ -55,6 +66,15 @@ export function HUD() {
       : realm.instabilityLevel === "unstable"
         ? "#f59e0b"
         : "#38bdf8";
+  const debugHud = isDebugHudEnabled();
+  const gateIcon =
+    exitGate.state === "open"
+      ? "◉"
+      : exitGate.state === "primed"
+        ? "◎"
+        : exitGate.state === "collapsed"
+          ? "✕"
+          : "◌";
 
   const dispatchControl = (event: ControlEvent) => {
     window.dispatchEvent(new Event(event));
@@ -135,26 +155,28 @@ export function HUD() {
         >
           <div
             style={{
-              display: "grid",
-              gridTemplateColumns: "minmax(0, 1fr) auto",
+              display: "flex",
+              flexWrap: "wrap",
               gap: "0.75rem",
-              color: "#94a3b8",
-              fontSize: 11,
+              color: "#cbd5e1",
+              fontSize: 12,
               letterSpacing: 0,
               textTransform: "uppercase",
+              fontWeight: 700,
             }}
           >
-            <span>
-              XYZ {state.coordinates.x}, {state.coordinates.y}, {state.coordinates.z}
-            </span>
-            <span>{Math.round(state.nearestLandmarkDistance)}M beacon</span>
-            <span>
-              {realm.nearestAnomalyLabel
-                ? `${Math.round(realm.nearestAnomalyDistance)}M signal`
-                : "Signals logged"}
-            </span>
-            <span>
-              Step {realm.agentPathIndex + 1}/{realm.activeRealm.goldenPath.length}
+            <span
+              style={{
+                color: exitGate.color,
+                background: "rgba(15, 23, 42, 0.45)",
+                padding: "0.2rem 0.55rem",
+                borderRadius: 999,
+                border: `1px solid ${exitGate.color}55`,
+                fontWeight: 900,
+                letterSpacing: 0.3,
+              }}
+            >
+              {gateIcon} {exitGate.label}
             </span>
             <span style={{ color: realm.activeRealm.archetype.accent }}>
               {routeGuidance.label}: {routeGuidance.detail}
@@ -164,18 +186,44 @@ export function HUD() {
                 {routeGuidance.hazardLabel}
               </span>
             ) : null}
-            <span style={{ color: exitGate.color }}>{exitGate.label}</span>
-            <span>
-              Models {renderBudget.selectedModels}/
-              {DEFAULT_REALM_RENDERABLE_ASSET_POLICY.maxActiveModels} ·{" "}
-              {renderBudget.selectedBytesLabel}/
-              {formatRealmAssetBytes(DEFAULT_REALM_RENDERABLE_ASSET_POLICY.maxActiveBytes)}
-            </span>
           </div>
+          {debugHud ? (
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.75rem",
+                marginTop: 6,
+                color: "#94a3b8",
+                fontSize: 10,
+                letterSpacing: 0,
+                textTransform: "uppercase",
+              }}
+            >
+              <span>
+                XYZ {state.coordinates.x}, {state.coordinates.y}, {state.coordinates.z}
+              </span>
+              <span>{Math.round(state.nearestLandmarkDistance)}M beacon</span>
+              <span>
+                {realm.nearestAnomalyLabel
+                  ? `${Math.round(realm.nearestAnomalyDistance)}M signal`
+                  : "Signals logged"}
+              </span>
+              <span>
+                Step {realm.agentPathIndex + 1}/{realm.activeRealm.goldenPath.length}
+              </span>
+              <span>
+                Models {renderBudget.selectedModels}/
+                {DEFAULT_REALM_RENDERABLE_ASSET_POLICY.maxActiveModels} ·{" "}
+                {renderBudget.selectedBytesLabel}/
+                {formatRealmAssetBytes(DEFAULT_REALM_RENDERABLE_ASSET_POLICY.maxActiveBytes)}
+              </span>
+            </div>
+          ) : null}
           <div style={{ color: "#f8fafc", fontWeight: 800, lineHeight: 1.25 }}>
             {realm.objective}
           </div>
-          <ModelBudgetReadout budget={renderBudget} />
+          {debugHud ? <ModelBudgetReadout budget={renderBudget} /> : null}
           {recentPickup ? (
             <div
               style={{
