@@ -8,12 +8,6 @@ import { defineCustomElements as defineJeepSqlite } from "jeep-sqlite/loader";
 
 const DB_NAME = "voxel_realms";
 const DB_VERSION = 1;
-const JEEP_SQLITE_LOG_PREFIXES = [
-  "#### getVersion new res:",
-  "Using the File System Access API.",
-  "Using the fallback implementation.",
-  "jeep-sqlite isStore = false",
-] as const;
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS app_kv (
@@ -32,7 +26,7 @@ let writeQueue: Promise<unknown> = Promise.resolve();
 
 export async function getDatabase(): Promise<SQLiteDBConnection> {
   if (!connectionPromise) {
-    connectionPromise = withSuppressedJeepSqliteLogs(() => initializeDatabase()).catch((error) => {
+    connectionPromise = initializeDatabase().catch((error) => {
       connectionPromise = null;
       throw error;
     });
@@ -61,12 +55,10 @@ export async function withDatabaseWriteLock<T>(
 }
 
 export async function closeDatabase(): Promise<void> {
-  await withSuppressedJeepSqliteLogs(async () => {
-    const existing = await sqlite.isConnection(DB_NAME, false);
-    if (existing.result) {
-      await sqlite.closeConnection(DB_NAME, false);
-    }
-  });
+  const existing = await sqlite.isConnection(DB_NAME, false);
+  if (existing.result) {
+    await sqlite.closeConnection(DB_NAME, false);
+  }
   connectionPromise = null;
 }
 
@@ -110,30 +102,5 @@ async function prepareWebStore(): Promise<void> {
 }
 
 async function flushWebStore(database = DB_NAME): Promise<void> {
-  await withSuppressedJeepSqliteLogs(() => sqlite.saveToStore(database));
-}
-
-async function withSuppressedJeepSqliteLogs<T>(action: () => Promise<T>): Promise<T> {
-  if (Capacitor.getPlatform() !== "web") {
-    return action();
-  }
-
-  const previousConsoleLog = console.log;
-  console.log = (...args: unknown[]) => {
-    const [first] = args;
-    if (
-      typeof first === "string" &&
-      JEEP_SQLITE_LOG_PREFIXES.some((prefix) => first.includes(prefix))
-    ) {
-      return;
-    }
-
-    previousConsoleLog(...args);
-  };
-
-  try {
-    return await action();
-  } finally {
-    console.log = previousConsoleLog;
-  }
+  await sqlite.saveToStore(database);
 }

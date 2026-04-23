@@ -81,7 +81,7 @@ export function verifyVisualManifest({
     }
 
     const file = readFileSync(capturePath);
-    const base64Length = file.toString("base64").length;
+    const base64Length = Math.ceil(file.length / 3) * 4;
     const sha256 = createHash("sha256").update(file).digest("hex");
 
     if (base64Length !== capture.base64Length) {

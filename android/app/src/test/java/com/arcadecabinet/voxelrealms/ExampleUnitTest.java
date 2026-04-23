@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package com.arcadecabinet.voxelrealms;
 
 import static org.junit.Assert.*;
 
