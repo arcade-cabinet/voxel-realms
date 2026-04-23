@@ -1,4 +1,5 @@
 import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
+import { scoreExpeditionFromRealmState } from "@logic/games/voxel-realms/engine/progression";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
 import {
   createInitialRealmRuntime,
@@ -92,8 +93,21 @@ function VoxelApp() {
           archetype={realmState.activeRealm.archetype.name}
           signalsScanned={realmState.discoveredAnomalies.length}
           expedition={summarizeRealmExpedition(realmState)}
+          score={scoreExpeditionFromRealmState(realmState)}
           onContinue={() => {
             voxelEntity.set(RealmTrait, createNextRealmRuntime(realmState));
+            voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
+            window.dispatchEvent(new Event("voxel:reset-player"));
+          }}
+          onRetry={() => {
+            voxelEntity.set(
+              RealmTrait,
+              createInitialRealmRuntime(
+                realmState.baseSeed,
+                realmState.realmIndex,
+                realmState.completedRealms
+              )
+            );
             voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
             window.dispatchEvent(new Event("voxel:reset-player"));
           }}
