@@ -35,8 +35,7 @@ export const GameViewport = forwardRef<HTMLDivElement, GameViewportProps>(functi
         userSelect: "none",
         touchAction: "none",
         isolation: "isolate",
-        fontFamily:
-          "Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        fontFamily: "var(--font-body)",
         ...style,
       }}
     >
@@ -54,7 +53,7 @@ const overlayStyle: CSSProperties = {
   justifyContent: "space-between",
   padding: "1rem",
   color: "#f8fafc",
-  fontFamily: "Inter, system-ui, sans-serif",
+  fontFamily: "var(--font-body)",
 };
 
 const panelStyle: CSSProperties = {

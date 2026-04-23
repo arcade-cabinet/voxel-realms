@@ -1,0 +1,522 @@
+{
+  "title": "Voxel Realms Chaos Slice",
+  "generatedAt": "2026-04-22T21:31:44.974Z",
+  "seed": "chaos-goblin-first-slice-2026-04-22",
+  "rule": "One usable model per original top-level zip archive. Randomly selected from GLB/GLTF when available, otherwise OBJ, otherwise VOX.",
+  "totalArchives": 28,
+  "selectedCount": 28,
+  "entries": [
+    {
+      "pack": "All Trees Uploads",
+      "archive": "All Trees Uploads.zip",
+      "slug": "all-trees-uploads",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 115,
+      "rawRelativePath": "raw-assets/extracted/all-trees-uploads/All Trees Uploads/Tree 10/Tree 10_2/Tree 10_2.gltf",
+      "publicPath": "/assets/models/chaos-slice/all-trees-uploads/Tree 10_2.glb",
+      "copiedFiles": ["Tree 10_2.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Tree 10_2.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Beekeeer Upload",
+      "archive": "Beekeeer Upload.zip",
+      "slug": "beekeeer-upload",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 18,
+      "rawRelativePath": "raw-assets/extracted/beekeeer-upload/Beekeeer Upload/GLTF Files/Honeycomb.gltf",
+      "publicPath": "/assets/models/chaos-slice/beekeeer-upload/Honeycomb.glb",
+      "copiedFiles": ["Honeycomb.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Honeycomb.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Farm Animals Pack Upload v2",
+      "archive": "Farm Animals Pack Upload v2.zip",
+      "slug": "farm-animals-pack-upload-v2",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 11,
+      "rawRelativePath": "raw-assets/extracted/farm-animals-pack-upload-v2/Bull/Bull.gltf",
+      "publicPath": "/assets/models/chaos-slice/farm-animals-pack-upload-v2/Bull.glb",
+      "copiedFiles": ["Bull.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Bull.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Gltf Files",
+      "archive": "Gltf Files.zip",
+      "slug": "gltf-files",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 52,
+      "rawRelativePath": "raw-assets/extracted/gltf-files/Gltf Files/Clown_Character_glt.gltf",
+      "publicPath": "/assets/models/chaos-slice/gltf-files/Clown_Character_glt.glb",
+      "copiedFiles": ["Clown_Character_glt.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Clown_Character_glt.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Goblin Characters Pack Upload",
+      "archive": "Goblin Characters Pack Upload.zip",
+      "slug": "goblin-characters-pack-upload",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 5,
+      "rawRelativePath": "raw-assets/extracted/goblin-characters-pack-upload/Goblin 3 Upload/Goblin 3 Upload/Goblin 3.gltf",
+      "publicPath": "/assets/models/chaos-slice/goblin-characters-pack-upload/Goblin 3.glb",
+      "copiedFiles": ["Goblin 3.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Goblin 3.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Jungle Animals Pack",
+      "archive": "Jungle Animals Pack.zip",
+      "slug": "jungle-animals-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/jungle-animals-pack/Python/Python.gltf",
+      "publicPath": "/assets/models/chaos-slice/jungle-animals-pack/Python.glb",
+      "copiedFiles": ["Python.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Python.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Modular House Pack",
+      "archive": "Modular House Pack.zip",
+      "slug": "modular-house-pack",
+      "status": "selected",
+      "selectionPool": ".obj",
+      "candidateCount": 110,
+      "rawRelativePath": "raw-assets/extracted/modular-house-pack/House Pack Center/Piece-69.obj",
+      "publicPath": "/assets/models/chaos-slice/modular-house-pack/Piece-69.obj",
+      "copiedFiles": ["Piece-69.obj", "Piece-69.mtl", "Piece-69.png"],
+      "warnings": []
+    },
+    {
+      "pack": "New Plants",
+      "archive": "New Plants.zip",
+      "slug": "new-plants",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 16,
+      "rawRelativePath": "raw-assets/extracted/new-plants/New Plants/Plant_04.gltf",
+      "publicPath": "/assets/models/chaos-slice/new-plants/Plant_04.glb",
+      "copiedFiles": ["Plant_04.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Plant_04.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Plant Pack",
+      "archive": "Plant Pack.zip",
+      "slug": "plant-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 43,
+      "rawRelativePath": "raw-assets/extracted/plant-pack/Plant Pack_gltf/Plant_11_glt.gltf",
+      "publicPath": "/assets/models/chaos-slice/plant-pack/Plant_11_glt.glb",
+      "copiedFiles": ["Plant_11_glt.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Plant_11_glt.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Trap Pack Upload",
+      "archive": "Trap Pack Upload.zip",
+      "slug": "trap-pack-upload",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 51,
+      "rawRelativePath": "raw-assets/extracted/trap-pack-upload/Trap 18/trap 18.gltf",
+      "publicPath": "/assets/models/chaos-slice/trap-pack-upload/trap 18.glb",
+      "copiedFiles": ["trap 18.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "trap 18.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Vox Modular Houses Pack",
+      "archive": "Vox Modular Houses Pack.zip",
+      "slug": "vox-modular-houses-pack",
+      "status": "selected",
+      "selectionPool": ".vox",
+      "candidateCount": 77,
+      "rawRelativePath": "raw-assets/extracted/vox-modular-houses-pack/Vox Modular Houses Pack/Modular House Pack Vox-72.vox",
+      "publicPath": "/assets/models/chaos-slice/vox-modular-houses-pack/Modular House Pack Vox-72.vox",
+      "copiedFiles": ["Modular House Pack Vox-72.vox"],
+      "warnings": []
+    },
+    {
+      "pack": "Voxel African Animals Pack",
+      "archive": "Voxel African Animals Pack.zip",
+      "slug": "voxel-african-animals-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 11,
+      "rawRelativePath": "raw-assets/extracted/voxel-african-animals-pack/Giraffe/Giraffe.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-african-animals-pack/Giraffe.glb",
+      "copiedFiles": ["Giraffe.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Giraffe.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Arctic Animals Pack",
+      "archive": "Voxel Arctic Animals Pack.zip",
+      "slug": "voxel-arctic-animals-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-arctic-animals-pack/Seal/Seal.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-arctic-animals-pack/Seal.glb",
+      "copiedFiles": ["Seal.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Seal.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Baby Dragons Pack",
+      "archive": "Voxel Baby Dragons Pack.zip",
+      "slug": "voxel-baby-dragons-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 20,
+      "rawRelativePath": "raw-assets/extracted/voxel-baby-dragons-pack/Gltf/Wood_B_Dragon.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-baby-dragons-pack/Wood_B_Dragon.glb",
+      "copiedFiles": ["Wood_B_Dragon.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Wood_B_Dragon.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Birds Pack",
+      "archive": "Voxel Birds Pack.zip",
+      "slug": "voxel-birds-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-birds-pack/Osprey/Osprey.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-birds-pack/Osprey.glb",
+      "copiedFiles": ["Osprey.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Osprey.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Dinosaurs Pack",
+      "archive": "Voxel Dinosaurs Pack.zip",
+      "slug": "voxel-dinosaurs-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-dinosaurs-pack/Ankylosaurus/Ankylosaurus.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-dinosaurs-pack/Ankylosaurus.glb",
+      "copiedFiles": ["Ankylosaurus.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Ankylosaurus.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Dwarf Characters Pack",
+      "archive": "Voxel Dwarf Characters Pack.zip",
+      "slug": "voxel-dwarf-characters-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 20,
+      "rawRelativePath": "raw-assets/extracted/voxel-dwarf-characters-pack/Gltf/Dwarf 05.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-dwarf-characters-pack/Dwarf 05.glb",
+      "copiedFiles": ["Dwarf 05.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Dwarf 05.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Forest Animals Pack",
+      "archive": "Voxel Forest Animals Pack.zip",
+      "slug": "voxel-forest-animals-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-forest-animals-pack/Squirrel/Squirrel.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-forest-animals-pack/Squirrel.glb",
+      "copiedFiles": ["Squirrel.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Squirrel.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Mermaid Characters Pack Upload",
+      "archive": "Voxel Mermaid Characters Pack Upload.zip",
+      "slug": "voxel-mermaid-characters-pack-upload",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 20,
+      "rawRelativePath": "raw-assets/extracted/voxel-mermaid-characters-pack-upload/Glb/MermaidFemale03.glb",
+      "publicPath": "/assets/models/chaos-slice/voxel-mermaid-characters-pack-upload/MermaidFemale03.glb",
+      "copiedFiles": ["MermaidFemale03.glb"],
+      "warnings": []
+    },
+    {
+      "pack": "Voxel Mythical Creatures Pack",
+      "archive": "Voxel Mythical Creatures Pack.zip",
+      "slug": "voxel-mythical-creatures-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-mythical-creatures-pack/Griffin/Griffin.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-mythical-creatures-pack/Griffin.glb",
+      "copiedFiles": ["Griffin.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Griffin.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Neanderthal Characters Pack",
+      "archive": "Voxel Neanderthal Characters Pack.zip",
+      "slug": "voxel-neanderthal-characters-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 5,
+      "rawRelativePath": "raw-assets/extracted/voxel-neanderthal-characters-pack/Mother/Mother.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-neanderthal-characters-pack/Mother.glb",
+      "copiedFiles": ["Mother.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Mother.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Ocean Animals Pack",
+      "archive": "Voxel Ocean Animals Pack.zip",
+      "slug": "voxel-ocean-animals-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 10,
+      "rawRelativePath": "raw-assets/extracted/voxel-ocean-animals-pack/Octapus/Octopus.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-ocean-animals-pack/Octopus.glb",
+      "copiedFiles": ["Octopus.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Octopus.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Props Pack",
+      "archive": "Voxel Props Pack.zip",
+      "slug": "voxel-props-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 8,
+      "rawRelativePath": "raw-assets/extracted/voxel-props-pack/Cabinet2/Cabinet2_glt.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-props-pack/Cabinet2_glt.glb",
+      "copiedFiles": ["Cabinet2_glt.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Cabinet2_glt.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Ronin Samurai Pack",
+      "archive": "Voxel Ronin Samurai Pack.zip",
+      "slug": "voxel-ronin-samurai-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 3,
+      "rawRelativePath": "raw-assets/extracted/voxel-ronin-samurai-pack/Samurai GLTF.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-ronin-samurai-pack/Samurai GLTF.glb",
+      "copiedFiles": ["Samurai GLTF.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Samurai GLTF.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Steampunk Characters Pack",
+      "archive": "Voxel Steampunk Characters Pack.zip",
+      "slug": "voxel-steampunk-characters-pack",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 20,
+      "rawRelativePath": "raw-assets/extracted/voxel-steampunk-characters-pack/Glb/Female_A1.glb",
+      "publicPath": "/assets/models/chaos-slice/voxel-steampunk-characters-pack/Female_A1.glb",
+      "copiedFiles": ["Female_A1.glb"],
+      "warnings": []
+    },
+    {
+      "pack": "Voxel Viking Characters Upload (1)",
+      "archive": "Voxel Viking Characters Upload (1).zip",
+      "slug": "voxel-viking-characters-upload-1",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 5,
+      "rawRelativePath": "raw-assets/extracted/voxel-viking-characters-upload-1/Gltf/Male_D1.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-viking-characters-upload-1/Male_D1.glb",
+      "copiedFiles": ["Male_D1.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Male_D1.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Viking Characters Upload",
+      "archive": "Voxel Viking Characters Upload.zip",
+      "slug": "voxel-viking-characters-upload",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 5,
+      "rawRelativePath": "raw-assets/extracted/voxel-viking-characters-upload/Gltf/Male_D1.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-viking-characters-upload/Male_D1.glb",
+      "copiedFiles": ["Male_D1.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Male_D1.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    },
+    {
+      "pack": "Voxel Weapons Pack 1",
+      "archive": "Voxel Weapons Pack 1.zip",
+      "slug": "voxel-weapons-pack-1",
+      "status": "selected",
+      "selectionPool": ".glb, .gltf",
+      "candidateCount": 35,
+      "rawRelativePath": "raw-assets/extracted/voxel-weapons-pack-1/Weapons Pack 1/Swords/Sword_10/Sword_10_Gltf.gltf",
+      "publicPath": "/assets/models/chaos-slice/voxel-weapons-pack-1/Sword_10_Gltf.glb",
+      "copiedFiles": ["Sword_10_Gltf.glb"],
+      "warnings": [],
+      "optimization": {
+        "convertedFrom": "Sword_10_Gltf.gltf",
+        "tool": "@gltf-transform/cli@4.3.0",
+        "command": "gltf-transform copy",
+        "compression": "none",
+        "note": "Lossless GLTF to GLB packaging. Does not strip animations or apply decoder-dependent compression."
+      }
+    }
+  ],
+  "assetPipeline": [
+    {
+      "step": "convert-gltf-to-glb",
+      "generatedAt": "2026-04-22T21:34:47.647Z",
+      "tool": "@gltf-transform/cli@4.3.0",
+      "convertedCount": 24
+    }
+  ]
+}

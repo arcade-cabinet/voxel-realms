@@ -1,3 +1,4 @@
+import type { Vec3 } from "@logic/games/voxel-realms/engine/types";
 import { CONFIG, type VoxelControls } from "@logic/games/voxel-realms/engine/types";
 import {
   advanceVoxelState,
@@ -7,17 +8,32 @@ import {
   findNearestLandmarkDistance,
   getProceduralHeight,
 } from "@logic/games/voxel-realms/engine/voxelSimulation";
-import { VoxelTrait } from "@logic/games/voxel-realms/store/traits";
+import {
+  advanceRealmRuntime,
+  RealmTrait,
+  VoxelTrait,
+} from "@logic/games/voxel-realms/store/traits";
 import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+import { isVitestBrowser } from "@logic/shared";
 import { useFrame, useThree } from "@react-three/fiber";
 import { type RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import * as THREE from "three";
 
 export interface ChunkCoords {
   cx: number;
   cz: number;
 }
+
+interface VoxelTestTeleportDetail {
+  position?: Vec3;
+  lookAt?: Vec3;
+}
+
+type VoxelRealmsBrowserTestGlobal = typeof globalThis & {
+  __voxelRealmsTestTeleport?: (position: Vec3, lookAt?: Vec3) => void;
+  __voxelRealmsTestTeleportCount?: number;
+};
 
 export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) => void }) {
   const { camera } = useThree();
@@ -35,10 +51,108 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
     jump: false,
   });
 
+  const resetPlayerToCamp = useCallback(() => {
+    movement.current = {
+      forward: false,
+      backward: false,
+      left: false,
+      right: false,
+      jump: false,
+    };
+    lastChunk.current = toChunkCoords(CONFIG.PLAYER_START.x, CONFIG.PLAYER_START.z);
+    onChunkChange(lastChunk.current);
+    camera.position.set(CONFIG.PLAYER_START.x, CONFIG.PLAYER_START.y + 0.75, CONFIG.PLAYER_START.z);
+    camera.lookAt(0, 0.4, -12);
+    position.current.set(CONFIG.PLAYER_START.x, CONFIG.PLAYER_START.y, CONFIG.PLAYER_START.z);
+
+    if (!rbRef.current) {
+      return;
+    }
+
+    rbRef.current.setTranslation(CONFIG.PLAYER_START, true);
+    rbRef.current.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    rbRef.current.setAngvel({ x: 0, y: 0, z: 0 }, true);
+  }, [camera, onChunkChange]);
+
+  const teleportPlayerForBrowserTest = useCallback(
+    (target: Vec3, lookAt?: Vec3) => {
+      movement.current = {
+        forward: false,
+        backward: false,
+        left: false,
+        right: false,
+        jump: false,
+      };
+      position.current.set(target.x, target.y, target.z);
+      lastChunk.current = toChunkCoords(target.x, target.z);
+      onChunkChange(lastChunk.current);
+
+      camera.position.set(target.x, target.y + 0.72, target.z);
+      camera.lookAt(lookAt?.x ?? target.x, lookAt?.y ?? target.y + 0.72, lookAt?.z ?? target.z - 8);
+
+      rbRef.current?.setTranslation(target, true);
+      rbRef.current?.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      rbRef.current?.setAngvel({ x: 0, y: 0, z: 0 }, true);
+
+      const realmState = voxelEntity.get(RealmTrait);
+      const voxelState = voxelEntity.get(VoxelTrait);
+      if (realmState && voxelState?.phase === "playing") {
+        voxelEntity.set(
+          RealmTrait,
+          advanceRealmRuntime(realmState, target, voxelState.timeSurvived + 250)
+        );
+      }
+    },
+    [camera, onChunkChange]
+  );
+
   useEffect(() => {
     camera.position.set(CONFIG.PLAYER_START.x, CONFIG.PLAYER_START.y + 0.75, CONFIG.PLAYER_START.z);
     camera.lookAt(0, 0.4, -12);
   }, [camera]);
+
+  useEffect(() => {
+    const handleResetPlayer = () => {
+      resetPlayerToCamp();
+    };
+
+    window.addEventListener("voxel:reset-player", handleResetPlayer);
+
+    return () => {
+      window.removeEventListener("voxel:reset-player", handleResetPlayer);
+    };
+  }, [resetPlayerToCamp]);
+
+  useEffect(() => {
+    if (!isVitestBrowser) {
+      return undefined;
+    }
+
+    const testGlobal = globalThis as VoxelRealmsBrowserTestGlobal;
+    testGlobal.__voxelRealmsTestTeleportCount = 0;
+    testGlobal.__voxelRealmsTestTeleport = (position: Vec3, lookAt?: Vec3) => {
+      testGlobal.__voxelRealmsTestTeleportCount =
+        (testGlobal.__voxelRealmsTestTeleportCount ?? 0) + 1;
+      teleportPlayerForBrowserTest(position, lookAt);
+    };
+
+    const handleTestTeleport = (event: Event) => {
+      const detail = (event as CustomEvent<VoxelTestTeleportDetail>).detail ?? {};
+      if (!detail.position) {
+        return;
+      }
+
+      testGlobal.__voxelRealmsTestTeleport?.(detail.position, detail.lookAt);
+    };
+
+    window.addEventListener("voxel:test-teleport", handleTestTeleport);
+
+    return () => {
+      window.removeEventListener("voxel:test-teleport", handleTestTeleport);
+      delete testGlobal.__voxelRealmsTestTeleport;
+      delete testGlobal.__voxelRealmsTestTeleportCount;
+    };
+  }, [teleportPlayerForBrowserTest]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -177,16 +291,22 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
         Math.floor(currentTrans.x),
         Math.floor(currentTrans.z)
       );
-      voxelEntity.set(
-        VoxelTrait,
-        advanceVoxelState(state, _delta * 1000, {
-          position: currentTrans,
-          velocity: currentVel,
-          grounded,
-          biome: classifyBiome(terrainHeight),
-          nearestLandmarkDistance: findNearestLandmarkDistance(currentTrans),
-        })
-      );
+      const nextVoxelState = advanceVoxelState(state, _delta * 1000, {
+        position: currentTrans,
+        velocity: currentVel,
+        grounded,
+        biome: classifyBiome(terrainHeight),
+        nearestLandmarkDistance: findNearestLandmarkDistance(currentTrans),
+      });
+      voxelEntity.set(VoxelTrait, nextVoxelState);
+
+      const realmState = voxelEntity.get(RealmTrait);
+      if (realmState) {
+        voxelEntity.set(
+          RealmTrait,
+          advanceRealmRuntime(realmState, currentTrans, nextVoxelState.timeSurvived)
+        );
+      }
     }
   });
 

@@ -4,6 +4,7 @@ import { useThree } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
 import { useEffect, useMemo, useState } from "react";
 import { type ChunkCoords, Player } from "./Player";
+import { RealmClimbRoute } from "./RealmClimbRoute";
 import { SpawnCamp } from "./SpawnCamp";
 import { TerrainManager } from "./TerrainManager";
 
@@ -42,6 +43,7 @@ export function World({ interactive = true }: { interactive?: boolean }) {
           <Player onChunkChange={setPlayerChunk} />
           <TerrainManager playerChunk={playerChunk} physicsEnabled streamingEnabled />
           <SpawnCamp physicsEnabled />
+          <RealmClimbRoute physicsEnabled />
         </Physics>
       ) : (
         <>
@@ -52,6 +54,7 @@ export function World({ interactive = true }: { interactive?: boolean }) {
             streamingEnabled={false}
           />
           <SpawnCamp physicsEnabled={false} />
+          <RealmClimbRoute physicsEnabled={false} />
         </>
       )}
       {interactive ? <PointerLockControls /> : null}

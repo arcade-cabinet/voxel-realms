@@ -13,3 +13,9 @@ createRoot(rootElement).render(
     <Game />
   </StrictMode>
 );
+
+void import("./shared/platform")
+  .then(({ bootstrapPlatform }) => bootstrapPlatform())
+  .catch((error) => {
+    console.error("Platform bootstrap failed", error);
+  });
