@@ -66,5 +66,5 @@ pnpm test:browser
 pnpm realm:validate -- --sequence-count 10
 pnpm build
 pnpm run cap:sync
-cd android && ./gradlew assembleDebug
+cd android && ./gradlew testDebugUnitTest && ./gradlew assembleDebug
 ```

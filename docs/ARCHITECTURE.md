@@ -54,6 +54,8 @@ src/games/voxel-realms/
     realmRuntimeTelemetry.ts    # runtime-frame telemetry checks
     realmYukaPlaythroughAgent.ts# pure-engine Yuka route run
     realmAssetBudget.ts         # runtime model policy and render budgets
+    realmPathfinding.ts         # traversability verification helpers
+    realmVisualManifest.ts      # browser capture manifest generation
   store/
     traits.ts                   # VoxelTrait and RealmTrait lifecycle
     world.ts                    # shared Koota world and entity
