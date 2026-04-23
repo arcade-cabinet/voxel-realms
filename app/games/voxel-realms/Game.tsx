@@ -1,4 +1,5 @@
 import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
+import { createRealmSequenceEntry } from "@logic/games/voxel-realms/engine/realmSequence";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
 import {
   createInitialRealmRuntime,
@@ -12,6 +13,7 @@ import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
 import { World } from "./r3f/World";
+import { ExtractionBeat } from "./ui/ExtractionBeat";
 import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
 import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
@@ -54,6 +56,14 @@ function VoxelApp() {
         <>
           <HUD />
           <FirstRunCoach />
+          <ExtractionBeat
+            extractionState={realmState.extractionState}
+            archetype={realmState.activeRealm.archetype.name}
+            signalsScanned={realmState.discoveredAnomalies.length}
+            nextArchetype={
+              createRealmSequenceEntry(realmState.baseSeed, realmState.realmIndex + 1).archetype
+            }
+          />
           <div
             style={{
               position: "absolute",
