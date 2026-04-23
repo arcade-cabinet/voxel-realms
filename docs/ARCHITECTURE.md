@@ -8,7 +8,7 @@ domain: technical
 # Architecture
 
 This document owns the stack, runtime boundaries, directory layout, and system
-contracts. Gameplay rules live in [DESIGN.md](./DESIGN.md). Validation and test
+contracts. Gameplay rules live in [RULES.md](./RULES.md). Validation and test
 strategy live in [TESTING.md](./TESTING.md).
 
 ## System Overview
