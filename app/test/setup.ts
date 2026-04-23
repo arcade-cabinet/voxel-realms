@@ -3,5 +3,6 @@ import "@app/shared/styles/globals.css";
 
 // Common mocks for browser environments
 if (typeof window !== "undefined") {
+  window.__VOXEL_REALMS_TEST__ = true;
   window.scrollTo = () => {};
 }

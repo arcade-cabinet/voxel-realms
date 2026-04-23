@@ -25,6 +25,19 @@ export interface BrowserGameStartResult {
   rootElement: Element;
 }
 
+export interface BrowserGameScreenshotCapture {
+  path: string;
+  mode: "canvas" | "page";
+  viewport: BrowserGameViewport;
+  base64Length: number;
+  sha256: string;
+  visiblePixelRatio: number | null;
+  colorBuckets: number | null;
+  averageLuma: number | null;
+  lumaStdDev: number | null;
+  perceptualHash: string | null;
+}
+
 export async function verifyBrowserGameStartFlow({
   Component,
   title,
@@ -86,7 +99,7 @@ export async function captureBrowserGameScreenshot(
   rootElement: Element,
   viewport: BrowserGameViewport,
   path: string
-) {
+): Promise<BrowserGameScreenshotCapture> {
   await page.viewport(viewport.width, viewport.height);
 
   assertViewportFill(host, rootElement, viewport);
@@ -100,26 +113,53 @@ export async function captureBrowserGameScreenshot(
       expect(canvasScreenshot.base64.length).toBeGreaterThan(5_000);
       expect(canvasScreenshot.visiblePixelRatio).toBeGreaterThan(0.001);
       expect(canvasScreenshot.colorBuckets).toBeGreaterThan(1);
-      return path;
+      const sha256 = await hashBase64(canvasScreenshot.base64);
+
+      return {
+        path,
+        mode: "canvas",
+        viewport,
+        base64Length: canvasScreenshot.base64.length,
+        sha256,
+        visiblePixelRatio: round(canvasScreenshot.visiblePixelRatio, 4),
+        colorBuckets: canvasScreenshot.colorBuckets,
+        averageLuma: round(canvasScreenshot.averageLuma, 2),
+        lumaStdDev: round(canvasScreenshot.lumaStdDev, 2),
+        perceptualHash: canvasScreenshot.perceptualHash,
+      };
     }
   } else {
     await new Promise((resolve) => window.setTimeout(resolve, 500));
   }
 
-  const screenshot = await page.screenshot({
-    base64: true,
-    path: `../${path}`,
+  const fallbackScreenshot = await page.screenshot({
+    element: rootElement,
+    save: false,
+    timeout: 15_000,
   });
-  expect(screenshot.base64.length).toBeGreaterThan(5_000);
+  await commands.writeFile(path, fallbackScreenshot, "base64");
+  expect(fallbackScreenshot.length).toBeGreaterThan(5_000);
+  const sha256 = await hashBase64(fallbackScreenshot);
 
-  return screenshot.path;
+  return {
+    path,
+    mode: "page",
+    viewport,
+    base64Length: fallbackScreenshot.length,
+    sha256,
+    visiblePixelRatio: null,
+    colorBuckets: null,
+    averageLuma: null,
+    lumaStdDev: null,
+    perceptualHash: null,
+  };
 }
 
 async function waitForVisibleCanvasScreenshot() {
   let lastCapture: Awaited<ReturnType<typeof captureLargestCanvas>>;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
-    await new Promise((resolve) => window.setTimeout(resolve, attempt === 0 ? 500 : 250));
+  for (let attempt = 0; attempt < 24; attempt++) {
+    await new Promise((resolve) => window.setTimeout(resolve, attempt === 0 ? 750 : 400));
 
     lastCapture = await captureLargestCanvas();
     if (!lastCapture) return undefined;
@@ -133,7 +173,7 @@ async function waitForVisibleCanvasScreenshot() {
     }
   }
 
-  return lastCapture;
+  return undefined;
 }
 
 function assertViewportFill(host: Element, rootElement: Element, viewport: BrowserGameViewport) {
@@ -185,6 +225,7 @@ function measureCanvasPixels(canvas: HTMLCanvasElement) {
   context.drawImage(canvas, 0, 0, sampleSize, sampleSize);
   const pixels = context.getImageData(0, 0, sampleSize, sampleSize).data;
   const colorBuckets = new Set<string>();
+  const lumaValues: number[] = [];
   let visiblePixels = 0;
 
   for (let i = 0; i < pixels.length; i += 4) {
@@ -197,11 +238,91 @@ function measureCanvasPixels(canvas: HTMLCanvasElement) {
     const luma = red * 0.2126 + green * 0.7152 + blue * 0.0722;
 
     if (luma > 8) visiblePixels += 1;
+    lumaValues.push(luma);
     colorBuckets.add(`${red >> 4},${green >> 4},${blue >> 4}`);
   }
+  const averageLuma = average(lumaValues);
 
   return {
     colorBuckets: colorBuckets.size,
     visiblePixelRatio: visiblePixels / (sampleSize * sampleSize),
+    averageLuma,
+    lumaStdDev: standardDeviation(lumaValues, averageLuma),
+    perceptualHash: createPerceptualHash(pixels, sampleSize),
   };
+}
+
+function createPerceptualHash(pixels: Uint8ClampedArray, sampleSize: number) {
+  const hashSize = 8;
+  const cellSize = sampleSize / hashSize;
+  const cellLumas: number[] = [];
+
+  for (let cellY = 0; cellY < hashSize; cellY++) {
+    for (let cellX = 0; cellX < hashSize; cellX++) {
+      const values: number[] = [];
+
+      for (let y = cellY * cellSize; y < (cellY + 1) * cellSize; y++) {
+        for (let x = cellX * cellSize; x < (cellX + 1) * cellSize; x++) {
+          const index = (y * sampleSize + x) * 4;
+          const red = pixels[index] ?? 0;
+          const green = pixels[index + 1] ?? 0;
+          const blue = pixels[index + 2] ?? 0;
+          values.push(red * 0.2126 + green * 0.7152 + blue * 0.0722);
+        }
+      }
+
+      cellLumas.push(average(values));
+    }
+  }
+
+  const averageCellLuma = average(cellLumas);
+  let bits = "";
+
+  for (const luma of cellLumas) {
+    bits += luma >= averageCellLuma ? "1" : "0";
+  }
+
+  return bitsToHex(bits);
+}
+
+function bitsToHex(bits: string) {
+  let hex = "";
+
+  for (let index = 0; index < bits.length; index += 4) {
+    hex += Number.parseInt(bits.slice(index, index + 4), 2).toString(16);
+  }
+
+  return hex;
+}
+
+async function hashBase64(base64: string) {
+  const binary = atob(base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index++) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function average(values: number[]) {
+  return values.length > 0 ? values.reduce((sum, value) => sum + value, 0) / values.length : 0;
+}
+
+function standardDeviation(values: number[], mean: number) {
+  if (values.length === 0) {
+    return 0;
+  }
+
+  const variance =
+    values.reduce((sum, value) => sum + (value - mean) * (value - mean), 0) / values.length;
+
+  return Math.sqrt(variance);
+}
+
+function round(value: number, precision: number) {
+  const multiplier = 10 ** precision;
+  return Math.round(value * multiplier) / multiplier;
 }

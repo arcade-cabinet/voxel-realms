@@ -1,33 +1,45 @@
 import {
   browserTestCanvasGlOptions,
-  CartridgeStartScreen,
   GameOverScreen,
   GameViewport,
   OverlayButton,
 } from "@app/shared";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
-import { VoxelTrait } from "@logic/games/voxel-realms/store/traits";
+import {
+  createInitialRealmRuntime,
+  RealmTrait,
+  VoxelTrait,
+} from "@logic/games/voxel-realms/store/traits";
 import { voxelEntity, voxelWorld } from "@logic/games/voxel-realms/store/world";
 import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
 import { World } from "./r3f/World";
 import { HUD } from "./ui/HUD";
+import { RealmLanding } from "./ui/RealmLanding";
 
 const MENU_PREVIEW_DELAY_MS = 900;
 const PLAY_SCENE_DELAY_MS = 120;
 
 function VoxelApp() {
   const state = useTrait(voxelEntity, VoxelTrait);
+  const realmState = useTrait(voxelEntity, RealmTrait);
   const sceneMounted = useDeferredSceneMount(state.phase);
   const worldInteractive = useDeferredWorldInteractivity(state.phase === "playing");
 
   const handleStart = () => {
+    voxelEntity.set(RealmTrait, createInitialRealmRuntime());
     voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
   };
 
   return (
-    <GameViewport background="#9fd7e8">
+    <GameViewport
+      background="#9fd7e8"
+      data-realm-extraction-state={realmState.extractionState}
+      data-realm-path-index={realmState.agentPathIndex}
+      data-realm-scanned={realmState.discoveredAnomalies.length}
+      data-realm-valid={realmState.activeRealm.validation.valid ? "true" : "false"}
+    >
       <Canvas shadows camera={{ fov: 72, position: [0, 4.6, 0] }} gl={browserTestCanvasGlOptions}>
         {sceneMounted && state.phase !== "gameover" && (
           <World
@@ -37,24 +49,7 @@ function VoxelApp() {
         )}
       </Canvas>
 
-      {state.phase === "menu" && (
-        <CartridgeStartScreen
-          accent="#84cc16"
-          cartridgeId="Slot 09"
-          description="Explore from a shoreline beacon camp into a living voxel frontier."
-          kicker="World Cartridge"
-          motif="voxel"
-          onStart={handleStart}
-          rules={[
-            "Survey the biome ring and follow beacon pings to orient yourself.",
-            "Collect resources when pickup pulses mark nearby blocks.",
-            "Use mobile or desktop movement to keep the horizon stable.",
-          ]}
-          secondaryAccent="#38bdf8"
-          startLabel="Enter Realm"
-          title="Voxel Realms"
-        />
-      )}
+      {state.phase === "menu" && <RealmLanding onStart={handleStart} />}
 
       {state.phase === "playing" && (
         <>

@@ -1,0 +1,92 @@
+{
+  "title": "Voxel Realms Static Variants",
+  "generatedAt": "2026-04-23T01:08:13.599Z",
+  "tool": {
+    "name": "Blender",
+    "executable": "/opt/homebrew/bin/blender",
+    "command": "import GLB, clear animation data, export GLB with export_animations=false"
+  },
+  "rule": "Static variants are generated only for deferred chaos-slice GLB character assets. They preserve the source asset as metadata and never replace vendor/source files.",
+  "entries": [
+    {
+      "id": "clown",
+      "label": "Clown Intrusion",
+      "sourcePublicPath": "/assets/models/chaos-slice/gltf-files/Clown_Character_glt.glb",
+      "variantPublicPath": "/assets/models/static-variants/clown/clown-character-glt.static.glb",
+      "sourceBytes": 27095428,
+      "variantBytes": 315752,
+      "sizeReduction": 0.9883,
+      "warnings": []
+    },
+    {
+      "id": "dwarf",
+      "label": "Dwarf Surveyor",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-dwarf-characters-pack/Dwarf 05.glb",
+      "variantPublicPath": "/assets/models/static-variants/dwarf/dwarf-05.static.glb",
+      "sourceBytes": 21775176,
+      "variantBytes": 288948,
+      "sizeReduction": 0.9867,
+      "warnings": []
+    },
+    {
+      "id": "goblin",
+      "label": "Goblin Signal",
+      "sourcePublicPath": "/assets/models/chaos-slice/goblin-characters-pack-upload/Goblin 3.glb",
+      "variantPublicPath": "/assets/models/static-variants/goblin/goblin-3.static.glb",
+      "sourceBytes": 32896252,
+      "variantBytes": 395936,
+      "sizeReduction": 0.988,
+      "warnings": []
+    },
+    {
+      "id": "mermaid",
+      "label": "Mermaid Echo",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-mermaid-characters-pack-upload/MermaidFemale03.glb",
+      "variantPublicPath": "/assets/models/static-variants/mermaid/mermaidfemale03.static.glb",
+      "sourceBytes": 27369364,
+      "variantBytes": 327084,
+      "sizeReduction": 0.988,
+      "warnings": []
+    },
+    {
+      "id": "mother",
+      "label": "Neanderthal Mother",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-neanderthal-characters-pack/Mother.glb",
+      "variantPublicPath": "/assets/models/static-variants/mother/mother.static.glb",
+      "sourceBytes": 33652372,
+      "variantBytes": 327248,
+      "sizeReduction": 0.9903,
+      "warnings": []
+    },
+    {
+      "id": "samurai",
+      "label": "Ronin Signal",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-ronin-samurai-pack/Samurai GLTF.glb",
+      "variantPublicPath": "/assets/models/static-variants/samurai/samurai-gltf.static.glb",
+      "sourceBytes": 40171128,
+      "variantBytes": 350592,
+      "sizeReduction": 0.9913,
+      "warnings": []
+    },
+    {
+      "id": "steampunk",
+      "label": "Steampunk Scout",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-steampunk-characters-pack/Female_A1.glb",
+      "variantPublicPath": "/assets/models/static-variants/steampunk/female-a1.static.glb",
+      "sourceBytes": 67202932,
+      "variantBytes": 562516,
+      "sizeReduction": 0.9916,
+      "warnings": []
+    },
+    {
+      "id": "viking",
+      "label": "Viking Echo",
+      "sourcePublicPath": "/assets/models/chaos-slice/voxel-viking-characters-upload/Male_D1.glb",
+      "variantPublicPath": "/assets/models/static-variants/viking/male-d1.static.glb",
+      "sourceBytes": 41309456,
+      "variantBytes": 284728,
+      "sizeReduction": 0.9931,
+      "warnings": []
+    }
+  ]
+}

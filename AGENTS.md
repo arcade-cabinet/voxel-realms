@@ -7,20 +7,21 @@ domain: technical
 
 # Voxel Realms Agent Instructions
 
-Voxel Realms is a standalone extraction from the Arcade Cabinet. It is preserved as a referenceable voxel exploration prototype, not as an active cabinet launch cartridge.
+Voxel Realms is a standalone, mobile-first voxel platforming game. Web is the development and playtest harness; Android and iOS via Capacitor are product targets.
 
 ## Product Boundary
 
 - Keep this repo standalone.
 - Do not re-add Voxel Realms to the central cabinet without an explicit owner decision.
 - Do not grow this into a broad survival sandbox unless Bok has already evaluated and rejected the relevant techniques.
-- Treat Bok as the likely destination for reusable ideas, not as a code-dump target.
+- Keep realm generation finite, deterministic, and golden-path testable.
 
 ## Architecture
 
-- `app/` contains React/R3F presentation, HUD, shared cartridge UI, and browser tests.
+- `app/` contains React/R3F presentation, HUD, platform bootstrap, persistence wrappers, and browser tests.
 - `src/` contains deterministic voxel simulation, terrain generation, Koota traits/world, and shared pure utilities.
-- `public/` contains static assets and wasm copied from the cabinet.
+- `android/` and `ios/` contain first-class Capacitor native shells and should stay buildable.
+- `public/` contains static assets, curated models, brand fonts, and web SQLite wasm.
 
 ## Merge Guidance For Future Agents
 
@@ -32,7 +33,7 @@ The valuable pieces to preserve and reference are:
 - `app/games/voxel-realms/r3f/SpawnCamp.tsx` for the authored spawn-camp onboarding pattern.
 - `app/games/voxel-realms/ui/HUD.tsx` for survey/pickup/biome readability and touch-anywhere joystick integration.
 
-Port ideas into Bok surgically. Do not import the app shell, route model, or a second voxel engine.
+If ideas move into Bok later, port them surgically. Do not import the app shell, route model, or a second voxel engine wholesale.
 
 ## Verification
 
@@ -45,4 +46,5 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm run cap:sync
 ```
