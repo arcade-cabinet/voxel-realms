@@ -51,6 +51,15 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
     jump: false,
   });
 
+  // P3.7 movement envelope: coyote time lets the player jump shortly
+  // after leaving a ledge; jump buffer lets a jump pressed just before
+  // landing fire on touchdown. Both stored as "time since event" counters
+  // incremented each frame and reset on the triggering event.
+  const msSinceGrounded = useRef<number>(Number.POSITIVE_INFINITY);
+  const msSinceJumpPressed = useRef<number>(Number.POSITIVE_INFINITY);
+  const COYOTE_WINDOW_MS = 110;
+  const JUMP_BUFFER_MS = 130;
+
   const resetPlayerToCamp = useCallback(() => {
     movement.current = {
       forward: false,
@@ -270,6 +279,23 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
     cameraDirection.normalize();
 
     const grounded = Math.abs(currentVel.y) < 0.08;
+    const deltaMs = _delta * 1000;
+
+    // Update envelope timers. msSinceGrounded resets to zero while the
+    // body is on the floor; msSinceJumpPressed resets to zero the frame
+    // the jump flag is true, then counts upward until consumed.
+    if (grounded) {
+      msSinceGrounded.current = 0;
+    } else {
+      msSinceGrounded.current += deltaMs;
+    }
+    if (movement.current.jump) {
+      msSinceJumpPressed.current = 0;
+      movement.current.jump = false;
+    } else {
+      msSinceJumpPressed.current += deltaMs;
+    }
+
     const movementVelocity = calculateMovementVelocity(
       movement.current,
       cameraDirection,
@@ -277,9 +303,14 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
     );
     rbRef.current.setLinvel(movementVelocity, true);
 
-    if (movement.current.jump) {
-      rbRef.current.setLinvel(calculateJumpVelocity(movementVelocity, grounded), true);
-      movement.current.jump = false;
+    const canJump =
+      msSinceGrounded.current <= COYOTE_WINDOW_MS && msSinceJumpPressed.current <= JUMP_BUFFER_MS;
+    if (canJump) {
+      rbRef.current.setLinvel(calculateJumpVelocity(movementVelocity, true), true);
+      // Consume both windows so a single input cannot trigger a double
+      // jump by persisting in the buffer.
+      msSinceGrounded.current = COYOTE_WINDOW_MS + 1;
+      msSinceJumpPressed.current = JUMP_BUFFER_MS + 1;
     }
 
     camera.position.copy(position.current);
