@@ -16,6 +16,7 @@ import { World } from "./r3f/World";
 import { ExtractionBeat } from "./ui/ExtractionBeat";
 import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
+import { NextRealmSplash } from "./ui/NextRealmSplash";
 import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
 import { RealmLanding } from "./ui/RealmLanding";
 
@@ -63,6 +64,11 @@ function VoxelApp() {
             nextArchetype={
               createRealmSequenceEntry(realmState.baseSeed, realmState.realmIndex + 1).archetype
             }
+          />
+          <NextRealmSplash
+            realmIndex={realmState.realmIndex}
+            archetypeId={realmState.activeRealm.archetype.id}
+            archetypeName={realmState.activeRealm.archetype.name}
           />
           <div
             style={{
