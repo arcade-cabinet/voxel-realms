@@ -3,8 +3,28 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+function normalizeBasePath(value?: string) {
+  if (!value) {
+    return "/";
+  }
+
+  const trimmed = value.trim();
+
+  if (!trimmed || trimmed === "/") {
+    return "/";
+  }
+
+  if (/^https?:\/\//.test(trimmed)) {
+    return trimmed.endsWith("/") ? trimmed : `${trimmed}/`;
+  }
+
+  return `/${trimmed.replace(/^\/+|\/+$/g, "")}/`;
+}
+
+const base = normalizeBasePath(process.env.VITE_BASE_PATH);
+
 export default defineConfig({
-  base: "/",
+  base,
   plugins: [react(), tailwindcss()],
   build: {
     copyPublicDir: false,
