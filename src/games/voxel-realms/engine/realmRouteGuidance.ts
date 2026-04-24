@@ -93,14 +93,16 @@ function formatMoveLabel(move: RealmRouteMove) {
 
 function formatLinkDetail(link: RealmRouteLink, hazard: RealmHazard | null) {
   const gap = `${link.horizontalGap.toFixed(1)}m gap`;
-  const vertical = Math.abs(link.verticalDelta) < 0.1 ? "level" : `${signed(link.verticalDelta)}m`;
-  const hazardLabel = hazard ? ` / ${describeRealmHazard(hazard.kind).shortLabel}` : "";
+  const vertical = formatVertical(link.verticalDelta);
+  const hazardLabel = hazard ? ` · ${describeRealmHazard(hazard.kind).shortLabel}` : "";
 
-  return `${gap} / ${vertical}${hazardLabel}`;
+  return vertical ? `${gap} · ${vertical}${hazardLabel}` : `${gap}${hazardLabel}`;
 }
 
-function signed(value: number) {
-  return value > 0 ? `+${value.toFixed(1)}` : value.toFixed(1);
+function formatVertical(delta: number): string | null {
+  if (Math.abs(delta) < 0.1) return null;
+  const meters = Math.abs(delta).toFixed(1);
+  return delta > 0 ? `${meters}m up` : `${meters}m down`;
 }
 
 function clampInt(value: number, min: number, max: number) {

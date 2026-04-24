@@ -16,6 +16,10 @@ describe("realm route guidance", () => {
     expect(guidance.activeLink?.to).toBe(realm.goldenPath[1]);
     expect(guidance.label).toMatch(/^Next /);
     expect(guidance.detail).toContain("gap");
+    // Verb polish (P2.8): vertical deltas surface as "up"/"down", not raw sign.
+    if (Math.abs(guidance.activeLink?.verticalDelta ?? 0) >= 0.1) {
+      expect(guidance.detail).toMatch(/ (up|down)$|(up|down) ·/);
+    }
   });
 
   test("clamps out-of-range path indexes to the exit state", () => {
