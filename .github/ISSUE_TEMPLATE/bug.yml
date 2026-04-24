@@ -1,0 +1,76 @@
+name: Bug report
+description: Something broke, crashed, or rendered wrong.
+title: "[bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Fill in what you can — this issue is
+        public, so do not paste personal data or account credentials.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Web (browser)
+        - Android
+        - iOS
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device / Browser + version
+      placeholder: Pixel 8 · Android 14 · Chrome 142
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      placeholder: v0.3.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Numbered list of actions that trigger the bug.
+      placeholder: |
+        1. Open the landing page
+        2. Tap "Enter Realm"
+        3. Scan the first anomaly
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: telemetry
+    attributes:
+      label: Error log (optional)
+      description: |
+        If Error telemetry is enabled, paste the redacted log here.
+        Skip if no log is available.
+      render: text
+    validations:
+      required: false

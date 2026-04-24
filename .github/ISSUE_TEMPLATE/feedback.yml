@@ -1,0 +1,82 @@
+name: Playtest feedback
+description: Share what worked, what got in the way, or what you'd like to see next.
+title: "[feedback] "
+labels:
+  - feedback
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for playing Voxel Realms. This form helps the developer
+        triage feedback quickly. All fields are optional but more detail
+        makes it easier to reproduce or act on.
+
+        **Privacy**: this issue is public. Do not paste personal data,
+        account credentials, or device identifiers.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Web (browser)
+        - Android
+        - iOS
+        - Other
+    validations:
+      required: false
+
+  - type: input
+    id: device
+    attributes:
+      label: Device / Browser
+      description: e.g. Pixel 8 · Android 14 · Chrome 142
+      placeholder: Pixel 8 · Android 14
+    validations:
+      required: false
+
+  - type: input
+    id: version
+    attributes:
+      label: App version
+      description: Paste the version chip text from the landing page if visible
+      placeholder: v0.3.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: What were you doing?
+      description: Which realm, which step of the climb, which button, etc.
+      placeholder: "I had just scanned the second anomaly in an arctic realm when..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: worked
+    attributes:
+      label: What worked well?
+      placeholder: "The jump felt responsive on my phone."
+    validations:
+      required: false
+
+  - type: textarea
+    id: friction
+    attributes:
+      label: What got in the way?
+      placeholder: "The gate took too long to arm and the timer felt stressful."
+    validations:
+      required: false
+
+  - type: textarea
+    id: telemetry
+    attributes:
+      label: Error log (optional)
+      description: |
+        If you enabled "Error telemetry" in Settings and the app misbehaved,
+        you can paste the local log here. The log is already redacted of
+        /Users/<name>/ paths but inspect it before pasting.
+      render: text
+    validations:
+      required: false
