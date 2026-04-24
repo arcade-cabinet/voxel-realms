@@ -1,4 +1,5 @@
 import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
+import { useAutoPauseOnBackground } from "@app/shared/hooks/useAutoPauseOnBackground";
 import { scoreExpeditionFromRealmState } from "@logic/games/voxel-realms/engine/progression";
 import { createRealmSequenceEntry } from "@logic/games/voxel-realms/engine/realmSequence";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
@@ -12,7 +13,7 @@ import {
 import { voxelEntity, voxelWorld } from "@logic/games/voxel-realms/store/world";
 import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AudioBindings } from "./AudioBindings";
 import { World } from "./r3f/World";
 import { ExtractionBeat } from "./ui/ExtractionBeat";
@@ -55,6 +56,13 @@ function VoxelApp() {
     window.dispatchEvent(new Event("voxel:reset-player"));
     setPaused(false);
   };
+
+  const handleBackground = useCallback(() => {
+    if (state.phase === "playing") {
+      setPaused(true);
+    }
+  }, [state.phase]);
+  useAutoPauseOnBackground(handleBackground);
 
   useEffect(() => {
     if (state.phase !== "playing") return;
