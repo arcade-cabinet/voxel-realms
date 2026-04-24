@@ -1,6 +1,6 @@
 ---
 title: Architecture
-updated: 2026-04-23
+updated: 2026-04-24
 status: current
 domain: technical
 ---
@@ -9,26 +9,50 @@ domain: technical
 
 This document owns the stack, runtime boundaries, directory layout, and system
 contracts. Gameplay rules live in [RULES.md](./RULES.md). Validation and test
-strategy live in [TESTING.md](./TESTING.md).
+strategy live in [TESTING.md](./TESTING.md). The in-flight shell migration
+from R3F to Jolly Pixel is described in
+[plans/jolly-pixel-migration.prq.md](./plans/jolly-pixel-migration.prq.md);
+the layers below note which layer is currently R3F-backed vs JP-backed.
 
 ## System Overview
 
 ```text
-React UI / App Shell
-  -> menu, HUD, landing, overlays
-R3F Scene Layer
+React DOM HUD overlay            (stays, simplified — flat DOM above the canvas)
+  -> landing, HUD, first-run coach, pause, settings
+Jolly Pixel Scene Layer          (TARGET STATE — replaces R3F Scene Layer)
+  -> Runtime + World, terrain actor w/ VoxelRenderer, player Behavior,
+     Camera3DControls, GLTF via engine asset registry
+R3F Scene Layer                  (CURRENT — removed at migration phase 6)
   -> World, Player, SpawnCamp, TerrainManager, RealmClimbRoute
-Koota State
-  -> VoxelTrait and RealmTrait runtime state
-Deterministic Engine
-  -> voxelSimulation, realmClimber, validation, telemetry, Yuka plan
-Platform Layer
+Koota State                      (stays)
+  -> VoxelTrait + RealmTrait; bridge between JP scene and React HUD
+Deterministic Engine             (stays, untouched by the migration)
+  -> voxelSimulation, realmClimber, validation, telemetry, Yuka plan,
+     realmVoxelBake (new: realm -> {position, blockId} commands)
+Platform Layer                   (stays)
   -> Capacitor shell config, Preferences, SQLite, web jeep-sqlite bridge
-Static Asset Layer
+Static Asset Layer               (stays; loader swaps to JP's registry at phase 5)
   -> curated models, static variants, fonts, sql-wasm
-Automation Layer
-  -> Vitest Browser, golden-path captures, CI/CD, release workflow
+Automation Layer                 (stays; spec surface adapts per phase)
+  -> Vitest Browser, golden-path captures, @prod-surface +
+     @prod-surface-jp Playwright specs, CI/CD, release workflow
 ```
+
+### Why the split
+
+The R3F scene layer is a UI framework pretending to be a game engine.
+It worked until the shell hit a platform difference — Pages subpath,
+mobile viewport emulation, animated landing obstructing Playwright
+stability — and each difference became a bespoke patch (see PRs
+#80 and #81 and the tracker "Tracked incidents" section). Jolly
+Pixel is an actual game engine: it owns the main loop, the canvas,
+and asset resolution, so those whole categories of bugs don't exist.
+Three.js stays as the graphics backend on both sides of the
+migration.
+
+React stays for the DOM HUD overlay. Flat-DOM text/form UI above a
+canvas was never the problem; the problem was asking R3F to host the
+canvas inside React's layout system.
 
 ## Directory Ownership
 
