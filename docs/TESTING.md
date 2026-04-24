@@ -78,8 +78,14 @@ pnpm build
 ```bash
 pnpm test:e2e                  # run full E2E matrix (desktop + mobile-portrait + tablet-portrait)
 pnpm test:e2e:ci               # CI-facing subset (desktop-chromium project only, headless)
+pnpm test:e2e:matrix           # all three device profiles, headless — runs nightly in CI
 pnpm test:store-screenshots    # capture landing + HUD PNGs for store listings (see e2e/store-screenshots.spec.ts)
 ```
+
+The three device profiles run on a schedule, not on every PR:
+`.github/workflows/nightly-e2e-matrix.yml` fires at 02:17 UTC and
+uploads the Playwright report as an artifact. PR CI stays on the
+desktop-chromium fast path to keep merge latency low.
 
 Store screenshots are tagged `@store` and excluded from the default
 E2E runs. Output lands in `test-screenshots/store/` and needs a
