@@ -5,6 +5,13 @@
 - Added biome discovery milestones and resource pickup event state.
 - Added pickup pulses, resource effects, biome silhouettes, survey HUD feedback, and shared cartridge landing identity.
 
+## [0.4.0](https://github.com/arcade-cabinet/voxel-realms/compare/v0.3.0...v0.4.0) (2026-04-24)
+
+
+### Features
+
+* **hud:** plain-language route guidance detail (P2.8) ([#48](https://github.com/arcade-cabinet/voxel-realms/issues/48)) ([37aa769](https://github.com/arcade-cabinet/voxel-realms/commit/37aa7699570e617c72a79e3b53abc8521dd4bf1b))
+
 ## [0.3.0](https://github.com/arcade-cabinet/voxel-realms/compare/v0.2.1...v0.3.0) (2026-04-24)
 
 
