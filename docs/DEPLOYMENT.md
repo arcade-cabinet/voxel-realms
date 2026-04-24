@@ -71,7 +71,10 @@ Current workflow requirements:
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Future iOS signing/distribution secrets are still open.
+Future iOS signing/distribution secrets are still open — see
+[iOS_SIGNING.md](./iOS_SIGNING.md) for the required App Store Connect
+setup, certificate and profile management, and the `release.yml`
+changes needed to produce a signed IPA.
 
 ## Operator Notes
 
