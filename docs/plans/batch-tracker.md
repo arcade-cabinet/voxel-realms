@@ -126,11 +126,17 @@ not done — even if every sub-task below is checked.
 
 ## Breath-point (per PRD, before touching `.claude/state/DONE`)
 
-- [ ] All open PRs merged (incl. #17 release-please)
+The full gate + release-train + live-Pages + tracker-truthfulness
+check lives in [batch-completion-gate.md](./batch-completion-gate.md).
+Follow that runbook; do not mark the batch done from this section
+alone.
+
+Quick pre-flight:
+- [ ] All non-release/non-dependabot PRs merged
 - [ ] Full local gate green on main
-- [ ] Incognito cold-player 60 s replay recorded
-- [ ] Score against Prime Directive — if any no, queue next batch
-- [ ] Only then: `touch .claude/state/DONE`
+- [ ] Live Pages build serves the landing page with no console errors
+- [ ] Tracker reflects every merged PR and every deferred item has a reason
+- [ ] Then: `touch .claude/state/DONE`
 
 ## Deferred deep-work (next batch)
 
