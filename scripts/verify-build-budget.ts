@@ -57,7 +57,11 @@ if (!fs.existsSync(distPath)) {
   addChunkMaxCheck(jsEntries, "vendor-r3f", 300_000);
   addChunkMaxCheck(jsEntries, "vendor-react", 300_000);
   addChunkMaxCheck(jsEntries, "realm-engine", 75_000);
-  addChunkMaxCheck(jsEntries, "index", 90_000);
+  // index grew during the 1.0 polish batch (ambient music, boot splash,
+  // overlay brand polish, a11y wiring, auto-pause hook). 95 KB gives a
+  // narrow headroom — revisit if it climbs past that, which would
+  // indicate a real regression rather than scope growth.
+  addChunkMaxCheck(jsEntries, "index", 95_000);
   addChunkMaxCheck(jsEntries, "vendor-sqlite", 380_000);
   addChunkMaxCheck(jsEntries, "vendor-misc", 60_000);
 }
