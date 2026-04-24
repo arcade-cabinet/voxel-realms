@@ -1,5 +1,6 @@
 import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
 import { scoreExpeditionFromRealmState } from "@logic/games/voxel-realms/engine/progression";
+import { createRealmSequenceEntry } from "@logic/games/voxel-realms/engine/realmSequence";
 import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
 import {
   createInitialRealmRuntime,
@@ -14,8 +15,10 @@ import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
 import { AudioBindings } from "./AudioBindings";
 import { World } from "./r3f/World";
+import { ExtractionBeat } from "./ui/ExtractionBeat";
 import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
+import { NextRealmSplash } from "./ui/NextRealmSplash";
 import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
 import { RealmLanding } from "./ui/RealmLanding";
 
@@ -57,6 +60,19 @@ function VoxelApp() {
           <HUD />
           <FirstRunCoach />
           <AudioBindings />
+          <ExtractionBeat
+            extractionState={realmState.extractionState}
+            archetype={realmState.activeRealm.archetype.name}
+            signalsScanned={realmState.discoveredAnomalies.length}
+            nextArchetype={
+              createRealmSequenceEntry(realmState.baseSeed, realmState.realmIndex + 1).archetype
+            }
+          />
+          <NextRealmSplash
+            realmIndex={realmState.realmIndex}
+            archetypeId={realmState.activeRealm.archetype.id}
+            archetypeName={realmState.activeRealm.archetype.name}
+          />
           <div
             style={{
               position: "absolute",
