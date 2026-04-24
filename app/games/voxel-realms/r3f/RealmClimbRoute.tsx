@@ -28,6 +28,13 @@ import * as THREE from "three";
 
 const PRELOADED_REALM_MODEL_PATHS = new Set<string>();
 
+function resolveAssetUrl(path: string): string {
+  const base = import.meta.env.BASE_URL ?? "/";
+  const normalizedBase = base.endsWith("/") ? base : `${base}/`;
+  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
+  return `${normalizedBase}${normalizedPath}`;
+}
+
 export function RealmClimbRoute({ physicsEnabled }: { physicsEnabled: boolean }) {
   const realmState = useTrait(voxelEntity, RealmTrait);
   const realm = realmState.activeRealm;
@@ -81,12 +88,14 @@ export function RealmClimbRoute({ physicsEnabled }: { physicsEnabled: boolean })
 
   useEffect(() => {
     for (const modelPath of preloadModelPaths) {
-      if (PRELOADED_REALM_MODEL_PATHS.has(modelPath)) {
+      const resolved = resolveAssetUrl(modelPath);
+
+      if (PRELOADED_REALM_MODEL_PATHS.has(resolved)) {
         continue;
       }
 
-      useGLTF.preload(modelPath);
-      PRELOADED_REALM_MODEL_PATHS.add(modelPath);
+      useGLTF.preload(resolved);
+      PRELOADED_REALM_MODEL_PATHS.add(resolved);
     }
   }, [preloadModelPaths]);
 
@@ -459,7 +468,7 @@ function FocusedSignalRings({
   const ringColor = pulse?.locked ? "#f8fafc" : focus.inScanRange ? "#f8fafc" : color;
 
   return (
-    <group name="focused-signal-rings" data-pulse-label={pulse?.label ?? "idle"}>
+    <group name="focused-signal-rings">
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[scanRadius, 0.028, 8, 40]} />
         <meshBasicMaterial color={color} depthWrite={false} transparent opacity={0.28} />
@@ -486,7 +495,7 @@ function PromotedAnomalyModel({
   discovered: boolean;
   modelPath: string;
 }) {
-  const gltf = useGLTF(modelPath);
+  const gltf = useGLTF(resolveAssetUrl(modelPath));
   const transform = useMemo(() => getNormalizedModelTransform(gltf.scene), [gltf.scene]);
 
   return (
