@@ -214,6 +214,28 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
           >
             Replay tutorial
           </button>
+          <a
+            href="https://github.com/arcade-cabinet/voxel-realms/issues/new?template=feedback.yml"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="settings-send-feedback"
+            style={{
+              background: "transparent",
+              border: "1px solid rgba(163, 230, 53, 0.55)",
+              color: "#a3e635",
+              padding: "0.5rem 0.95rem",
+              borderRadius: 8,
+              fontSize: 12,
+              letterSpacing: 0.25,
+              textTransform: "uppercase",
+              fontWeight: 800,
+              textDecoration: "none",
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            Send feedback
+          </a>
           <button
             type="button"
             onClick={onClose}
