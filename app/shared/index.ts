@@ -1,4 +1,4 @@
-export * from "@logic/shared";
+export * from "@shared";
 export * from "./hooks/useContainerSize";
 export * from "./hooks/useDevice";
 export * from "./hooks/useGameLoop";

@@ -1,16 +1,16 @@
 import { browserTestCanvasGlOptions, GameViewport } from "@app/shared";
 import { useAutoPauseOnBackground } from "@app/shared/hooks/useAutoPauseOnBackground";
-import { scoreExpeditionFromRealmState } from "@logic/games/voxel-realms/engine/progression";
-import { createRealmSequenceEntry } from "@logic/games/voxel-realms/engine/realmSequence";
-import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
+import { scoreExpeditionFromRealmState } from "@world/progression";
+import { createRealmSequenceEntry } from "@world/sequence";
+import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   createInitialRealmRuntime,
   createNextRealmRuntime,
   RealmTrait,
   summarizeRealmExpedition,
   VoxelTrait,
-} from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity, voxelWorld } from "@logic/games/voxel-realms/store/world";
+} from "@store/traits";
+import { voxelEntity, voxelWorld } from "@store/world";
 import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
 import { useCallback, useEffect, useState } from "react";

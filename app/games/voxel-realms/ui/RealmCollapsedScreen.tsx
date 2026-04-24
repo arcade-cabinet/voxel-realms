@@ -1,7 +1,7 @@
 import { GameOverScreen, OverlayButton } from "@app/shared";
 import { recordExpeditionScore } from "@app/shared/platform/persistence/preferences";
-import type { ExpeditionScore } from "@logic/games/voxel-realms/engine/progression";
-import type { summarizeRealmExpedition } from "@logic/games/voxel-realms/store/traits";
+import type { ExpeditionScore } from "@world/progression";
+import type { summarizeRealmExpedition } from "@store/traits";
 import { useEffect } from "react";
 
 type ExpeditionSummary = ReturnType<typeof summarizeRealmExpedition>;

@@ -1,5 +1,5 @@
-import type { Vec3 } from "@logic/games/voxel-realms/engine/types";
-import { CONFIG, type VoxelControls } from "@logic/games/voxel-realms/engine/types";
+import type { Vec3 } from "@engine/types";
+import { CONFIG, type VoxelControls } from "@engine/types";
 import {
   advanceVoxelState,
   calculateJumpVelocity,
@@ -8,14 +8,14 @@ import {
   classifyBiome,
   findNearestLandmarkDistance,
   getProceduralHeight,
-} from "@logic/games/voxel-realms/engine/voxelSimulation";
+} from "@engine/voxel-simulation";
 import {
   advanceRealmRuntime,
   RealmTrait,
   VoxelTrait,
-} from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
-import { isVitestBrowser } from "@logic/shared";
+} from "@store/traits";
+import { voxelEntity } from "@store/world";
+import { isVitestBrowser } from "@shared";
 import { useFrame, useThree } from "@react-three/fiber";
 import { type RapierRigidBody, RigidBody } from "@react-three/rapier";
 import { useCallback, useEffect, useRef } from "react";

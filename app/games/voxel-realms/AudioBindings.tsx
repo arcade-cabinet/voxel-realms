@@ -1,9 +1,9 @@
 import { playAmbientForArchetype, stopAmbient } from "@app/shared/audio/ambientMusic";
 import { playCue } from "@app/shared/audio/sfx";
 import { fireHaptic } from "@app/shared/platform/haptics";
-import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
-import { RealmTrait, VoxelTrait } from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+import { summarizeRealmExitGate } from "@world/exit-gate";
+import { RealmTrait, VoxelTrait } from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { useTrait } from "koota/react";
 import { useEffect, useRef } from "react";
 

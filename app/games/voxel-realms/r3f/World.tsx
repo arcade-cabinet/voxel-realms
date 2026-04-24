@@ -1,4 +1,4 @@
-import { CONFIG } from "@logic/games/voxel-realms/engine/types";
+import { CONFIG } from "@engine/types";
 import { PointerLockControls, Sky } from "@react-three/drei";
 import { useThree } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";

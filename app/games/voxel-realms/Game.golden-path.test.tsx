@@ -4,17 +4,17 @@ import {
   saveRealmPreferences,
 } from "@app/shared/platform/persistence/preferences";
 import { startBrowserGame } from "@app/test/browserGameHarness";
-import { validateRealmPathfindingContract } from "@logic/games/voxel-realms/engine/realmPathfinding";
-import { createRealmPlaythroughPlan } from "@logic/games/voxel-realms/engine/realmPlaythroughPlan";
-import { validateRealmRuntimeTelemetry } from "@logic/games/voxel-realms/engine/realmRuntimeTelemetry";
-import { createYukaRealmPlaythroughRun } from "@logic/games/voxel-realms/engine/realmYukaPlaythroughAgent";
-import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
+import { validateRealmPathfindingContract } from "@engine/pathfinding";
+import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
+import { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
+import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   createInitialRealmRuntime,
   RealmTrait,
   VoxelTrait,
-} from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+} from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import Game from "./Game";

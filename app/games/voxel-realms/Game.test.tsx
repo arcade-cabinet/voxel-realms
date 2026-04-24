@@ -4,13 +4,13 @@ import {
   saveRealmPreferences,
 } from "@app/shared/platform/persistence/preferences";
 import { captureBrowserGameScreenshot, startBrowserGame } from "@app/test/browserGameHarness";
-import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
+import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   createInitialRealmRuntime,
   RealmTrait,
   VoxelTrait,
-} from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+} from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { cleanup } from "@testing-library/react";
 import { afterEach, beforeEach, expect, test } from "vitest";
 import Game from "./Game";

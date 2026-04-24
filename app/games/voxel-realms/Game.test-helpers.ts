@@ -3,22 +3,22 @@ import {
   type BrowserGameViewport,
   captureBrowserGameScreenshot,
 } from "@app/test/browserGameHarness";
-import type { validateRealmPathfindingContract } from "@logic/games/voxel-realms/engine/realmPathfinding";
+import type { validateRealmPathfindingContract } from "@engine/pathfinding";
 import type {
   createRealmPlaythroughPlan,
   RealmPlaythroughCheckpoint,
-} from "@logic/games/voxel-realms/engine/realmPlaythroughPlan";
-import type { validateRealmRuntimeTelemetry } from "@logic/games/voxel-realms/engine/realmRuntimeTelemetry";
+} from "@world/playthrough-plan";
+import type { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
 import {
   type RealmVisualManifest,
   validateRealmVisualManifest,
-} from "@logic/games/voxel-realms/engine/realmVisualManifest";
+} from "@assets/visual-manifest";
 import type {
   createYukaRealmPlaythroughRun,
   RealmYukaPlaythroughFrame,
   RealmYukaPlaythroughIssue,
-} from "@logic/games/voxel-realms/engine/realmYukaPlaythroughAgent";
-import type { Vec3 } from "@logic/games/voxel-realms/engine/types";
+} from "@ai/yuka-agent";
+import type { Vec3 } from "@engine/types";
 import { waitFor } from "@testing-library/react";
 import { expect } from "vitest";
 import { commands } from "vitest/browser";

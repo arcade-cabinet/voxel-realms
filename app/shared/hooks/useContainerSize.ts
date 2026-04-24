@@ -1,4 +1,4 @@
-import type { ContainerSize } from "@logic/shared";
+import type { ContainerSize } from "@shared";
 import type { RefObject } from "react";
 import { useEffect, useState } from "react";
 

@@ -1,10 +1,10 @@
-import TerrainWorker from "@logic/games/voxel-realms/engine/TerrainWorker?worker";
-import { CONFIG } from "@logic/games/voxel-realms/engine/types";
+import TerrainWorker from "@workers/terrain-worker?worker";
+import { CONFIG } from "@engine/types";
 import {
   type BlockData,
   type ChunkData,
   generateChunkData,
-} from "@logic/games/voxel-realms/engine/voxelSimulation";
+} from "@engine/voxel-simulation";
 import { InstancedRigidBodies } from "@react-three/rapier";
 import type { MutableRefObject } from "react";
 import { useEffect, useMemo, useRef, useState } from "react";

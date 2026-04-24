@@ -3,17 +3,17 @@ import {
   DEFAULT_REALM_RENDERABLE_ASSET_POLICY,
   formatRealmAssetBytes,
   summarizeRenderableRealmAnomalies,
-} from "@logic/games/voxel-realms/engine/realmAssetBudget";
-import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
-import { summarizeRealmRouteGuidance } from "@logic/games/voxel-realms/engine/realmRouteGuidance";
-import { createInitialVoxelState } from "@logic/games/voxel-realms/engine/voxelSimulation";
+} from "@world/asset-budget";
+import { summarizeRealmExitGate } from "@world/exit-gate";
+import { summarizeRealmRouteGuidance } from "@world/route-guidance";
+import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   createNextRealmRuntime,
   RealmTrait,
   summarizeRealmExpedition,
   VoxelTrait,
-} from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+} from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { useTrait } from "koota/react";
 
 type ControlEvent = "voxel:jump";

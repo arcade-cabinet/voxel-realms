@@ -1,25 +1,25 @@
-import { type RealmAgentRun, runRealmAgent } from "@logic/games/voxel-realms/engine/realmAgent";
+import { type RealmAgentRun, runRealmAgent } from "@engine/agent";
 import {
   getRealmAssetBudget,
   selectPreloadRealmModelPaths,
   selectRenderableRealmAnomalies,
-} from "@logic/games/voxel-realms/engine/realmAssetBudget";
+} from "@world/asset-budget";
 import type {
   RealmAnomaly,
   RealmAssetRef,
   RealmHazard,
   RealmPlatform,
   RealmRouteLink,
-} from "@logic/games/voxel-realms/engine/realmClimber";
-import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
-import { summarizeRealmRouteGuidance } from "@logic/games/voxel-realms/engine/realmRouteGuidance";
+} from "@world/climber";
+import { summarizeRealmExitGate } from "@world/exit-gate";
+import { summarizeRealmRouteGuidance } from "@world/route-guidance";
 import {
   type RealmSignalPulse,
   summarizeRealmSignalPulse,
-} from "@logic/games/voxel-realms/engine/realmSignalPulse";
-import { summarizeRealmSignalFocus } from "@logic/games/voxel-realms/engine/realmSignals";
-import { RealmTrait } from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+} from "@world/signal-pulse";
+import { summarizeRealmSignalFocus } from "@world/signals";
+import { RealmTrait } from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { Clone, useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { useTrait } from "koota/react";

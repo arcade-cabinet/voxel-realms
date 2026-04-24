@@ -1,6 +1,6 @@
-import { createSpawnCampLayout } from "@logic/games/voxel-realms/engine/voxelSimulation";
-import { VoxelTrait } from "@logic/games/voxel-realms/store/traits";
-import { voxelEntity } from "@logic/games/voxel-realms/store/world";
+import { createSpawnCampLayout } from "@engine/voxel-simulation";
+import { VoxelTrait } from "@store/traits";
+import { voxelEntity } from "@store/world";
 import { RigidBody } from "@react-three/rapier";
 import { useTrait } from "koota/react";
 import type { ReactNode } from "react";
