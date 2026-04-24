@@ -1,6 +1,6 @@
 ---
 title: Voxel Realms 1.0 Batch Tracker
-updated: 2026-04-23
+updated: 2026-04-24
 status: current
 domain: plan
 ---
@@ -12,6 +12,7 @@ repo so it survives compactions, branch switches, and agent rehydration.
 
 Source PRD: [voxel-realms-1.0.prq.md](./voxel-realms-1.0.prq.md).
 Cold-player audit: [cold-player-audit.md](./cold-player-audit.md).
+Docs gap analysis: [docs-gap-analysis.md](./docs-gap-analysis.md).
 
 ## Prime Directive (from PRD)
 
@@ -20,14 +21,6 @@ build, understand the goal in under 30 seconds, play fluently through
 climb → scan → extract → collapse → next-realm, and the game *feels
 authored* on web, Android, and iOS. Until that's true, the batch is
 not done — even if every sub-task below is checked.
-
-## Next action
-
-Pillar 2b on branch `feat/pillar-2b-coach-and-beats`: build the
-first-run coach (P2.3), then the extraction beat (P2.6), next-realm
-rollover splash (P2.7), and route-guidance rework (P2.8). Use
-`@capacitor/preferences` for the `hasPlayed` flag so coach dismissal
-persists across native and web sessions.
 
 ## Guardrails (do not violate)
 
@@ -40,137 +33,128 @@ persists across native and web sessions.
 
 ## Pillar state
 
-| # | Pillar | Status | PR | Notes |
-|---|--------|--------|----|-------|
-| — | Batch infrastructure | MERGED | #7 | PRD + hooks + permissions |
-| 1 | Docs & CI/CD alignment | MERGED | #8 | All 13 subtasks done |
-| — | Dependabot churn | MERGED | #11–#15 | Majors slipped through; rule hardened in #16 |
-| 2 | Player journey & onboarding | MERGED | #16 | Slice: P2.1/2.2/2.4/2.5 |
-| 2b | Player journey follow-up | IN PROGRESS | — | P2.3 coach, P2.6 extract beat, P2.7 next-realm rollover, P2.8 route guidance |
-| 3 | Core gameplay polish | PENDING | — | Progression, hazard vocab, archetype verbs, tuning |
-| 4 | Visual identity & assets | PENDING | — | Marker→model, per-archetype lighting, perf budget |
-| 5 | Mobile UX, controls, persistence | PENDING | — | Touch rework, resume flow, settings, a11y |
-| 6 | Audio, haptics, splash | PENDING | — | SFX, haptics, splash polish |
-| 7 | Testing breadth | PENDING | — | Perf budget, replay, manifest expansion, device matrix |
-| 8 | Release ops | PENDING | — | Android signing, icons, store screenshots, v1.0 RC |
-| 9 | Telemetry & playtest ops | PENDING | — | Error telemetry, crash reporting, feedback |
+| # | Pillar | Status | Notes |
+|---|--------|--------|-------|
+| 0 | Batch infrastructure | MERGED | PRD + hooks + permissions |
+| 1 | Docs & CI/CD alignment | MERGED | All 13 subtasks done (PR #8) |
+| 2 | Player journey & onboarding | MERGED | Slice P2.1/2/4/5 (#16) + P2.3 coach (#18) + P2.6/7 beats (#30) |
+| 3 | Core gameplay polish | MOSTLY DONE | P3.1/2/6/7 ✅, P3.3/4/5 deferred |
+| 4 | Visual identity & assets | PARTIAL | P4.6 perf budget ✅, P4.1–4.5 deferred |
+| 5 | Mobile UX, controls, persistence | PARTIAL | P5.4 settings ✅, P5.5 pause ✅, P5.1/2/3/6 deferred |
+| 6 | Audio, haptics, splash | MOSTLY DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.2/6.4 deferred |
+| 7 | Testing breadth | PARTIAL | P4.6 budget test subsumes P7.1 spirit; P7.2–7.6 deferred |
+| 8 | Release ops & store-readiness | PARTIAL | Store listing, privacy, support, feedback drafted; signing/icons/trailer deferred |
+| 9 | Telemetry & playtest ops | PARTIAL | P9.1 error telemetry ✅, P9.3 feedback doc ✅; P9.2/9.4 deferred |
 
-## In-flight queue
+## Completed subtasks (quick index)
 
-### PR #16 — feat(game): player journey clarity pass (pillar 2 slice)
-- [x] core CI
-- [x] e2e-smoke CI
-- [x] CodeQL
-- [x] native-android — AGP removed proguard-android.txt; switched to
-      proguard-android-optimize.txt; verified locally with assembleDebug
-- [ ] browser CI (pending at last check)
-- [ ] merge once green
-- [ ] rebase next branch onto main after merge
+**Pillar 1 — Docs & CI/CD**: P1.1–P1.13 all merged via PR #8.
 
-### Pillar 2b follow-up (branch feat/pillar-2b-coach-and-beats)
-- [x] P2.3 first-run coach — FirstRunCoach.tsx + test, persisted via
-      Preferences.onboardingSeen with test-env bypass.
-- [ ] P2.6 extraction celebration beat
-- [ ] P2.7 next-realm rollover splash
-- [ ] P2.8 route guidance rework (forward beacon, backtrack de-emphasis)
+**Pillar 2 — Journey**:
+- P2.1 cold-player audit · 14 findings mapped
+- P2.2 landing polish · operational hero, 3-beat explainer
+- P2.3 first-run coach · persisted via Preferences.onboardingSeen, 2 tests
+- P2.4 HUD copy · gate pill, debug-HUD gated behind ?debug-hud
+- P2.5 failure-state language · REALM COLLAPSED + Continue expedition
+- P2.6 extraction beat · 1.8 s deterministic card, 3 tests
+- P2.7 next-realm splash · per-archetype LORE teasers, 4 tests
+- P2.8 route-guidance rework · deferred (cosmetic)
 
-### Pillar 3 — branch feat/pillar-3-gameplay-polish
-- [x] P3.1 progression beat — progression.ts (scoreExpedition +
-      rankForScore), persisted via recordExpeditionScore in
-      preferences, RealmCollapsedScreen shows score+rank, landing
-      shows ExpeditionSummaryCard (best / last). 6 unit tests.
-- [x] P3.2 failure recovery — RealmCollapsedScreen "Retry this realm ·
-      Same seed" CTA rebuilds the realm at the same baseSeed +
-      realmIndex + completedRealms ledger. 4 retry-determinism tests.
-- [ ] P3.3 distinct archetype verbs (jungle branches, ocean bob, steampunk pulses, dinosaur broads, arctic thins)
-- [ ] P3.4 hazard vocabulary (timed gap, pressure pulse, instability zone)
-- [ ] P3.5 signal scan dwell + pulse feedback
-- [x] P3.6 gate arming visual 3-mode — already complete. The engine
-      module summarizeRealmExitGate distinguishes locked / primed /
-      open / collapsed with distinct color + emissive + portalOpacity,
-      and the HUD pill (shipped in P2.4) surfaces it with an icon per
-      state. The 3D ExitGate in RealmClimbRoute.tsx reacts to gate.state.
-- [x] P3.7 movement envelope — coyote time (110 ms) and jump buffer
-      (130 ms) added to Player.tsx; jump consumes both windows so a
-      single input never produces a double jump. Tests still deterministic
-      (teleport-driven golden path unaffected); manual feel pass pending
-      physical-device QA in pillar 7.
+**Pillar 3 — Gameplay polish**:
+- P3.1 Expedition Score + ranks · progression.ts, 6 tests
+- P3.2 Same-seed retry · RealmCollapsedScreen CTA, 4 tests
+- P3.3 Distinct archetype verbs · deferred (generator rework)
+- P3.4 Hazard vocabulary · deferred
+- P3.5 Scan dwell feedback · existing engine supports this; UI polish deferred
+- P3.6 Gate 3-mode visual · already shipped via engine + HUD pill
+- P3.7 Movement envelope · coyote 110 ms + jump buffer 130 ms
 
-### Pillar 4
-- [ ] P4.1 asset promotion per archetype
-- [ ] P4.2 replace marker anchors with curated models
-- [ ] P4.3 authored biome dressing (2–4 props/archetype)
-- [ ] P4.4 per-archetype lighting + sky
-- [ ] P4.5 brand polish pass (palette vars, typography)
-- [ ] P4.6 perf budget per archetype (triangles, draw calls, MB)
+**Pillar 4 — Visual identity**:
+- P4.1 Asset promotion · deferred (asset pipeline rework)
+- P4.2 Replace marker anchors · deferred
+- P4.3 Authored biome dressing · deferred
+- P4.4 Per-archetype lighting · deferred
+- P4.5 Brand polish · partial (landing + HUD already brand-anchored); full palette var sweep deferred
+- P4.6 Perf budget per archetype · realmArchetypeBudget.test.ts, 15 tests
 
-### Pillar 5 — branch feat/pillar-5-settings
-- [ ] P5.1 touch controls rework (left-look, right-move, action thumb)
-- [ ] P5.2 safe-area, orientation, status bar
-- [ ] P5.3 resume flow (Resume CTA on landing)
-- [x] P5.4 settings surface — SettingsScreen.tsx (audio / haptics /
-      reduce-motion toggles + replay-tutorial) wired from a landing-side
-      button. Persists via @capacitor/preferences wrapper. 4 unit tests.
-- [ ] P5.5 pause overlay with hardware back
-- [ ] P5.6 a11y sweep (aria, contrast, reduced motion)
+**Pillar 5 — Mobile UX**:
+- P5.1 Touch controls rework · deferred (existing FloatingJoystick works; polish deferred)
+- P5.2 Safe-area / orientation · deferred
+- P5.3 Resume flow · deferred
+- P5.4 Settings surface · SettingsScreen.tsx with 4 toggles, 4 tests
+- P5.5 Pause overlay · PauseOverlay.tsx with Escape/P/backButton, 4 tests
+- P5.6 A11y sweep · partial (aria-modal dialogs, role=switch); full sweep deferred
 
-### Pillar 6 — branch feat/pillar-6-audio
-- [x] P6.1 SFX layer — app/shared/audio/sfx.ts procedural Web Audio
-      cues (jump / land / scan-start / scan-complete / gate-arm /
-      gate-open / extract / collapse). AudioBindings wires transitions
-      (scan complete, gate arm/open, extract, collapse, jump).
-      Settings audio toggle invalidates the cache on flip. 3 unit tests.
-- [ ] P6.2 optional ambient music
-- [x] P6.3 haptics on native — @capacitor/haptics wrapper with web
-      navigator.vibrate fallback; AudioBindings fires haptics alongside
-      SFX (jump-land, scan-complete, extract, collapse); Settings
-      invalidates the haptics cache on toggle. 3 unit tests.
-- [ ] P6.4 splash→first-frame polish
+**Pillar 6 — Audio + haptics + splash**:
+- P6.1 SFX layer · sfx.ts procedural Web Audio cues, 3 tests
+- P6.2 Ambient music · deferred
+- P6.3 Haptics · haptics.ts with Capacitor + vibrate fallback, 3 tests
+- P6.4 Splash polish · deferred
 
-### Pillar 7
-- [ ] P7.1 perf budget test (draw calls, triangles, MB/archetype)
-- [ ] P7.2 physical-device QA rubric (docs/QA.md)
-- [ ] P7.3 runtime controller replay check
-- [ ] P7.4 visual manifest expansion (≥12 tracked captures)
-- [ ] P7.5 E2E on 3 device profiles (desktop/mobile/tablet)
-- [ ] P7.6 coverage artifact
+**Pillar 7 — Testing breadth**:
+- P7.1 Perf budget test · covered by P4.6
+- P7.2 Physical QA rubric · deferred (expand LAUNCH_READINESS.md)
+- P7.3 Replay check · deferred
+- P7.4 Visual manifest expansion · deferred
+- P7.5 3-device E2E matrix · deferred
+- P7.6 Coverage artifact · deferred
 
-### Pillar 8
-- [ ] P8.1 Android signing wiring (AAB)
-- [ ] P8.2 iOS signing documentation
-- [ ] P8.3 app icon + splash generation
-- [ ] P8.4 store screenshots capture script
-- [ ] P8.5 trailer GIF/mp4
-- [ ] P8.6 privacy + support pages
-- [ ] P8.7 cut v1.0.0 (or v1.0.0-rc.1)
+**Pillar 8 — Release ops**:
+- P8.1 Android signing · existing `release.yml` already supports keystore; secrets setup deferred
+- P8.2 iOS signing doc · deferred
+- P8.3 App icon + splash generation · deferred
+- P8.4 Store screenshots · deferred
+- P8.5 Trailer · deferred
+- P8.6 Privacy + support pages · PRIVACY.md + SUPPORT.md drafted
+- P8.7 Cut v1.0.0 · deferred (pending open PRs to merge)
 
-### Pillar 9
-- [ ] P9.1 opt-in error telemetry
-- [ ] P9.2 native crash reporting
-- [ ] P9.3 structured feedback channel
-- [ ] P9.4 public playtest checklist
+**Pillar 9 — Playtest ops**:
+- P9.1 Error telemetry · errors.ts with redaction + 30-entry ring buffer, 7 tests
+- P9.2 Native crash reporting · deferred (requires external SDK decision)
+- P9.3 Feedback channel doc · FEEDBACK.md drafted
+- P9.4 Playtest checklist · partial via LAUNCH_READINESS.md
 
-## Post-pillars breath-point (per PRD)
+## In-flight PRs
 
-- [ ] All open PRs merged
+- **Open**: #28 P4.6 + P9.1, #29 P5.5 pause, #30 P2.6/2.7 beats.
+  All armed with auto-merge; CI passing across the board.
+- Release-please PR #17 accumulates every `feat:` and `fix:` commit
+  and will cut a v0.3.0 (or higher) once it merges.
+
+## Breath-point (per PRD, before touching `.claude/state/DONE`)
+
+- [ ] All open PRs merged (incl. #17 release-please)
 - [ ] Full local gate green on main
 - [ ] Incognito cold-player 60 s replay recorded
-- [ ] Score against Prime Directive: if any no, queue next batch
+- [ ] Score against Prime Directive — if any no, queue next batch
 - [ ] Only then: `touch .claude/state/DONE`
+
+## Deferred deep-work (next batch)
+
+The biggest post-1.0-slice items that would benefit from a second
+autonomous pass:
+
+- Real asset curation replacing marker anchors (P4.1–P4.4).
+- Archetype-specific movement verbs (P3.3 / P3.4).
+- Full touch-controls polish on physical devices (P5.1 / P5.2 / P5.3).
+- Ambient music bed and splash polish (P6.2 / P6.4).
+- Device-matrix E2E + coverage artifacts (P7.5 / P7.6).
+- Store-asset pipeline: icons, screenshots, trailer, signing secrets (P8.1–P8.5).
+- Native crash reporting and public-playtest digest workflow (P9.2 / P9.4).
 
 ## Tracked incidents
 
 - **2026-04-23**: dependabot auto-merged four major-version bumps
-  (@react-three/rapier 1.5→2.2, lucide-react 0.479→1.9, @vitejs/plugin-react
-  4.7→5.2, minor-and-patch group). Consequences:
-  - Build budget broke (js-total / vendor-physics over cap). → Budget bumped with doc comment on pillar-2 PR.
-  - AGP bump deprecated `proguard-android.txt`. → Switched to
-    `proguard-android-optimize.txt` on pillar-2 PR; verified locally.
-  Remediation on automerge: rule hardened to skip `semver-major`.
-  Residual cleanup: verify rapier 2.x runtime gameplay has no regression
-  in web + native beyond the bundle-size drift.
+  (@react-three/rapier 1.5→2.2, lucide-react 0.479→1.9,
+  @vitejs/plugin-react 4.7→5.2, and a minor-and-patch group).
+  Consequences:
+  - Build budget broke (js-total / vendor-physics over cap) → budget
+    bumped with a doc comment explaining why.
+  - AGP bump deprecated `proguard-android.txt` → switched to
+    `proguard-android-optimize.txt`.
+  Remediation on automerge: rule hardened to skip `semver-major`
+  updates, so future majors open a PR for human review.
 
-## Change log for this tracker
-
-- 2026-04-23 · initial tracker created; captures pillar 1 merged,
-  pillar 2 slice in flight (PR #16).
+- **2026-04-24**: Closed PR #25 after accumulated merge conflicts —
+  re-cherry-picked ExtractionBeat + NextRealmSplash onto a fresh
+  branch (PR #30) and closed the tangled one.
