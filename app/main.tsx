@@ -14,6 +14,18 @@ createRoot(rootElement).render(
   </StrictMode>
 );
 
+const dismissBootSplash = () => {
+  const splash = document.getElementById("boot-splash");
+  if (!splash) return;
+  splash.setAttribute("data-hidden", "true");
+  window.setTimeout(() => splash.remove(), 420);
+};
+if (typeof window.requestAnimationFrame === "function") {
+  window.requestAnimationFrame(() => window.requestAnimationFrame(dismissBootSplash));
+} else {
+  dismissBootSplash();
+}
+
 void import("./shared/platform")
   .then(({ bootstrapPlatform }) => bootstrapPlatform())
   .catch((error) => {
