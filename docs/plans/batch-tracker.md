@@ -38,7 +38,7 @@ not done — even if every sub-task below is checked.
 | 0 | Batch infrastructure | MERGED | PRD + hooks + permissions |
 | 1 | Docs & CI/CD alignment | MERGED | All 13 subtasks done (PR #8) |
 | 2 | Player journey & onboarding | MERGED | Slice P2.1/2/4/5 (#16) + P2.3 coach (#18) + P2.6/7 beats (#30) |
-| 3 | Core gameplay polish | MOSTLY DONE | P3.1/2/6/7 ✅, P3.3/4/5 deferred |
+| 3 | Core gameplay polish | MOSTLY DONE | P3.1/2/3/6/7 ✅, P3.4/5 deferred |
 | 4 | Visual identity & assets | PARTIAL | P4.6 perf budget ✅, P4.1–4.5 deferred |
 | 5 | Mobile UX, controls, persistence | PARTIAL | P5.4 settings ✅, P5.5 pause ✅, P5.1/2/3/6 deferred |
 | 6 | Audio, haptics, splash | MOSTLY DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.2/6.4 deferred |
@@ -63,7 +63,7 @@ not done — even if every sub-task below is checked.
 **Pillar 3 — Gameplay polish**:
 - P3.1 Expedition Score + ranks · progression.ts, 6 tests
 - P3.2 Same-seed retry · RealmCollapsedScreen CTA, 4 tests
-- P3.3 Distinct archetype verbs · deferred (generator rework)
+- P3.3 Distinct archetype verbs · engine-owned verb + verbDetail (Swing/Surf/Vent/Stomp/Glide), 3 tests (PR #36)
 - P3.4 Hazard vocabulary · deferred
 - P3.5 Scan dwell feedback · existing engine supports this; UI polish deferred
 - P3.6 Gate 3-mode visual · already shipped via engine + HUD pill
@@ -116,8 +116,8 @@ not done — even if every sub-task below is checked.
 
 ## In-flight PRs
 
-- **Open**: #28 P4.6 + P9.1, #29 P5.5 pause, #30 P2.6/2.7 beats.
-  All armed with auto-merge; CI passing across the board.
+- **Merged since last tick**: #35 (P4.6 budget + P9.1 telemetry clean re-cherry-pick) and #36 (P3.3 archetype verbs).
+- **Open**: none outside release-please.
 - Release-please PR #17 accumulates every `feat:` and `fix:` commit
   and will cut a v0.3.0 (or higher) once it merges.
 
@@ -135,7 +135,7 @@ The biggest post-1.0-slice items that would benefit from a second
 autonomous pass:
 
 - Real asset curation replacing marker anchors (P4.1–P4.4).
-- Archetype-specific movement verbs (P3.3 / P3.4).
+- Archetype-specific hazard vocabulary (P3.4) — P3.3 verbs shipped in #36.
 - Full touch-controls polish on physical devices (P5.1 / P5.2 / P5.3).
 - Ambient music bed and splash polish (P6.2 / P6.4).
 - Device-matrix E2E + coverage artifacts (P7.5 / P7.6).
