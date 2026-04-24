@@ -47,10 +47,10 @@ not done — even if every sub-task below is checked.
 | 1 | Docs & CI/CD alignment | MERGED | All 13 subtasks done (PR #8) |
 | 2 | Player journey & onboarding | DONE | Slice P2.1/2/4/5 + P2.3 coach + P2.6/7 beats + P2.8 route-guidance polish (#48) |
 | 3 | Core gameplay polish | DONE | P3.1/2/3/4/5/6/7 all shipped |
-| 4 | Visual identity & assets | PARTIAL | P4.1 asset report ✅, P4.2 render-override for house-piece/vox-house ✅ (PR #75), P4.4 lighting descriptors ✅, P4.5 overlay brand polish ✅, P4.6 perf budget ✅; P4.3 biome dressing deferred |
+| 4 | Visual identity & assets | MOSTLY DONE | P4.1 asset report ✅, P4.2 render-override for house-piece/vox-house ✅ (PR #75), P4.4 lighting descriptors ✅, P4.5 overlay brand polish ✅, P4.6 perf budget ✅; P4.3 biome dressing deferred (external: golden-path screenshot rebaseline) |
 | 5 | Mobile UX, controls, persistence | MOSTLY DONE | P5.2/3/4/5/6 ✅, P5.1 touch-controls polish deferred |
 | 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.2 ambient music ✅, P6.3 haptics ✅, P6.4 boot splash ✅ |
-| 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred |
+| 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred. Golden-path browser test deflaked via PR #78 (timer clamp + test-file split + unique screenshot paths). |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness, trailer capture ✅; icons/secrets provisioning deferred |
 | 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
 
