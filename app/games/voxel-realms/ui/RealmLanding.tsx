@@ -1,5 +1,7 @@
 import type { CSSProperties } from "react";
+import { useState } from "react";
 import { ExpeditionSummaryCard } from "./ExpeditionSummaryCard";
+import { SettingsScreen } from "./SettingsScreen";
 
 interface RealmLandingProps {
   onStart: () => void;
@@ -35,6 +37,9 @@ const VOXEL_PARTICLES = Array.from({ length: 18 }, (_, index) => ({
 }));
 
 export function RealmLanding({ onStart }: RealmLandingProps) {
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [summaryReload, setSummaryReload] = useState(0);
+
   return (
     <div className="realm-landing" data-testid="start-screen">
       <div aria-hidden="true" className="realm-landing__shader" />
@@ -75,11 +80,32 @@ export function RealmLanding({ onStart }: RealmLandingProps) {
               <span />
               Playtest build — mobile-first
             </div>
+            <button
+              type="button"
+              onClick={() => setSettingsOpen(true)}
+              data-testid="realm-landing-settings"
+              style={{
+                marginTop: "0.75rem",
+                alignSelf: "flex-start",
+                background: "transparent",
+                border: "1px solid rgba(148, 163, 184, 0.35)",
+                color: "#cbd5e1",
+                padding: "0.4rem 0.85rem",
+                borderRadius: 8,
+                fontSize: 11,
+                letterSpacing: 0.3,
+                textTransform: "uppercase",
+                fontWeight: 800,
+                cursor: "pointer",
+              }}
+            >
+              Settings
+            </button>
           </div>
         </div>
 
         <aside className="realm-landing__intel" aria-label="Realm briefing">
-          <ExpeditionSummaryCard />
+          <ExpeditionSummaryCard reloadToken={summaryReload} />
           <div className="realm-landing__beacon">
             <div aria-hidden="true" className="realm-landing__beacon-core" />
             <div>
@@ -108,6 +134,20 @@ export function RealmLanding({ onStart }: RealmLandingProps) {
           </div>
         </aside>
       </section>
+
+      {settingsOpen ? (
+        <SettingsScreen
+          onClose={() => {
+            setSettingsOpen(false);
+            // Trigger a summary-card re-load in case replay-tutorial
+            // cleared onboardingSeen or toggles affect downstream UI.
+            setSummaryReload((token) => token + 1);
+          }}
+          onReplayTutorial={() => {
+            // Summary card reload is handled by the onClose path above.
+          }}
+        />
+      ) : null}
     </div>
   );
 }
