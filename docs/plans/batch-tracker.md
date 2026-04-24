@@ -5,20 +5,38 @@ status: current
 domain: plan
 ---
 
-> **Batch status (2026-04-24)**: autonomous polish slice closed against
-> [batch-completion-gate.md](./batch-completion-gate.md). All six hard
-> gates green, live Pages HTTP 200, tracker truthful, no open
-> regressions outside release-please + dependabot-major PRs.
-> `.claude/state/DONE` created; keep-going hook releases control.
-> Remaining deferred items need external inputs (design source,
-> physical devices, repo secrets) and are safe for a follow-up batch.
+> **Batch status (2026-04-24, pivot)**: the R3F-era 1.0 push is on
+> hold and will be completed from the Jolly Pixel rebuild. Pillars
+> 1–9 stay as-is for record-keeping; Pillar 10 (the migration) is
+> the only active lane. See
+> [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md)
+> for the why and the phase plan. `.claude/state/DONE` is *not*
+> set — the batch ends when the JP shell ships live-Pages-playable
+> on desktop + mobile.
+>
+> The shell stack (React + R3F + Vite+Capacitor + DOM/CSS layout)
+> produced a string of *CI-green / live-broken* bugs: #80 (BASE_URL
+> + R3F `data-*` crash), #81 (`#root` height cascade + mobile
+> `dvh=0`), plus every assertion I had to hand-roll to even see
+> them. That category is an engine-shape problem, not a test-cov
+> problem. Jolly Pixel (`@jolly-pixel/engine@2.5`,
+> `/runtime@3.3`, `/voxel.renderer@1.4`) gives us ECS +
+> actors/signals + a voxel renderer that takes
+> `{position, blockId}` + engine-resolved assets + a `Runtime`
+> that owns the main loop. Three.js stays the backend; React
+> stays for the flat-DOM HUD overlay; Capacitor stays for mobile.
+> The deterministic engine under `src/games/voxel-realms/engine/`
+> is untouched by the port.
 
 # Voxel Realms 1.0 — Batch Tracker
 
 Authoritative live tracker for the autonomous 1.0 batch. Committed to the
 repo so it survives compactions, branch switches, and agent rehydration.
 
-Source PRD: [voxel-realms-1.0.prq.md](./voxel-realms-1.0.prq.md).
+Source PRD: [voxel-realms-1.0.prq.md](./voxel-realms-1.0.prq.md)
+(superseded in part by
+[jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md),
+which takes over the shell layer).
 Cold-player audit: [cold-player-audit.md](./cold-player-audit.md).
 Docs gap analysis: [docs-gap-analysis.md](./docs-gap-analysis.md).
 
@@ -53,6 +71,7 @@ not done — even if every sub-task below is checked.
 | 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred. Golden-path browser test deflaked via PR #78 (timer clamp + test-file split + unique screenshot paths). |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness, trailer capture ✅; icons/secrets provisioning deferred |
 | 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
+| 10 | **Jolly Pixel migration (active)** | IN PROGRESS | Phase 0: PRD + tracker pivot (this PR). Phase 1: hello-JP scene at `app/jp/` with voxel platform + camera. Phase 2: realm→voxel baker. Phase 3: player+camera behaviors. Phase 4: React DOM HUD overlay above the JP canvas. Phase 5: GLTF anomalies via JP asset registry. Phase 6: cutover (delete `app/r3f/`, drop `@react-three/*` deps, single Vite entry). See [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md). |
 
 ## Completed subtasks (quick index)
 
@@ -134,17 +153,32 @@ not done — even if every sub-task below is checked.
 
 ## Breath-point (per PRD, before touching `.claude/state/DONE`)
 
-The full gate + release-train + live-Pages + tracker-truthfulness
-check lives in [batch-completion-gate.md](./batch-completion-gate.md).
-Follow that runbook; do not mark the batch done from this section
-alone.
+**Redefined by the JP pivot.** The
+[batch-completion-gate.md](./batch-completion-gate.md) hard gates
+still apply, but they now apply to the JP shell, not the R3F shell.
 
 Quick pre-flight:
-- [ ] All non-release/non-dependabot PRs merged
-- [ ] Full local gate green on main
-- [ ] Live Pages build serves the landing page with no console errors
+- [ ] All phases in [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md) merged (phases 1–6)
+- [ ] `@react-three/*` deps removed from `package.json`
+- [ ] `app/games/voxel-realms/r3f/` tree deleted
+- [ ] Full local gate green on main (lint + typecheck + engine tests + realm-validate + prod-surface E2E + build)
+- [ ] Live Pages (`https://arcade-cabinet.github.io/voxel-realms/`) plays fluently on both desktop and mobile-portrait, verified by the `@prod-surface-jp` Playwright spec
+- [ ] Android debug APK launches to the JP scene
 - [ ] Tracker reflects every merged PR and every deferred item has a reason
 - [ ] Then: `touch .claude/state/DONE`
+
+## Open R3F-era PRs (close without merging)
+
+These PRs were partial fixes to the shell stack we are abandoning.
+Keeping them open wastes review attention. Close them with a comment
+pointing at the migration PRD:
+
+- **#81** `fix(pages): give html/body/#root explicit height …` — was chasing the canvas-collapse problem on mobile-portrait headless emulation. The height-cascade problem disappears when JP owns the canvas.
+
+Live Pages stays on the current R3F build (which is playable, thanks
+to merged fixes #75/#77/#78/#80) while the JP migration lands in
+parallel phases. Phase 6 flips the deploy target; only then do the
+R3F layout workarounds go away.
 
 ## Deferred deep-work (next batch)
 

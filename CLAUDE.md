@@ -1,6 +1,6 @@
 ---
 title: Claude Code Instructions
-updated: 2026-04-23
+updated: 2026-04-24
 status: current
 ---
 
@@ -15,6 +15,17 @@ harness; Android and iOS via Capacitor are the product targets.
 The current slice generates deterministic 3D realm routes, validates a
 golden path from spawn to exit gate, captures browser playthrough evidence,
 and ships Android debug APKs + iOS archives via CD.
+
+**Active migration (2026-04-24 →)**: the scene layer is moving off
+React-Three-Fiber onto **Jolly Pixel**
+(`@jolly-pixel/engine` + `@jolly-pixel/runtime` +
+`@jolly-pixel/voxel.renderer`). See
+`docs/plans/jolly-pixel-migration.prq.md` for the phase plan. The
+deterministic engine under `src/games/voxel-realms/engine/` is
+untouched by the port; the shell under `app/` is what gets rewritten.
+React stays for the DOM HUD overlay that sits above the JP canvas.
+Capacitor stays for mobile. Until phase 6 cutover, live Pages runs
+the current R3F build.
 
 **Doc pillars** — each file owns exactly one area:
 - `docs/DESIGN.md` — vision, product statement, creative pillars, non-goals
