@@ -57,7 +57,6 @@
     "jeep-sqlite": "^2.8.0",
     "koota": "^0.6.6",
     "lucide-react": "^1.9.0",
-    "mitt": "^3.0.1",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
     "sql.js": "1.11.0",
