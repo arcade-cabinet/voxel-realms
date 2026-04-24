@@ -97,6 +97,7 @@ export default defineConfig({
       "@logic": path.resolve(__dirname, "src"),
       react: path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      "three/addons": path.resolve(__dirname, "node_modules/three/examples/jsm"),
       three: path.resolve(__dirname, "node_modules/three"),
     },
     dedupe: ["react", "react-dom", "three", "koota"],
