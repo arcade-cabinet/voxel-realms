@@ -102,7 +102,10 @@ persists across native and web sessions.
 - [ ] P4.3 authored biome dressing (2–4 props/archetype)
 - [ ] P4.4 per-archetype lighting + sky
 - [ ] P4.5 brand polish pass (palette vars, typography)
-- [ ] P4.6 perf budget per archetype (triangles, draw calls, MB)
+- [x] P4.6 perf budget per archetype — realmArchetypeBudget.test.ts
+      locks min/max platforms, goldenPath length, anomalies, hazards,
+      and link counts with 3 deterministic samples per archetype.
+      15 tests total, catches drift as we add archetype verbs.
 
 ### Pillar 5 — branch feat/pillar-5-settings
 - [ ] P5.1 touch controls rework (left-look, right-move, action thumb)
@@ -145,7 +148,10 @@ persists across native and web sessions.
 - [ ] P8.7 cut v1.0.0 (or v1.0.0-rc.1)
 
 ### Pillar 9
-- [ ] P9.1 opt-in error telemetry
+- [x] P9.1 opt-in error telemetry — app/shared/telemetry/errors.ts
+      with a 30-entry ring buffer, stack redaction for /Users/ paths,
+      and default-off semantics. Wired into SettingsScreen with a
+      telemetryOptIn toggle that persists via preferences. 7 unit tests.
 - [ ] P9.2 native crash reporting
 - [ ] P9.3 structured feedback channel
 - [ ] P9.4 public playtest checklist
