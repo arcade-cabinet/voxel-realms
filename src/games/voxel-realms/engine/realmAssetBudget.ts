@@ -2,7 +2,7 @@ import type { RealmAnomaly, RealmAssetRef } from "./realmClimber";
 import type { Vec3 } from "./types";
 
 export type RealmAssetPromotionTier = "inline" | "safe" | "deferred" | "reference";
-export type RealmAssetModelSource = "source" | "static-variant" | "none";
+export type RealmAssetModelSource = "source" | "static-variant" | "render-override" | "none";
 
 export interface RealmAssetBudget {
   assetId: string;
@@ -141,6 +141,19 @@ export const REALM_ASSET_SIZE_BYTES_BY_ID: Record<string, number> = {
   viking: 41_309_456,
   "vox-house": 306_512,
   "wood-dragon": 1_386_708,
+};
+
+export const REALM_RENDER_OVERRIDE_BY_ID: Record<string, RealmStaticVariantRef> = {
+  "house-piece": {
+    publicPath: "/assets/models/chaos-slice/voxel-props-pack-ruin/treasure-chest.glb",
+    sizeBytes: 338_752,
+    sourceBytes: 2_301,
+  },
+  "vox-house": {
+    publicPath: "/assets/models/chaos-slice/voxel-props-pack-ruin/closet.glb",
+    sizeBytes: 163_860,
+    sourceBytes: 306_512,
+  },
 };
 
 export const REALM_STATIC_VARIANT_BY_ID: Record<string, RealmStaticVariantRef> = {
@@ -315,6 +328,27 @@ export function getRealmAssetRuntimeModel(asset: RealmAssetRef): RealmAssetRunti
   };
 }
 
+export function getRealmAssetRenderModel(asset: RealmAssetRef): RealmAssetRuntimeModel {
+  const override = REALM_RENDER_OVERRIDE_BY_ID[asset.id];
+  if (override) {
+    const tier = getTierForRenderableBytes(override.sizeBytes);
+
+    return {
+      assetId: asset.id,
+      publicPath: override.publicPath,
+      source: "render-override",
+      tier,
+      sizeBytes: override.sizeBytes,
+      sizeLabel: formatRealmAssetBytes(override.sizeBytes),
+      canLoadAtRuntime: tier === "inline" || tier === "safe",
+      reason:
+        "Render-only GLB override for a reference-tier source; does not participate in anomaly pool selection.",
+    };
+  }
+
+  return getRealmAssetRuntimeModel(asset);
+}
+
 export function getPromotedRealmAssets(
   assets: RealmAssetRef[],
   policy: RealmAssetPromotionPolicy = DEFAULT_REALM_ASSET_PROMOTION_POLICY
@@ -333,7 +367,7 @@ export function selectRenderableRealmAnomalies(
   };
   const candidates = anomalies.map((anomaly) => {
     const budget = getRealmAssetBudget(anomaly.asset);
-    const runtimeModel = getRealmAssetRuntimeModel(anomaly.asset);
+    const runtimeModel = getRealmAssetRenderModel(anomaly.asset);
     const distance = roundDistance(distance3d(position, anomaly.position));
     const loadRadius =
       runtimeModel.tier === "inline"

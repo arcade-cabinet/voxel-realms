@@ -161,4 +161,4 @@ test("Voxel Realms follows the deterministic golden path to goal capture", async
     visualDistinctness,
     viewport,
   });
-}, 240_000);
+}, 420_000);

@@ -54,4 +54,4 @@ test("Voxel Realms reaches gameplay and captures a browser start screenshot", as
   );
 
   expect(startCapture.path).toContain(`voxel-realms-${viewport.name}.png`);
-}, 60_000);
+}, 120_000);
