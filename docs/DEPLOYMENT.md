@@ -76,6 +76,11 @@ Future iOS signing/distribution secrets are still open — see
 setup, certificate and profile management, and the `release.yml`
 changes needed to produce a signed IPA.
 
+Android signing infrastructure already exists in `release.yml` — see
+[ANDROID_SIGNING.md](./ANDROID_SIGNING.md) for keystore generation,
+the four repository secrets to provision, and the Google Play
+promotion workflow.
+
 ## Operator Notes
 
 - Use `workflow_dispatch` on `cd.yml` when the deploy path itself needs a clean
