@@ -19,6 +19,7 @@
     "test:visual-verifier": "jiti scripts/test-visual-manifest-verifier.ts",
     "test:e2e": "playwright test --grep-invert @store",
     "test:e2e:ci": "CI=1 playwright test --project=desktop-chromium --grep-invert @store",
+    "test:e2e:matrix": "CI=1 playwright test --project=desktop-chromium --project=mobile-portrait --project=tablet-portrait --grep-invert @store",
     "test:store-screenshots": "playwright test --grep @store --project=desktop-chromium",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
