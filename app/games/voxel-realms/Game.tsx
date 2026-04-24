@@ -12,6 +12,7 @@ import { voxelEntity, voxelWorld } from "@logic/games/voxel-realms/store/world";
 import { Canvas } from "@react-three/fiber";
 import { useTrait, WorldProvider } from "koota/react";
 import { useEffect, useState } from "react";
+import { AudioBindings } from "./AudioBindings";
 import { World } from "./r3f/World";
 import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
@@ -55,6 +56,7 @@ function VoxelApp() {
         <>
           <HUD />
           <FirstRunCoach />
+          <AudioBindings />
           <div
             style={{
               position: "absolute",

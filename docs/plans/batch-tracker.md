@@ -114,8 +114,12 @@ persists across native and web sessions.
 - [ ] P5.5 pause overlay with hardware back
 - [ ] P5.6 a11y sweep (aria, contrast, reduced motion)
 
-### Pillar 6
-- [ ] P6.1 SFX layer (jump/land/scan/gate/collapse/extract)
+### Pillar 6 — branch feat/pillar-6-audio
+- [x] P6.1 SFX layer — app/shared/audio/sfx.ts procedural Web Audio
+      cues (jump / land / scan-start / scan-complete / gate-arm /
+      gate-open / extract / collapse). AudioBindings wires transitions
+      (scan complete, gate arm/open, extract, collapse, jump).
+      Settings audio toggle invalidates the cache on flip. 3 unit tests.
 - [ ] P6.2 optional ambient music
 - [ ] P6.3 haptics on native
 - [ ] P6.4 splash→first-frame polish
