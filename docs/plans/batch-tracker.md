@@ -37,13 +37,13 @@ not done — even if every sub-task below is checked.
 |---|--------|--------|-------|
 | 0 | Batch infrastructure | MERGED | PRD + hooks + permissions |
 | 1 | Docs & CI/CD alignment | MERGED | All 13 subtasks done (PR #8) |
-| 2 | Player journey & onboarding | MERGED | Slice P2.1/2/4/5 (#16) + P2.3 coach (#18) + P2.6/7 beats (#30) |
+| 2 | Player journey & onboarding | DONE | Slice P2.1/2/4/5 + P2.3 coach + P2.6/7 beats + P2.8 route-guidance polish (#48) |
 | 3 | Core gameplay polish | DONE | P3.1/2/3/4/5/6/7 all shipped |
 | 4 | Visual identity & assets | PARTIAL | P4.6 perf budget ✅, P4.1–4.5 deferred |
 | 5 | Mobile UX, controls, persistence | MOSTLY DONE | P5.2/3/4/5/6 ✅, P5.1 touch-controls polish deferred |
 | 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.4 boot splash ✅; P6.2 ambient music deferred |
-| 7 | Testing breadth | PARTIAL | P4.6 budget test subsumes P7.1 spirit; P7.2 QA rubric ✅; P7.3–7.6 deferred |
-| 8 | Release ops & store-readiness | PARTIAL | Store listing, privacy, support, feedback, iOS signing runbook drafted; icons/secrets/trailer deferred |
+| 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2 QA rubric ✅; P7.3 sequence replay ✅; P7.4/5/6 deferred |
+| 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness ✅; icons/secrets provisioning/trailer deferred |
 | 9 | Telemetry & playtest ops | MOSTLY DONE | P9.1 error telemetry ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅; P9.2 native crash SDK deferred |
 
 ## Completed subtasks (quick index)
@@ -58,7 +58,7 @@ not done — even if every sub-task below is checked.
 - P2.5 failure-state language · REALM COLLAPSED + Continue expedition
 - P2.6 extraction beat · 1.8 s deterministic card, 3 tests
 - P2.7 next-realm splash · per-archetype LORE teasers, 4 tests
-- P2.8 route-guidance rework · deferred (cosmetic)
+- P2.8 route-guidance rework · plain-language detail line ("2.1m gap · 1.5m up · snare") (PR #48)
 
 **Pillar 3 — Gameplay polish**:
 - P3.1 Expedition Score + ranks · progression.ts, 6 tests
@@ -94,19 +94,19 @@ not done — even if every sub-task below is checked.
 **Pillar 7 — Testing breadth**:
 - P7.1 Perf budget test · covered by P4.6
 - P7.2 Physical QA rubric · deferred (expand LAUNCH_READINESS.md)
-- P7.3 Replay check · deferred
+- P7.3 Replay check · realmSequenceReplay.test.ts walks 8 realms through gen→plan→Yuka→telemetry, 2 tests (PR #47)
 - P7.4 Visual manifest expansion · deferred
 - P7.5 3-device E2E matrix · deferred
 - P7.6 Coverage artifact · deferred
 
 **Pillar 8 — Release ops**:
-- P8.1 Android signing · existing `release.yml` already supports keystore; secrets setup deferred
+- P8.1 Android signing · docs/ANDROID_SIGNING.md runbook + Play Console flow (PR #51); secrets provisioning still required for signed AAB
 - P8.2 iOS signing doc · docs/iOS_SIGNING.md runbook drafted (PR #44)
-- P8.3 App icon + splash generation · deferred
-- P8.4 Store screenshots · deferred
+- P8.3 App icon + splash generation · deferred (needs design source)
+- P8.4 Store screenshots · e2e/store-screenshots.spec.ts tagged @store captures phone/tablet portrait PNGs (PR #53)
 - P8.5 Trailer · deferred
 - P8.6 Privacy + support pages · PRIVACY.md + SUPPORT.md drafted
-- P8.7 Cut v1.0.0 · deferred (pending open PRs to merge)
+- P8.7 Cut v1.0.0 · **v0.3.0 + v0.4.0 tagged via release-please** on 2026-04-24; 1.0.0 promotion deferred until P4 asset pipeline + Android signing secrets + icons
 
 **Pillar 9 — Playtest ops**:
 - P9.1 Error telemetry · errors.ts with redaction + 30-entry ring buffer, 7 tests
@@ -117,7 +117,8 @@ not done — even if every sub-task below is checked.
 ## In-flight PRs
 
 - **Merged wave 2**: #38 P3.4 hazard vocab, #39 P3.5 scan pulse, #40 P6.4 boot splash, #41 P5.6 a11y, #42 P5.2 portrait lock, #43 P9.4 digest, #44 P8.2 iOS signing, #45 P5.3 auto-pause.
-- **Open**: none outside release-please (#17) and dependabot (#19, #20).
+- **Merged wave 3**: #46 tracker, #47 P7.3 replay, #48 P2.8 route polish, #50 docs/state, #51 P8.1 Android signing runbook, #53 P8.4 store screenshots.
+- **Release train**: #17 v0.3.0 tagged and merged; #49 v0.4.0 tagged (route guidance); #52 v0.4.1 in flight.
 - Release-please PR #17 accumulates every `feat:` and `fix:` commit
   and will cut a v0.3.0 (or higher) once it merges.
 
@@ -138,9 +139,11 @@ autonomous pass:
 - Pillar 3 complete (verbs + hazard vocab + pulse feedback all shipped).
 - Touch-controls polish on physical devices (P5.1).
 - Ambient music bed (P6.2).
-- Replay runtime check, visual-manifest expansion ≥12 captures, device-matrix E2E, coverage artifact (P7.3–P7.6).
-- Store-asset pipeline: icons, screenshots, trailer, signing secrets (P8.1 / P8.3 / P8.4 / P8.5).
+- Visual-manifest expansion ≥12 captures, device-matrix E2E, coverage artifact (P7.4–P7.6).
+- Store-asset design source + icon/trailer production (P8.3 / P8.5).
+- Provision the real iOS/Android signing secrets in repo settings (runbooks ready).
 - Native crash reporting SDK pick (P9.2).
+- Real asset curation replacing marker anchors (P4.1–P4.4) — the biggest remaining polish chunk.
 
 ## Tracked incidents
 
