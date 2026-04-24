@@ -1,3 +1,4 @@
+import { playAmbientForArchetype, stopAmbient } from "@app/shared/audio/ambientMusic";
 import { playCue } from "@app/shared/audio/sfx";
 import { fireHaptic } from "@app/shared/platform/haptics";
 import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
@@ -79,6 +80,14 @@ export function AudioBindings() {
     window.addEventListener("voxel:jump", handleJump);
     return () => window.removeEventListener("voxel:jump", handleJump);
   }, []);
+
+  // Ambient music bed — switches when the realm archetype changes and
+  // stops when the scene unmounts (phase !== "playing" unmounts this
+  // component).
+  useEffect(() => {
+    void playAmbientForArchetype(realm.activeRealm.archetype.id);
+    return () => stopAmbient();
+  }, [realm.activeRealm.archetype.id]);
 
   // Reference state.phase only to keep the linter happy about the
   // koota subscription — the effects above already drive their own
