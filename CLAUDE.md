@@ -30,6 +30,13 @@ and ships Android debug APKs + iOS archives via CD.
 - `docs/VISUAL_REVIEW.md` — visual identity + readability checkpoints
 - `docs/LORE.md` — narrative anchor for HUD copy and onboarding
 - `docs/store-listing.md` — store copy + metadata draft
+- `docs/ANDROID_SIGNING.md` — Android keystore + Play Console runbook
+- `docs/iOS_SIGNING.md` — App Store Connect + signed IPA runbook
+- `docs/CRASH_REPORTING.md` — crash-reporting SDK strategy (Sentry default)
+- `docs/PRIVACY.md` — player-facing data handling posture
+- `docs/SUPPORT.md` — player-facing support channels
+- `docs/FEEDBACK.md` — feedback channel documentation
+- `docs/QA.md` — physical-device QA rubric
 - `docs/plans/` — active PRDs and gap analyses (e.g. `voxel-realms-1.0.prq.md`)
 
 Superseded plans live in git history, not in the tree.
@@ -63,6 +70,11 @@ pnpm test                         # Visual-verifier self-test + vitest (app + sr
 pnpm test:browser                 # Vitest Browser (real Chromium via Playwright provider)
 pnpm test:golden                  # Deterministic golden-path browser playthrough only
 pnpm test:visual-verifier         # Verifier self-test on temp fixtures
+pnpm test:coverage                # Engine coverage via v8 (runs src/ in Node, emits coverage/)
+pnpm test:e2e                     # Full Playwright E2E matrix (excludes @store captures)
+pnpm test:e2e:ci                  # Desktop-chromium only, CI-facing subset
+pnpm test:e2e:matrix              # Desktop + iPhone 14 + iPad — nightly in CI
+pnpm test:store-screenshots       # Capture landing + HUD for store listings
 pnpm realm:validate               # Engine-only realm validation (default sequence count)
 pnpm realm:validate -- --sequence-count 25   # Deeper drift check
 pnpm realm:verify-visual          # Visual manifest SHA check
