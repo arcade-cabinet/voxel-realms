@@ -111,7 +111,11 @@ persists across native and web sessions.
 - [x] P5.4 settings surface — SettingsScreen.tsx (audio / haptics /
       reduce-motion toggles + replay-tutorial) wired from a landing-side
       button. Persists via @capacitor/preferences wrapper. 4 unit tests.
-- [ ] P5.5 pause overlay with hardware back
+- [x] P5.5 pause overlay with hardware back — PauseOverlay.tsx with
+      Resume / Settings / Restart realm · Same seed / Abandon actions.
+      Keyboard: Escape toggles pause while playing, P key toggles any
+      time; Capacitor App plugin backButton listener resumes on
+      Android/iOS. HUD gains a ⏸ Pause button. 4 unit tests.
 - [ ] P5.6 a11y sweep (aria, contrast, reduced motion)
 
 ### Pillar 6 — branch feat/pillar-6-audio
