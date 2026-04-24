@@ -37,6 +37,17 @@ jobs:
       - name: Realm validation
         run: pnpm run realm:validate -- --sequence-count 10
 
+      - name: Engine coverage
+        run: pnpm run test:coverage
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: engine-coverage
+          path: coverage/
+          retention-days: 14
+
       - name: Build
         run: pnpm run build
 

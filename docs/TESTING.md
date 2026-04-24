@@ -80,6 +80,7 @@ pnpm test:e2e                  # run full E2E matrix (desktop + mobile-portrait 
 pnpm test:e2e:ci               # CI-facing subset (desktop-chromium project only, headless)
 pnpm test:e2e:matrix           # all three device profiles, headless — runs nightly in CI
 pnpm test:store-screenshots    # capture landing + HUD PNGs for store listings (see e2e/store-screenshots.spec.ts)
+pnpm test:coverage             # engine coverage (pure `src/` tests, v8 provider) — emits coverage/ lcov + HTML
 ```
 
 The three device profiles run on a schedule, not on every PR:
