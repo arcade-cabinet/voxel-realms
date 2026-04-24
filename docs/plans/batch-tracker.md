@@ -47,7 +47,7 @@ not done — even if every sub-task below is checked.
 | 1 | Docs & CI/CD alignment | MERGED | All 13 subtasks done (PR #8) |
 | 2 | Player journey & onboarding | DONE | Slice P2.1/2/4/5 + P2.3 coach + P2.6/7 beats + P2.8 route-guidance polish (#48) |
 | 3 | Core gameplay polish | DONE | P3.1/2/3/4/5/6/7 all shipped |
-| 4 | Visual identity & assets | PARTIAL | P4.4 lighting descriptors ✅, P4.5 overlay brand polish ✅, P4.6 perf budget ✅; P4.1–4.3 asset-pipeline work deferred |
+| 4 | Visual identity & assets | PARTIAL | P4.1 asset report ✅, P4.4 lighting descriptors ✅, P4.5 overlay brand polish ✅, P4.6 perf budget ✅; P4.2/3 need a golden-path rebaseline coordinated with Bok (see notes) |
 | 5 | Mobile UX, controls, persistence | MOSTLY DONE | P5.2/3/4/5/6 ✅, P5.1 touch-controls polish deferred |
 | 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.2 ambient music ✅, P6.3 haptics ✅, P6.4 boot splash ✅ |
 | 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred |
@@ -78,9 +78,9 @@ not done — even if every sub-task below is checked.
 - P3.7 Movement envelope · coyote 110 ms + jump buffer 130 ms
 
 **Pillar 4 — Visual identity**:
-- P4.1 Asset promotion · deferred (asset pipeline rework)
-- P4.2 Replace marker anchors · deferred
-- P4.3 Authored biome dressing · deferred
+- P4.1 Asset promotion · docs/plans/asset-report.md snapshot committed (PR #73); budget shows 25/27 anomalies already render via static variants; pipeline is healthy
+- P4.2 Replace marker anchors · **attempted, reverted** — promoted `house-piece` (TreasureChest.glb 338 KB) and `vox-house` (Closet.glb 164 KB) from raw-assets/voxel-props-pack, but the extra renderable draw calls pushed `Game.test.tsx` past its 150 s timeout (222 s total). Needs either (a) a higher test timeout + CI capacity, (b) a lazier load path that doesn't count against the golden-path's 4-active-model budget at start, or (c) Bok's OK to raise the test ceiling. Raw assets and conversion pipeline are **ready** — not a content gap.
+- P4.3 Authored biome dressing · deferred — same golden-path rebaseline concern applies (adding dressing props affects screenshots)
 - P4.4 Per-archetype lighting · realmArchetypeLighting.ts data layer (ambient/sun/hemisphere/fog per archetype), 4 tests (PR #66); scene wiring in World.tsx deferred to keep golden-path stable
 - P4.5 Brand polish · SettingsScreen + PauseOverlay + RealmCollapsedScreen migrated to --realm-* CSS vars (PR #67); HUD/FirstRunCoach/NextRealmSplash/ExtractionBeat kept untouched to preserve golden-path fingerprint
 - P4.6 Perf budget per archetype · realmArchetypeBudget.test.ts, 15 tests
@@ -159,7 +159,7 @@ autonomous pass:
 - Wire the lighting descriptors into World.tsx when the golden-path screenshot rebaseline is acceptable.
 - Rebrand HUD/FirstRunCoach/NextRealmSplash/ExtractionBeat to --realm-* vars (needs Bok's sign-off on visual shift and a screenshot rebaseline).
 - Provision the real iOS/Android/Sentry secrets in repo settings (runbooks ready).
-- Real asset curation replacing marker anchors (P4.1–P4.3) — the biggest remaining polish chunk.
+- **Asset promotion bundle** (P4.2 + P4.3) — raw-assets/ has the library, conversion pipeline works, and 25/27 anomalies already render via static variants. Remaining gap is (a) swapping house-piece + vox-house from OBJ/VOX markers to GLB (attempted; blocked on Game.test.tsx timeout), (b) adding 2–4 biome dressing props per archetype. Both need a one-time coordination with Bok to raise the 150 s test timeout or to move marker-replacement load out of the golden-path's active-model budget.
 
 ## Tracked incidents
 
