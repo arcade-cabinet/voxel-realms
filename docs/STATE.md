@@ -1,6 +1,6 @@
 ---
 title: State
-updated: 2026-04-23
+updated: 2026-04-24
 status: current
 domain: context
 ---
@@ -53,6 +53,23 @@ The follow-up deployment slice established:
 This documentation pass establishes a full docs map aligned to the current game
 shape, stack, release flow, and remaining work.
 
+### 1.0 polish slice (v0.3.0)
+
+The autonomous 1.0 polish batch landed these subsystems between 2026-04-23
+and 2026-04-24 (tagged as v0.3.0):
+
+- Onboarding: cold-player audit, landing hero polish, HUD copy pass,
+  first-run coach, extraction beat, next-realm splash.
+- Gameplay: expedition score + ranks, same-seed retry, distinct archetype
+  verbs, hazard vocabulary, scan-dwell pulse feedback, coyote time + jump
+  buffer.
+- Mobile: settings surface, pause overlay with hardware-back + keyboard,
+  Android portrait lock, auto-pause on background, safe-area insets.
+- Presentation: procedural SFX, native + web-fallback haptics, inline-CSS
+  boot splash.
+- Release ops: iOS signing runbook, playtest digest workflow, opt-in error
+  telemetry, per-archetype perf budget.
+
 ## What Is Done Today
 
 - The design direction is locked to a vertical realm climber rather than an open
@@ -68,22 +85,25 @@ shape, stack, release flow, and remaining work.
 
 | Pillar | Status | Remaining Work |
 | --- | --- | --- |
-| Core gameplay | Partial | deepen archetype rules, progression, onboarding, and failure-state language |
+| Core gameplay | Done | archetype verbs, hazard vocabulary, scan pulse, progression, coach, failure-state all shipped in v0.3.0 |
 | Asset curation | Partial | replace markers with curated runtime models, trim heavy characters, expand biome sets |
-| Mobile UX | Partial | physical-device tuning, settings surfaces, resume flow |
-| Persistence | Early | connect wrappers to full player-facing save/load and preference UX |
-| Testing | Strong base | add physical-device QA, runtime-controller replay checks, performance thresholds |
+| Mobile UX | Mostly done | touch-controls polish on physical devices remaining; pause, settings, resume, a11y, portrait all shipped |
+| Persistence | Done | Capacitor Preferences + SQLite wrappers wired through settings + onboarding + expedition records |
+| Testing | Strong base | sequence replay shipped; device-matrix E2E, coverage artifact, ≥12-capture visual manifest remain |
 | Deployment | Healthy | keep Pages and Android artifact path stable as product grows |
-| Release ops | Partial | add Android signing and iOS signing/submission pipeline |
-| Presentation | Partial | add richer audio, haptics, and more authored visual set pieces |
-| Playtest operations | Early | telemetry, crash reporting, and structured feedback loop |
+| Release ops | Partial | Android signing keystore supported; iOS signing runbook drafted; secrets provisioning + icon pipeline remain |
+| Presentation | Mostly done | procedural SFX + haptics + boot splash shipped; ambient music bed remains |
+| Playtest operations | Mostly done | opt-in error telemetry + feedback template + weekly digest workflow shipped; native crash SDK remains |
 
 ## Immediate Next Work
 
-1. Improve the actual mobile play experience on real hardware.
-2. Promote more realm anomalies from marker mode to real runtime models.
-3. Build the first real progression layer around repeated realm runs.
-4. Add production telemetry and store-ready signing.
+1. Wire iOS signing secrets and promote the runbook in `docs/iOS_SIGNING.md`
+   into a working `release.yml` job.
+2. Promote realm anomalies from marker mode to curated runtime models per
+   archetype (P4.1–P4.4 in the batch tracker).
+3. Run physical-device playtest passes against the QA rubric in
+   `docs/QA.md`.
+4. Capture mobile/desktop store screenshots + a 30-second trailer loop.
 
 ## Risks To Watch
 
