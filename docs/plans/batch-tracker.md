@@ -41,10 +41,10 @@ not done — even if every sub-task below is checked.
 | 3 | Core gameplay polish | DONE | P3.1/2/3/4/5/6/7 all shipped |
 | 4 | Visual identity & assets | PARTIAL | P4.6 perf budget ✅, P4.1–4.5 deferred |
 | 5 | Mobile UX, controls, persistence | MOSTLY DONE | P5.2/3/4/5/6 ✅, P5.1 touch-controls polish deferred |
-| 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.4 boot splash ✅; P6.2 ambient music deferred |
-| 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2 QA rubric ✅; P7.3 sequence replay ✅; P7.4/5/6 deferred |
+| 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.2 ambient music ✅, P6.3 haptics ✅, P6.4 boot splash ✅ |
+| 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness ✅; icons/secrets provisioning/trailer deferred |
-| 9 | Telemetry & playtest ops | MOSTLY DONE | P9.1 error telemetry ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅; P9.2 native crash SDK deferred |
+| 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
 
 ## Completed subtasks (quick index)
 
@@ -87,7 +87,7 @@ not done — even if every sub-task below is checked.
 
 **Pillar 6 — Audio + haptics + splash**:
 - P6.1 SFX layer · sfx.ts procedural Web Audio cues, 3 tests
-- P6.2 Ambient music · deferred
+- P6.2 Ambient music · ambientMusic.ts per-archetype procedural drone with LFO sweep, 4 tests (PR #55)
 - P6.3 Haptics · haptics.ts with Capacitor + vibrate fallback, 3 tests
 - P6.4 Splash polish · inline-CSS boot splash paints brand grid on first HTML parse, fades on React mount, respects prefers-reduced-motion (PR #40)
 
@@ -96,8 +96,8 @@ not done — even if every sub-task below is checked.
 - P7.2 Physical QA rubric · deferred (expand LAUNCH_READINESS.md)
 - P7.3 Replay check · realmSequenceReplay.test.ts walks 8 realms through gen→plan→Yuka→telemetry, 2 tests (PR #47)
 - P7.4 Visual manifest expansion · deferred
-- P7.5 3-device E2E matrix · deferred
-- P7.6 Coverage artifact · deferred
+- P7.5 3-device E2E matrix · nightly-e2e-matrix.yml runs desktop + mobile-portrait + tablet-portrait at 02:17 UTC (PR #58)
+- P7.6 Coverage artifact · @vitest/coverage-v8 + vitest.coverage.config.ts, CI artifact `engine-coverage`; baseline 91% lines (PR #59)
 
 **Pillar 8 — Release ops**:
 - P8.1 Android signing · docs/ANDROID_SIGNING.md runbook + Play Console flow (PR #51); secrets provisioning still required for signed AAB
@@ -110,7 +110,7 @@ not done — even if every sub-task below is checked.
 
 **Pillar 9 — Playtest ops**:
 - P9.1 Error telemetry · errors.ts with redaction + 30-entry ring buffer, 7 tests
-- P9.2 Native crash reporting · deferred (requires external SDK decision)
+- P9.2 Native crash reporting · docs/CRASH_REPORTING.md recommends @sentry/capacitor with beforeSend gated on telemetryOptIn; wiring deferred (PR #56)
 - P9.3 Feedback channel doc · FEEDBACK.md drafted
 - P9.4 Playtest digest · weekly workflow collates feedback-labelled issues into a digest issue (PR #43); LAUNCH_READINESS.md still the manual checklist
 
@@ -118,7 +118,8 @@ not done — even if every sub-task below is checked.
 
 - **Merged wave 2**: #38 P3.4 hazard vocab, #39 P3.5 scan pulse, #40 P6.4 boot splash, #41 P5.6 a11y, #42 P5.2 portrait lock, #43 P9.4 digest, #44 P8.2 iOS signing, #45 P5.3 auto-pause.
 - **Merged wave 3**: #46 tracker, #47 P7.3 replay, #48 P2.8 route polish, #50 docs/state, #51 P8.1 Android signing runbook, #53 P8.4 store screenshots.
-- **Release train**: #17 v0.3.0 tagged and merged; #49 v0.4.0 tagged (route guidance); #52 v0.4.1 in flight.
+- **Merged wave 4**: #54 tracker, #55 P6.2 ambient music, #56 P9.2 crash strategy, #58 P7.5 device-matrix nightly, #59 P7.6 coverage artifact.
+- **Release train**: v0.3.0, v0.4.0, v0.5.0 tagged on 2026-04-24; next release-please PR accumulates the rest.
 - Release-please PR #17 accumulates every `feat:` and `fix:` commit
   and will cut a v0.3.0 (or higher) once it merges.
 
@@ -138,11 +139,9 @@ autonomous pass:
 - Real asset curation replacing marker anchors (P4.1–P4.4).
 - Pillar 3 complete (verbs + hazard vocab + pulse feedback all shipped).
 - Touch-controls polish on physical devices (P5.1).
-- Ambient music bed (P6.2).
-- Visual-manifest expansion ≥12 captures, device-matrix E2E, coverage artifact (P7.4–P7.6).
+- Visual-manifest expansion ≥12 captures (P7.4) — risky to widen on the flaky golden-path test without a rewrite.
 - Store-asset design source + icon/trailer production (P8.3 / P8.5).
-- Provision the real iOS/Android signing secrets in repo settings (runbooks ready).
-- Native crash reporting SDK pick (P9.2).
+- Provision the real iOS/Android/Sentry secrets in repo settings (runbooks ready).
 - Real asset curation replacing marker anchors (P4.1–P4.4) — the biggest remaining polish chunk.
 
 ## Tracked incidents
