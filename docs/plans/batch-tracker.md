@@ -5,28 +5,23 @@ status: current
 domain: plan
 ---
 
-> **Batch status (2026-04-24, pivot)**: the R3F-era 1.0 push is on
-> hold and will be completed from the Jolly Pixel rebuild. Pillars
-> 1–9 stay as-is for record-keeping; Pillar 10 (the migration) is
-> the only active lane. See
+> **Batch status (2026-04-24, restructure + JP port)**: the R3F-era
+> 1.0 push is on hold. The batch ends when a single PR lands that
+> both **restructures the module layout** (flat domain folders under
+> `src/` and `app/` — no `games/voxel-realms/`, no `shared/` junk
+> drawer, every domain behind a barrel) **and ports the scene layer
+> onto Jolly Pixel**. See
 > [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md)
-> for the why and the phase plan. `.claude/state/DONE` is *not*
-> set — the batch ends when the JP shell ships live-Pages-playable
-> on desktop + mobile.
+> for the target layout, hard dependency rules, and execution plan.
 >
-> The shell stack (React + R3F + Vite+Capacitor + DOM/CSS layout)
-> produced a string of *CI-green / live-broken* bugs: #80 (BASE_URL
-> + R3F `data-*` crash), #81 (`#root` height cascade + mobile
-> `dvh=0`), plus every assertion I had to hand-roll to even see
-> them. That category is an engine-shape problem, not a test-cov
-> problem. Jolly Pixel (`@jolly-pixel/engine@2.5`,
-> `/runtime@3.3`, `/voxel.renderer@1.4`) gives us ECS +
-> actors/signals + a voxel renderer that takes
-> `{position, blockId}` + engine-resolved assets + a `Runtime`
-> that owns the main loop. Three.js stays the backend; React
-> stays for the flat-DOM HUD overlay; Capacitor stays for mobile.
-> The deterministic engine under `src/games/voxel-realms/engine/`
-> is untouched by the port.
+> `.claude/state/DONE` is not set — it's only written after the
+> restructure + JP port PR is merged, CI is green across every job,
+> and live Pages renders the JP scene with the HUD overlay on
+> desktop + mobile portrait.
+>
+> Pillars 1–9 below are frozen as record-keeping of what the R3F
+> build shipped. Pillar 10 (the restructure + port) is the only
+> active lane.
 
 # Voxel Realms 1.0 — Batch Tracker
 
@@ -71,7 +66,7 @@ not done — even if every sub-task below is checked.
 | 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred. Golden-path browser test deflaked via PR #78 (timer clamp + test-file split + unique screenshot paths). |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness, trailer capture ✅; icons/secrets provisioning deferred |
 | 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
-| 10 | **Jolly Pixel migration (active)** | IN PROGRESS | Phase 0: PRD + tracker pivot (this PR). Phase 1: hello-JP scene at `app/jp/` with voxel platform + camera. Phase 2: realm→voxel baker. Phase 3: player+camera behaviors. Phase 4: React DOM HUD overlay above the JP canvas. Phase 5: GLTF anomalies via JP asset registry. Phase 6: cutover (delete `app/r3f/`, drop `@react-three/*` deps, single Vite entry). See [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md). |
+| 10 | **Restructure + JP port (active)** | IN PROGRESS | One branch `feat/restructure-and-jp-port`, one PR. Flattens the tree into flat domain folders (`src/world`, `src/engine`, `src/ai`, `src/assets`, `src/scene`, `src/audio`, `src/store`, `src/platform`, `src/shared`; `app/views`, `app/components`, `app/atoms`, `app/hooks`, `app/styles`, `app/test`); every domain behind an `index.ts` barrel. Rips out `app/games/`, `src/games/`, `app/shared/`, the R3F directory, and `@react-three/*` deps. Builds `src/scene/` on `@jolly-pixel/{engine,runtime,voxel.renderer}`. Adds `src/world/voxel-bake.ts` as the pure RealmClimb → voxel commands function. Done when `pnpm lint && typecheck && test && realm:validate && test:e2e:ci && build` all green and live Pages renders JP scene on desktop + mobile portrait. See [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md). |
 
 ## Completed subtasks (quick index)
 

@@ -1,252 +1,304 @@
 ---
-title: Voxel Realms — Migration to Jolly Pixel engine
+title: Voxel Realms — Restructure + Jolly Pixel port
 updated: 2026-04-24
 status: current
 domain: plan
 ---
 
-# Voxel Realms — Pivot from R3F + React + Vite+Capacitor to Jolly Pixel
+# Voxel Realms — Restructure + Port to Jolly Pixel (single PR)
 
 ## Why this PRD exists
 
-The 1.0 batch repeatedly shipped "green CI, broken live Pages" because the
-shell stack (React + React-Three-Fiber + Vite + Capacitor + DOM/CSS
-layout) is a UI framework pretending to be a game engine. Every
-divergence between production and test surfaced as a one-off bug:
+Two problems, one rewrite.
 
-| Symptom | Root cause (stack artefact) |
-|---|---|
-| #80 Pages black, GLB 404s | `useGLTF("/assets/...")` fetches don't route through Vite `base`. |
-| #80 R3F crash on `<group data-pulse-label>` | R3F reconciler rejects DOM `data-*` on three.js Group. |
-| #81 canvas collapses to thin strip | `#root { min-height: 100dvh }` without explicit `height` lets GameViewport collapse. |
-| #81 mobile-portrait CI still fails | `dvh` resolves to 0 in headless mobile emulation mid-paint. |
-| #78 golden-path flake | R3F `useFrame` deltaMs unclamped; WebGL context-lost between tests. |
-| #77 golden-path divergence | Unrelated, engine-side — survived the stack; this is the shape of bug we want to keep. |
+### Problem 1: the shell stack is the wrong shape
 
-The deterministic engine under `src/games/voxel-realms/engine/` is
-healthy. The shell under `app/` is where time goes to die.
+The R3F + React + Vite + DOM/CSS shell produced a sequence of
+CI-green / live-broken bugs — #80 (`useGLTF` bypasses `base`, R3F
+rejects DOM `data-*`), #81 (`#root` height cascade + headless mobile
+`dvh = 0`), #78 (context-loss flakes), plus every assertion I had to
+hand-roll before I could even see them. That's an engine-shape
+problem, not a test-coverage problem. React-Three-Fiber is a UI
+framework pretending to be a game engine; every platform divergence
+becomes a bespoke patch.
 
-**Jolly Pixel** (`/Users/jbogaty/src/reference-codebases/editor`,
-published as `@jolly-pixel/engine`, `@jolly-pixel/runtime`,
-`@jolly-pixel/voxel.renderer` on npm) solves this by being an actual
-engine: ECS actors + components + signals, a voxel renderer that takes
-`{position, blockId}` (a native match for our already-procedural
-realms), engine-owned asset loading, a `Runtime` that owns the main
-loop, and a unified `Input` system. Three.js stays as the graphics
-backend — we just stop fighting React about who owns it.
+Jolly Pixel is an actual game engine: ECS actors + behaviors +
+signals, a voxel renderer that takes `{position, blockId}` (a native
+match for our already-procedural realms), engine-owned asset
+resolution, a `Runtime` that owns the main loop and the canvas, a
+unified `Input` system. Three.js stays as the graphics backend —
+we just stop fighting React about who owns the viewport.
 
-**Capacitor stays.** JP is a pure web engine; we wrap its bundle in
-the existing Android/iOS shells exactly as we do now.
+### Problem 2: the module layout is a junk drawer
 
-## Prime Directive (supersedes the 1.0 PRD until this migration lands)
+Today's tree is shaped as if this repo hosts many games:
 
-A first-time player on the JP build can land on live Pages, understand
-the goal in under 30 seconds, and play fluently through climb → scan →
-extract → collapse → next-realm. The Game.test.tsx-style flakes, the
-BASE_URL hand-wringing, and the CSS-height cascade are not just fixed
-— they are structurally gone because the engine owns the viewport.
+- `app/games/voxel-realms/…` — there is only one game
+- `src/games/voxel-realms/engine/…` — 40+ files in one directory
+  mixing generation, validation, pathfinding, yuka playthrough,
+  asset budget, visual manifest, and runtime telemetry
+- `app/shared/…`, `src/shared/…` — duplicate "shared" namespaces
+- `app/games/voxel-realms/r3f/…` — R3F-coupled scene mixed with
+  product-level phase switching in `Game.tsx`
 
-## What stays, what moves, what dies
+Nothing has a barrel export. Every file reaches into every other
+file's private surface. Splitting the R3F→JP port from the
+restructure would mean rewriting imports in two separate passes.
+Doing both in one PR means each file gets rewritten exactly once.
 
-### Stays verbatim (zero changes)
+## Prime Directive (supersedes the 1.0 PRD until this PR lands)
 
-- `src/games/voxel-realms/engine/**/*` — deterministic generators,
-  validators, pathfinding, yuka playthrough, visual manifest, asset
-  budget, etc. Pure TypeScript, no React, no three.js directly.
-- `src/games/voxel-realms/store/world.ts` — Koota world definition.
-- `android/`, `ios/` — Capacitor shells. The web payload they load
-  changes; the shells themselves don't.
-- Vite. JP is a Vite-friendly library. We keep Vite; we change what
-  it builds.
-- release-please, dependabot, biome, tsc, the engine test suite.
+One branch, one PR. After this PR merges:
 
-### Replaced
+- The live Pages build runs the Jolly Pixel scene.
+- The module layout is decomposed by domain: `src/` holds
+  runtime + deterministic engine, `app/` holds React DOM overlay
+  only. No `games/voxel-realms/`. No `shared/` junk drawer.
+- Every domain exports through an `index.ts` barrel. Cross-domain
+  imports only touch barrels.
+- A first-time player on live Pages can climb → scan → extract →
+  collapse → next-realm fluently on desktop and mobile portrait.
 
-| Old (R3F / React) | New (Jolly Pixel) |
-|---|---|
-| `app/main.tsx` + `createRoot(<Game />)` | `new Runtime(canvas)` + `loadRuntime(runtime)` |
-| `<Canvas>` + `useFrame` | `runtime.world.beginFrame → update → render → endFrame` |
-| `app/games/voxel-realms/r3f/World.tsx` | `World` actor + terrain actor with `VoxelRenderer` component |
-| `r3f/Player.tsx` | `PlayerBehavior extends Behavior` on a Player actor; polls `world.input` |
-| `r3f/TerrainManager.tsx` + `SpawnCamp.tsx` | Terrain actor with `VoxelRenderer`; `setVoxel()` per platform voxel |
-| `r3f/RealmClimbRoute.tsx` | Route actor with layered `VoxelRenderer` for beacons/hazards + GLTF anomaly meshes via engine loader |
-| `r3f/Player` camera + Drei controls | `Camera3DControls` component from JP |
-| HUD as React DOM overlay | Keep a thin React DOM overlay **above** the canvas (JP is unopinionated about HTML overlays). Only the 3D scene moves to JP. |
-| `useGLTF("/assets/...")` + `resolveAssetUrl` helper | JP's asset registry + `Loaders.model(...)` — relative paths, engine-resolved |
-| `globals.css` `#root`/`#body`/`html` height cascade | JP owns the canvas; no `100dvh` dance |
-| Drei + `@react-three/rapier` | Drop. Physics optional via JP's Rapier integration if needed. |
+## Target layout
 
-### Deleted
+```
+src/                        # game runtime (non-UI)
+  world/                    # realm generation, voxel bake, sequence
+    index.ts                (barrel)
+    climber.ts              (was realmClimber.ts)
+    voxel-bake.ts           (NEW: RealmClimb → {position, blockId} commands)
+    sequence.ts             (was realmSequence.ts)
+    exit-gate.ts            (was realmExitGate.ts)
+    signals.ts              (was realmSignals.ts)
+    signal-pulse.ts         (was realmSignalPulse.ts)
+    route-guidance.ts       (was realmRouteGuidance.ts)
+    instability.ts          (was realmInstability.ts)
+    hazard-vocabulary.ts    (was realmHazardVocabulary.ts)
+    progression.ts
+    playthrough-plan.ts     (was realmPlaythroughPlan.ts)
+    types.ts
+  engine/                   # deterministic simulation + validation
+    index.ts
+    voxel-simulation.ts     (was voxelSimulation.ts)
+    validation.ts           (was realmValidation.ts)
+    pathfinding.ts          (was realmPathfinding.ts)
+    spatial-validation.ts   (was realmSpatialValidation.ts)
+    framing-validation.ts   (was realmFramingValidation.ts)
+    runtime-telemetry.ts    (was realmRuntimeTelemetry.ts)
+    archetype-lighting.ts   (was realmArchetypeLighting.ts)
+  ai/                       # yuka playthrough agent + realm agent
+    index.ts
+    yuka-agent.ts           (was realmYukaPlaythroughAgent.ts)
+    realm-agent.ts          (was realmAgent.ts)
+  assets/                   # budget, manifest, render override
+    index.ts
+    budget.ts               (was realmAssetBudget.ts)
+    visual-manifest.ts      (was realmVisualManifest.ts)
+  scene/                    # JP scene layer — replaces R3F directory
+    index.ts
+    runtime.ts              (boots JP Runtime, creates World)
+    terrain-actor.ts        (VoxelRenderer + tileset — consumes voxel-bake output)
+    player-actor.ts
+    route-actor.ts          (beacons, hazards, anomaly GLTFs via JP asset registry)
+    camera-behavior.ts      (Camera3DControls wrapper)
+    player-behavior.ts      (input → movement → Koota trait write-back)
+    tileset.ts              (tileset catalog + loader)
+  audio/                    # ambient music + SFX
+    index.ts
+    ambient-music.ts        (was ambientMusic.ts)
+    sfx.ts
+  store/                    # Koota world + traits (bridge between scene and UI)
+    index.ts
+    world.ts
+    traits.ts
+  platform/                 # Capacitor + persistence
+    index.ts
+    bootstrap.ts
+    haptics.ts
+    native-shell.ts         (was nativeShell.ts)
+    preferences.ts          (from persistence/preferences.ts)
+    sqlite.ts               (from persistence/database.ts)
+    storage.ts              (from persistence/storage.ts)
+  shared/                   # event bus, cross-domain types
+    index.ts
+    event-bus.ts            (was eventBus.ts)
+    types.ts
 
-- `@react-three/fiber`, `@react-three/drei`, `@react-three/rapier`
-- `app/games/voxel-realms/r3f/**/*`
-- `app/games/voxel-realms/Game.tsx` (replaced by a thin mount module)
-- React-component tests for R3F pieces (engine tests stay; Playwright
-  prod-surface spec updates to target the JP scene)
-- All `globals.css` that exists solely to fight the DOM height chain
-  for the Canvas
+app/                        # React DOM overlay only
+  main.tsx                  (boots platform + JP runtime + HUD overlay)
+  views/                    # full-screen React views
+    index.ts
+    landing.tsx             (was RealmLanding.tsx)
+    game-over.tsx           (was GameOverScreen.tsx)
+    realm-collapsed.tsx     (was RealmCollapsedScreen.tsx)
+    pause.tsx               (was PauseOverlay.tsx)
+  components/               # HUD widgets + small React pieces
+    index.ts
+    hud.tsx                 (was HUD.tsx)
+    first-run-coach.tsx     (was FirstRunCoach.tsx)
+    extraction-beat.tsx     (was ExtractionBeat.tsx)
+    next-realm-splash.tsx   (was NextRealmSplash.tsx)
+    expedition-summary.tsx  (was ExpeditionSummaryCard.tsx)
+    settings.tsx            (was SettingsScreen.tsx)
+  atoms/                    # buttons, labels, cartridge, joystick
+    index.ts
+    atoms.tsx
+    cartridge.tsx           (was Cartridge.tsx)
+    circular-gallery.tsx    (was CircularGallery.tsx)
+    floating-joystick.tsx   (was FloatingJoystick.tsx — only the real component; test gets a spec file below)
+  hooks/                    # React hooks
+    index.ts
+    use-device.ts           (was useDevice.ts)
+    use-responsive.ts       (was useResponsive.ts)
+    use-container-size.ts   (was useContainerSize.ts)
+    use-auto-pause.ts       (was useAutoPauseOnBackground.ts)
+  styles/
+    globals.css
+  test/
+    setup.ts
+```
 
-### Built new (not covered by JP today)
+## Hard dependency rules
 
-- **Realm→voxel baker**: a pure function that takes a `RealmClimb`
-  (our existing deterministic output) and emits the voxel-set commands
-  for the terrain actor. Lives under `src/games/voxel-realms/engine/`
-  so it stays testable without the runtime.
-- **React overlay for menu/HUD**: keep a minimal React app mounted
-  *above* the JP canvas for the landing screen, first-run coach, HUD
-  readouts, settings/pause modals. React does what it's good at (text,
-  forms, accessibility). JP owns the scene. They communicate via
-  Koota traits — same way the scene talks to Koota today.
-- **Asset path manifest**: JP resolves assets relative to the HTML
-  root, which already avoids the BASE_URL bug. We commit an
-  `assets.manifest.json` that the JP scene iterates for preloads.
+Enforced by barrel discipline + biome import checks where possible:
 
-## HUD overlay: why we keep React for that
+- `src/shared/` imports nothing from the repo (leaf module).
+- `src/store/` imports `src/shared/` only.
+- `src/world/`, `src/engine/`, `src/ai/`, `src/assets/` import
+  `src/shared/` and each other's `index.ts` barrels. No direct
+  path into another domain's private files.
+- `src/scene/` imports `src/world/`, `src/engine/`, `src/assets/`,
+  `src/store/`, `@jolly-pixel/*`, `three`. Not React.
+- `src/audio/`, `src/platform/` are leaf domains, depend on
+  `src/shared/` only.
+- `app/` imports from any `src/*/index.ts` barrel. No three, no JP,
+  no R3F in `app/`. React reads scene state through Koota traits.
+- `app/main.tsx` is the only place that wires scene + UI + platform.
 
-The audit pointed out JP has a `UIRenderer` / `UISprite` system. We do
-not need it. DOM is the right tool for our HUD: text readouts, pause
-menu, first-run coach, settings screen. The bug we're fixing isn't
-"React is bad" — it's "React is bad as a game-scene renderer." A
-React overlay sitting above a JP-owned `<canvas>` has none of the
-chained-height problems because React isn't trying to host the canvas.
+## What gets deleted
 
-The R3F coupling is what fought us. Flat DOM over a fixed-size canvas
-doesn't.
+- `@react-three/fiber`, `@react-three/drei`, `@react-three/rapier`.
+- `app/games/voxel-realms/r3f/**/*` — every file.
+- `app/games/voxel-realms/Game.tsx` — phase switching moves to
+  `app/main.tsx` driven by a single Koota `PhaseTrait`.
+- `app/games/voxel-realms/AudioBindings.tsx` — replaced by a
+  tiny hook that subscribes Koota trait changes to `src/audio`.
+- `app/games/voxel-realms/index.ts`, `index.d.ts`, `vite-env.d.ts`
+  — replaced by `src/vite-env.d.ts` + root exports.
+- `useGameLoop` — JP owns the frame loop.
+- Every `Game.test.tsx` / `Game.golden-path.test.tsx` /
+  `Game.test-helpers.ts` — replaced by a scene-level Playwright
+  spec that drives the JP runtime headlessly, plus the existing
+  engine unit tests which are untouched except for the rename.
+- The `globals.css` height cascade (`height: 100vh; height: 100dvh`
+  chain on html/body/#root). JP owns the canvas; no cascade needed.
+- `browserGameHarness.tsx` — replaced by a tiny scene harness that
+  mounts a JP runtime in jsdom-skip mode for unit tests.
 
-## Phase plan — each phase is one PR, mergeable on its own
+## What gets built
 
-### Phase 0 — Foundations (this PR)
+- `src/scene/runtime.ts` — boots `new Runtime(canvas)`, creates
+  actors, wires `loadRuntime(runtime)`. Exported as `startScene()`.
+- `src/scene/terrain-actor.ts` — `VoxelBehavior` that consumes the
+  output of `src/world/voxel-bake.ts` and calls `VoxelRenderer.load`
+  with a constructed `VoxelWorldJSON`.
+- `src/scene/player-actor.ts` + `player-behavior.ts` — input +
+  kinematic controller, writes position to `RealmTrait`.
+- `src/scene/camera-behavior.ts` — `Camera3DControls` with our
+  framing rules from `src/engine/framing-validation.ts`.
+- `src/scene/route-actor.ts` — loads anomaly GLTFs via JP's
+  `assetManager`, places beacons and hazard markers via the voxel
+  layer for procedural signals and via GLTF for curated overrides.
+- `src/world/voxel-bake.ts` — pure function
+  `bakeRealmVoxels(realm: RealmClimb): BakedVoxelWorld` — snapshot
+  tested per archetype × seed.
+- `app/main.tsx` — new bootstrap: platform init → Koota world →
+  JP runtime → React HUD overlay. No `<Canvas>` element in React.
 
-- Write this PRD.
-- Update `docs/plans/batch-tracker.md` to record the pivot as
-  Pillar 10 and mark it the only active pillar.
-- Add a `docs/ARCHITECTURE.md` update noting the split:
-  **engine (TS deterministic)** ⟂ **scene (JP)** ⟂ **UI (React DOM
-  overlay)** ⟂ **shell (Capacitor)**.
-- Do **not** yet add JP deps. Do not touch runtime code. This PR is
-  paperwork so reviewers see the plan.
+## Test strategy
 
-### Phase 1 — Hello JP
+- **Engine unit tests** (every `*.test.ts` in `src/world`,
+  `src/engine`, `src/ai`, `src/assets`): renamed only, behavior
+  unchanged. These are the durable contract.
+- **Scene tests**: `src/scene/runtime.test.ts` boots the runtime
+  against a canvas stub and asserts actor composition. The render
+  path is verified by Playwright, not jsdom.
+- **UI tests** (`app/components/*.test.tsx`,
+  `app/views/*.test.tsx`): existing RTL tests, updated imports,
+  no R3F dependency.
+- **Playwright prod-surface** (`e2e/prod-surface.spec.ts`): builds
+  dist, serves on subpath, asserts landing → click start → canvas
+  filled → HUD "RUN 1" visible → no 404s → no pageerrors. Runs on
+  desktop-chromium + mobile-portrait + tablet-portrait.
+- **Realm validation** (`pnpm realm:validate`): unchanged
+  engine-only entrypoint, updated paths only.
+- **Visual manifest** (`pnpm realm:verify-visual`): the captured
+  frames are net-new because JP renders differently; rebaseline
+  is part of this PR.
 
-- Add `@jolly-pixel/engine`, `@jolly-pixel/runtime`,
-  `@jolly-pixel/voxel.renderer` to `package.json`.
-- Create `app/jp/` with `main.ts` that boots a JP `Runtime`, places a
-  4×4 voxel platform, and wires one `Camera3DControls`. Mounted on a
-  second Vite entry `jp.html` so it lives alongside the current build
-  without colliding.
-- New `pnpm dev:jp` and `pnpm build:jp` scripts.
-- Prod-surface spec runs against `/voxel-realms/jp.html` in a new
-  `@prod-surface-jp` tag. Asserts landing, canvas fills viewport, no
-  404s, no pageerrors.
-- **Exit criteria**: `pnpm build:jp` produces a dist; local preview
-  shows a voxel platform with working camera; Playwright green on
-  desktop + mobile-portrait.
+## Execution plan
 
-### Phase 2 — Realm→Voxel baker
+One branch `feat/restructure-and-jp-port`, one PR:
 
-- New module `src/games/voxel-realms/engine/realmVoxelBake.ts`: takes
-  a `RealmClimb` and returns `Array<{layer, position, blockId}>`.
-  Pure function, snapshot-tested against every seeded archetype.
-- Terrain actor in `app/jp/` consumes the bake output and calls
-  `setVoxel()` in order. Any one realm is fully rendered from its
-  seed through the baker through the terrain actor.
-- **Exit criteria**: given any seed, the JP terrain visually matches
-  the R3F terrain (side-by-side screenshots). Snapshot tests on
-  `realmVoxelBake` cover all 5 archetypes × 25 seeds.
-
-### Phase 3 — Player + camera
-
-- `PlayerBehavior` polls `world.input` for WASD + jump.
-- Writes position back to the Koota `RealmTrait` so the engine sees
-  scan/extract progress exactly as today.
-- Camera is a `Camera3DControls` with the same FOV/positioning as the
-  R3F camera so golden-path framing continues to match.
-- **Exit criteria**: the existing deterministic yuka playthrough,
-  when teleported through the JP scene, reaches extraction. Engine
-  tests unaffected.
-
-### Phase 4 — React DOM HUD overlay (no JP UI)
-
-- Keep existing HUD, FirstRunCoach, RealmLanding, PauseOverlay,
-  SettingsScreen components. Mount them **above** the JP canvas via
-  `createRoot` on a dedicated `#hud-root` div.
-- `hud-root` sits in a flex/grid shell around the canvas; HTML layout
-  no longer has to compete with R3F for the viewport.
-- Koota traits stay the bridge. React subscribes with `useTrait` as
-  it already does. JP writes traits from its Behaviors.
-- **Exit criteria**: HUD text, pause, settings, first-run coach all
-  work exactly as before, **without** the height-cascade problem —
-  because React is sitting in flex boxes, not trying to fill a canvas
-  parent.
-
-### Phase 5 — GLTF anomalies via JP loader
-
-- Route the existing `realmAssetBudget` + render-override tables
-  through JP's `Loaders.model()`.
-- Delete the `resolveAssetUrl` helper — JP handles path resolution.
-- Static-variant and render-override GLBs load via the engine, not
-  via hand-rolled `useGLTF`.
-- **Exit criteria**: every anomaly still renders. P4.2's
-  house-piece/vox-house overrides still show. No console 404s on live
-  Pages.
-
-### Phase 6 — Cutover
-
-- Delete `app/games/voxel-realms/r3f/**/*`, `@react-three/*` deps,
-  `globals.css` height-cascade cruft.
-- `app/main.tsx` becomes a thin bootstrap that mounts HUD overlay +
-  starts the JP runtime.
-- Single Vite entry again (`index.html`), pointing at the JP app.
-- Capacitor `cap sync` picks up the new dist.
-- **Exit criteria**: live Pages + local prod-surface + Android debug
-  APK all show the game; engine test suite still 100%; CI green
-  across every job; `.claude/state/DONE` **only** then.
-
-Each phase is its own PR with its own CI gate. Phase 6 is the first
-time we delete R3F; everything before that runs in parallel.
+1. **Paperwork** (this file + tracker + CLAUDE.md + ARCHITECTURE.md
+   reflect the new layout).
+2. **Scaffold domains**: create every `src/<domain>/index.ts`
+   barrel as an empty export; create every `app/<domain>/index.ts`
+   barrel as an empty export. tsconfig paths updated.
+3. **Move engine/world/ai/assets/audio/platform files** (`git mv`
+   where possible, or rewrite if rename also changes casing). Fix
+   every import at the call site to go through the new barrel.
+4. **Move UI files** to `app/views`, `app/components`, `app/atoms`,
+   `app/hooks`. Rewrite imports.
+5. **Write `src/scene/`**: runtime, terrain-actor, player-actor,
+   player-behavior, camera-behavior, route-actor, tileset. Add
+   `src/world/voxel-bake.ts` + snapshot tests.
+6. **Rewire `app/main.tsx`**: delete `Game.tsx`, phase switching
+   becomes a Koota trait + React subscribes.
+7. **Delete R3F**: remove files, remove deps, strip globals.css
+   cascade, update Capacitor sync.
+8. **Green gate**:
+   `pnpm lint && pnpm typecheck && pnpm test && pnpm realm:validate -- --sequence-count 10 && pnpm test:e2e:ci && pnpm build`.
+9. **Rebaseline visual manifest** once.
+10. **PR, green CI, merge**, then `.claude/state/DONE`.
 
 ## Non-goals
 
-- Porting `@jolly-pixel/pixel-draw.renderer` or `@jolly-pixel/fs-tree`
-  into our shell. Those are editor-authoring tools; our game is
-  procedural.
-- Building a realm-authoring UI. The deterministic generator is the
-  authoring surface. The voxel renderer is read-only for now.
-- Replacing Capacitor. Mobile still ships via Capacitor wrapping the
-  same web bundle.
-- Replacing React in the HUD. React DOM for text-and-forms UI is
-  fine; we only purge the in-canvas React.
-- Replacing the deterministic engine. It stays pure TS.
+- Porting `@jolly-pixel/pixel-draw.renderer` or `/fs-tree` — those
+  are editor tools; our game is procedural.
+- Building an authoring UI.
+- Dropping Capacitor. Mobile still ships via Capacitor.
+- Rewriting the deterministic engine. It's the one part that works
+  today; renames and relocations only.
 
 ## Risks and mitigations
 
 | Risk | Mitigation |
 |---|---|
-| JP's voxel renderer doesn't visually match the current chaos-slice style. | The baker is pure data. We iterate tilesets separately from port. A tileset that renders blocks as flat-shaded cubes in archetype palette reproduces the current look quickly. |
-| Phase 2's baker snapshot tests explode in diff size. | Bake output is deterministic; snapshot files go in `src/games/voxel-realms/engine/__snapshots__/` and review is one-time. |
-| HUD overlay React app still fights layout. | The HUD overlay's root is `position: fixed; inset: 0; pointer-events: none` with children opting back in. No height cascade because it doesn't contain the canvas. |
-| Golden-path screenshots invalidate on visual change. | Rebaseline once when phase 2 lands. All engine-level golden-path assertions (pathfinding, yuka, spatial) stay untouched. |
-| Physics. Rapier was a dependency; if player physics matters, JP's Rapier integration covers it; otherwise the current kinematic teleport-controller model keeps working. | Defer: phase 3 uses the same kinematic controller. Rapier can come back in a later phase if needed. |
+| Snapshot-baking 125 realms produces giant diffs. | Snapshots live in `src/world/__snapshots__/` and are reviewed once. Failures after that fail CI. |
+| JP voxel style doesn't match the chaos-slice look. | Tileset is data — swap tilesets later without touching scene code. |
+| HUD overlay still fights layout. | Overlay root is `position: fixed; inset: 0; pointer-events: none`; children opt back in. No height cascade because overlay doesn't host the canvas. |
+| Rebaselining visual manifest hides regressions. | All engine-level validations (pathfinding, yuka, spatial, framing) stay in force, and they don't depend on pixels. |
+| Player physics. | Phase-equivalent kinematic controller; JP's Rapier integration can come back later if needed. |
 
 ## References
 
-- Jolly Pixel audit: delivered by Explore agent on 2026-04-24.
-- Repo: `/Users/jbogaty/src/reference-codebases/editor`
-- Docs bundle: `/Users/jbogaty/src/reference-codebases/editor/docs/llms/*.md`
-- Hello-JP reference example:
-  `/Users/jbogaty/src/reference-codebases/editor/packages/voxel-renderer/examples/scripts/demo-physics.ts`
-- Engine published: `@jolly-pixel/engine@2.5.0`,
-  `@jolly-pixel/runtime@3.3.0`,
-  `@jolly-pixel/voxel.renderer@1.4.0` — all confirmed on npm.
+- Jolly Pixel packages: `@jolly-pixel/engine@2.5`,
+  `@jolly-pixel/runtime@3.3`, `@jolly-pixel/voxel.renderer@1.4`.
+- Reference repo: `/Users/jbogaty/src/reference-codebases/editor`.
+- Voxel demo we build from:
+  `packages/voxel-renderer/examples/scripts/demo-tiled.ts`
+  and `components/VoxelMap.ts`.
 
 ## Supersedes
 
-- `docs/plans/voxel-realms-1.0.prq.md` — was the R3F-era 1.0 batch PRD. Its
-  Prime Directive (fluent play, authored feel, web+Android+iOS) still
-  holds; the path to it now routes through this migration.
-- `docs/plans/batch-completion-gate.md` — hard gates stay identical;
-  what changes is which shell they apply to.
+- The phased migration plan previously in this file (PR #82). That
+  plan called for `app/jp/` parallel tree and a 6-phase port —
+  both were wrong-shape. This PR replaces it.
+- `docs/plans/voxel-realms-1.0.prq.md` — the Prime Directive
+  (fluent play on web + Android + iOS) still holds; the path to
+  it now routes through this single restructure PR.
 
-Follow-up: once phase 6 lands, replace this PRD's "current" status
-with "archived" and write a short `docs/plans/jolly-pixel-migration-postmortem.md`
-covering what each phase actually took vs estimates.
+Follow-up: once this lands, archive this PRD and write
+`docs/plans/restructure-jp-port-postmortem.md` with actuals vs
+estimates.
