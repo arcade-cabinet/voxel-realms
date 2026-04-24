@@ -6,7 +6,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { CartridgeLabel, type CartridgeLabelProps } from "./Cartridge";
+import { CartridgeLabel, type CartridgeLabelProps } from "./cartridge";
 
 function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ");

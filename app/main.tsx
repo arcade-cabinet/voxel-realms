@@ -1,4 +1,4 @@
-import "@app/shared/styles/globals.css";
+import "@app/styles/globals.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import Game from "./games/voxel-realms/Game";
@@ -26,7 +26,7 @@ if (typeof window.requestAnimationFrame === "function") {
   dismissBootSplash();
 }
 
-void import("./shared/platform")
+void import("@platform")
   .then(({ bootstrapPlatform }) => bootstrapPlatform())
   .catch((error) => {
     console.error("Platform bootstrap failed", error);

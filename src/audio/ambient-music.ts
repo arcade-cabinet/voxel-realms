@@ -19,7 +19,7 @@
  *    Vitest Browser never spin up an oscillator graph.
  */
 
-import { loadRealmPreferences } from "@app/shared/platform/persistence/preferences";
+import { loadRealmPreferences } from "@platform";
 
 type AmbientArchetypeId = "jungle" | "ocean" | "steampunk" | "dinosaur" | "arctic";
 

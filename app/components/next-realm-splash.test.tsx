@@ -1,6 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
-import { NextRealmSplash } from "./NextRealmSplash";
+import { NextRealmSplash } from "@components/next-realm-splash";
 
 describe("NextRealmSplash", () => {
   afterEach(() => {

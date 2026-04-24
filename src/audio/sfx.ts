@@ -12,7 +12,7 @@
  *    cues in one frame doesn't hammer the wrapper.
  */
 
-import { loadRealmPreferences } from "@app/shared/platform/persistence/preferences";
+import { loadRealmPreferences } from "@platform";
 
 export type VoxelRealmsCue =
   | "jump"

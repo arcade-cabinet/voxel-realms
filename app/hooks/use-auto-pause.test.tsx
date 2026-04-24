@@ -1,6 +1,6 @@
 import { act, cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { useAutoPauseOnBackground } from "./useAutoPauseOnBackground";
+import { useAutoPauseOnBackground } from "./use-auto-pause";
 
 function Probe({ onBackground }: { onBackground: () => void }) {
   useAutoPauseOnBackground(onBackground);

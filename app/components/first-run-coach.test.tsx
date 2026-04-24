@@ -1,8 +1,8 @@
-import { resetRealmPreferencesForTests } from "@app/shared/platform/persistence/preferences";
+import { resetRealmPreferencesForTests } from "@platform";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
-import { FirstRunCoach } from "./FirstRunCoach";
+import { FirstRunCoach } from "@components/first-run-coach";
 
 declare global {
   interface Window {

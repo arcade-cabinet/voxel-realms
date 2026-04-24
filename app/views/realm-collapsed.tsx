@@ -1,5 +1,5 @@
-import { GameOverScreen, OverlayButton } from "@app/shared";
-import { recordExpeditionScore } from "@app/shared/platform/persistence/preferences";
+import { GameOverScreen, OverlayButton } from "@atoms";
+import { recordExpeditionScore } from "@platform";
 import type { ExpeditionScore } from "@world/progression";
 import type { summarizeRealmExpedition } from "@store/traits";
 import { useEffect } from "react";

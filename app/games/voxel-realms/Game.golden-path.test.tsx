@@ -2,7 +2,7 @@ import {
   DEFAULT_REALM_PREFERENCES,
   resetRealmPreferencesForTests,
   saveRealmPreferences,
-} from "@app/shared/platform/persistence/preferences";
+} from "@platform";
 import { startBrowserGame } from "@app/test/browserGameHarness";
 import { validateRealmPathfindingContract } from "@engine/pathfinding";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";

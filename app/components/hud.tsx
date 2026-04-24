@@ -1,4 +1,4 @@
-import { FloatingJoystick } from "@app/shared";
+import { FloatingJoystick } from "@atoms";
 import {
   DEFAULT_REALM_RENDERABLE_ASSET_POLICY,
   formatRealmAssetBytes,

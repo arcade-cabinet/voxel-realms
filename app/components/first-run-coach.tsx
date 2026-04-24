@@ -2,7 +2,7 @@ import {
   DEFAULT_REALM_PREFERENCES,
   loadRealmPreferences,
   updateRealmPreferences,
-} from "@app/shared/platform/persistence/preferences";
+} from "@platform";
 import { useEffect, useState } from "react";
 
 interface CoachStep {

@@ -1,13 +1,13 @@
-import { invalidateAmbientPreferencesCache, stopAmbient } from "@app/shared/audio/ambientMusic";
-import { invalidateAudioPreferencesCache } from "@app/shared/audio/sfx";
-import { invalidateHapticsPreferencesCache } from "@app/shared/platform/haptics";
+import { invalidateAmbientPreferencesCache, stopAmbient } from "@audio";
+import { invalidateAudioPreferencesCache } from "@audio";
+import { invalidateHapticsPreferencesCache } from "@platform";
 import {
   DEFAULT_REALM_PREFERENCES,
   loadRealmPreferences,
   type RealmPlayerPreferences,
   updateRealmPreferences,
-} from "@app/shared/platform/persistence/preferences";
-import { disableErrorTelemetry, enableErrorTelemetry } from "@app/shared/telemetry/errors";
+} from "@platform";
+import { disableErrorTelemetry, enableErrorTelemetry } from "@shared";
 import { useEffect, useState } from "react";
 
 interface SettingsScreenProps {

@@ -2,7 +2,7 @@ import {
   DEFAULT_REALM_PREFERENCES,
   resetRealmPreferencesForTests,
   saveRealmPreferences,
-} from "@app/shared/platform/persistence/preferences";
+} from "@platform";
 import { captureBrowserGameScreenshot, startBrowserGame } from "@app/test/browserGameHarness";
 import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {

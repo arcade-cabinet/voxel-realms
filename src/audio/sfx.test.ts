@@ -2,7 +2,7 @@ import {
   DEFAULT_REALM_PREFERENCES,
   resetRealmPreferencesForTests,
   saveRealmPreferences,
-} from "@app/shared/platform/persistence/preferences";
+} from "@platform";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { disposeAudioForTests, invalidateAudioPreferencesCache, playCue } from "./sfx";
 

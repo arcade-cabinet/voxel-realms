@@ -1,6 +1,6 @@
-import { playAmbientForArchetype, stopAmbient } from "@app/shared/audio/ambientMusic";
-import { playCue } from "@app/shared/audio/sfx";
-import { fireHaptic } from "@app/shared/platform/haptics";
+import { playAmbientForArchetype, stopAmbient } from "@audio";
+import { playCue } from "@audio";
+import { fireHaptic } from "@platform";
 import { summarizeRealmExitGate } from "@world/exit-gate";
 import { RealmTrait, VoxelTrait } from "@store/traits";
 import { voxelEntity } from "@store/world";

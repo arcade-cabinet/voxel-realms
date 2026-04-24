@@ -1,7 +1,7 @@
 import {
   loadRealmPreferences,
   type RealmExpeditionRecord,
-} from "@app/shared/platform/persistence/preferences";
+} from "@platform";
 import { useEffect, useState } from "react";
 
 interface ExpeditionSummaryCardProps {

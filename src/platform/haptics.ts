@@ -1,4 +1,4 @@
-import { loadRealmPreferences } from "@app/shared/platform/persistence/preferences";
+import { loadRealmPreferences } from "@platform";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
 
 /**

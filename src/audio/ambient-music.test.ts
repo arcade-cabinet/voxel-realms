@@ -5,7 +5,7 @@ import {
   invalidateAmbientPreferencesCache,
   playAmbientForArchetype,
   stopAmbient,
-} from "./ambientMusic";
+} from "./ambient-music";
 
 describe("ambientMusic", () => {
   afterEach(() => {

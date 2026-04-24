@@ -1,6 +1,6 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, test } from "vitest";
-import { ExtractionBeat } from "./ExtractionBeat";
+import { ExtractionBeat } from "@components/extraction-beat";
 
 describe("ExtractionBeat", () => {
   afterEach(() => {
