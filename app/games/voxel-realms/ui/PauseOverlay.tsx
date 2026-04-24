@@ -71,7 +71,7 @@ export function PauseOverlay({
         alignItems: "center",
         justifyContent: "center",
         zIndex: 35,
-        background: "rgba(7, 16, 18, 0.8)",
+        background: "rgba(7, 9, 13, 0.82)",
         backdropFilter: "blur(8px)",
       }}
     >
@@ -79,11 +79,11 @@ export function PauseOverlay({
         style={{
           width: "min(100%, 440px)",
           padding: "1.3rem 1.4rem 1.2rem",
-          background: "rgba(8, 20, 24, 0.96)",
-          border: "1px solid rgba(56, 189, 248, 0.45)",
+          background: "var(--realm-panel-strong, rgba(12, 20, 32, 0.96))",
+          border: "1px solid var(--realm-border, rgba(247, 243, 223, 0.22))",
           borderRadius: 14,
-          color: "#f8fafc",
-          boxShadow: "0 28px 60px rgba(0, 0, 0, 0.55)",
+          color: "var(--realm-ink, #f7f3df)",
+          boxShadow: "0 28px 60px var(--realm-shadow, rgba(0, 0, 0, 0.55))",
         }}
       >
         <h2
@@ -101,7 +101,7 @@ export function PauseOverlay({
         <p
           style={{
             fontSize: 12,
-            color: "#94a3b8",
+            color: "var(--realm-mist, #aab9bd)",
             marginTop: 6,
             marginBottom: 16,
             letterSpacing: 0.15,
@@ -167,18 +167,18 @@ function PauseButton({
 
 const PAUSE_STYLES = {
   primary: {
-    background: "linear-gradient(135deg, #a3e635, #38bdf8)",
-    color: "#071012",
+    background: "linear-gradient(135deg, var(--realm-lime, #bcff5c), var(--realm-cyan, #41dce8))",
+    color: "var(--realm-void, #07090d)",
     border: "none",
   },
   default: {
-    background: "rgba(15, 23, 42, 0.7)",
-    color: "#f8fafc",
-    border: "1px solid rgba(148, 163, 184, 0.35)",
+    background: "var(--realm-panel, rgba(7, 11, 18, 0.7))",
+    color: "var(--realm-ink, #f7f3df)",
+    border: "1px solid var(--realm-border, rgba(247, 243, 223, 0.22))",
   },
   danger: {
     background: "transparent",
-    color: "#fca5a5",
-    border: "1px solid rgba(252, 165, 165, 0.45)",
+    color: "var(--realm-coral, #ff6f59)",
+    border: "1px solid rgba(255, 111, 89, 0.5)",
   },
 } as const;
