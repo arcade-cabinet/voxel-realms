@@ -38,7 +38,8 @@ function tilesetBaseUrl(): string {
 
 class TerrainBehavior extends ActorComponent {
   renderer: VoxelRenderer | null = null;
-  private tilesetLoaded = false;
+  private tilesetPromise: Promise<void> | null = null;
+  private loadChain: Promise<void> = Promise.resolve();
 
   constructor(actor: Actor) {
     super({ actor, typeName: "TerrainBehavior" });
@@ -56,29 +57,42 @@ class TerrainBehavior extends ActorComponent {
     }
   }
 
-  private async ensureTileset(): Promise<void> {
-    if (this.tilesetLoaded || !this.renderer) return;
-    try {
-      await this.renderer.loadTileset({
+  private ensureTileset(): Promise<void> {
+    if (!this.renderer) return Promise.resolve();
+    if (this.tilesetPromise) return this.tilesetPromise;
+    const renderer = this.renderer;
+    this.tilesetPromise = renderer
+      .loadTileset({
         id: BAKED_TILESET_ID,
         src: `${tilesetBaseUrl()}assets/tilesets/${BAKED_TILESET_ID}.png`,
         tileSize: 32,
+      })
+      .catch((error) => {
+        console.error("[scene] tileset load failed", error);
+        // Reset so a future setRealm can retry.
+        this.tilesetPromise = null;
       });
-      this.tilesetLoaded = true;
-    } catch (error) {
-      console.error("[scene] tileset load failed", error);
-    }
+    return this.tilesetPromise;
   }
 
   async setRealm(realm: RealmClimb): Promise<void> {
     if (!this.renderer) return;
-    await this.ensureTileset();
-    const worldJson = bakeRealmVoxels(realm);
-    try {
-      await this.renderer.load(worldJson);
-    } catch (error) {
-      console.error("[scene] voxel load failed", error);
-    }
+    // Serialise loads so back-to-back setRealm calls (phase transitions,
+    // rapid realm swaps) do not interleave and race two parallel
+    // VoxelRenderer.load() calls through the same chunk pipeline.
+    const prior = this.loadChain.catch(() => undefined);
+    const run = prior.then(async () => {
+      await this.ensureTileset();
+      if (!this.renderer) return;
+      const worldJson = bakeRealmVoxels(realm);
+      try {
+        await this.renderer.load(worldJson);
+      } catch (error) {
+        console.error("[scene] voxel load failed", error);
+      }
+    });
+    this.loadChain = run.catch(() => undefined);
+    return run;
   }
 }
 
