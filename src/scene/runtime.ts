@@ -15,6 +15,7 @@ import type { RealmClimb } from "@world/climber";
 import * as THREE from "three";
 import { CameraFollowBehavior } from "./camera-follow-behavior";
 import { PlayerBehavior } from "./player-behavior";
+import { RouteBehavior } from "./route-behavior";
 import { TerrainBehavior } from "./terrain-behavior";
 
 export interface SceneHandle {
@@ -49,6 +50,14 @@ export async function startScene(
   const terrainActor = world.createActor("terrain");
   const terrainBehavior = terrainActor.addComponentAndGet(TerrainBehavior);
 
+  // Route — anomaly markers. Spawns a child actor per anomaly with a
+  // JP ModelRenderer so loadRuntime's asset pipeline tracks the GLB
+  // bytes and the player sees them in-world.
+  const routeActor = world.createActor("route");
+  const routeBehavior = routeActor.addComponentAndGet(RouteBehavior, {
+    realm: initialRealm,
+  });
+
   // Player — kinematic body, reads world.input each frame, writes
   // position into RealmTrait via advanceRealmRuntime.
   const spawn = initialRealm?.platforms[0]?.position ?? { x: 0, y: 0, z: 0 };
@@ -75,6 +84,7 @@ export async function startScene(
     async loadRealm(realm) {
       if (disposed) return;
       await terrainBehavior.setRealm(realm);
+      routeBehavior.setRealm(realm);
     },
     pause() {
       if (!disposed && runtime.running) {
