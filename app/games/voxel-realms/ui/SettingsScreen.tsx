@@ -114,7 +114,7 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
         justifyContent: "center",
         padding: "clamp(1rem, 4vw, 2.5rem)",
         zIndex: 40,
-        background: "rgba(7, 16, 18, 0.74)",
+        background: "rgba(7, 9, 13, 0.78)",
         backdropFilter: "blur(6px)",
       }}
     >
@@ -122,10 +122,10 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
         style={{
           width: "min(100%, 520px)",
           padding: "1.2rem 1.4rem 1.1rem",
-          background: "rgba(8, 20, 24, 0.96)",
-          border: "1px solid rgba(56, 189, 248, 0.45)",
+          background: "var(--realm-panel-strong, rgba(12, 20, 32, 0.96))",
+          border: "1px solid var(--realm-border, rgba(247, 243, 223, 0.22))",
           borderRadius: 14,
-          color: "#f8fafc",
+          color: "var(--realm-ink, #f7f3df)",
           boxShadow: "0 28px 60px rgba(0, 0, 0, 0.55)",
         }}
       >
@@ -158,7 +158,7 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             style={{
               background: "transparent",
               border: "none",
-              color: "#cbd5e1",
+              color: "var(--realm-mist, #aab9bd)",
               fontSize: 14,
               letterSpacing: 0.2,
               cursor: "pointer",
@@ -171,7 +171,7 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
         <p
           style={{
             fontSize: 12,
-            color: "#94a3b8",
+            color: "var(--realm-mist, #aab9bd)",
             marginTop: 0,
             marginBottom: 14,
             letterSpacing: 0.15,
@@ -229,8 +229,8 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             data-testid="settings-replay-tutorial"
             style={{
               background: "transparent",
-              border: "1px solid rgba(56, 189, 248, 0.55)",
-              color: "#7dd3fc",
+              border: "1px solid rgba(65, 220, 232, 0.55)",
+              color: "var(--realm-cyan, #41dce8)",
               padding: "0.5rem 0.95rem",
               borderRadius: 8,
               fontSize: 12,
@@ -249,8 +249,8 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             data-testid="settings-send-feedback"
             style={{
               background: "transparent",
-              border: "1px solid rgba(163, 230, 53, 0.55)",
-              color: "#a3e635",
+              border: "1px solid rgba(188, 255, 92, 0.55)",
+              color: "var(--realm-lime, #bcff5c)",
               padding: "0.5rem 0.95rem",
               borderRadius: 8,
               fontSize: 12,
@@ -269,8 +269,9 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             onClick={onClose}
             style={{
               marginLeft: "auto",
-              background: "linear-gradient(135deg, #a3e635, #38bdf8)",
-              color: "#071012",
+              background:
+                "linear-gradient(135deg, var(--realm-lime, #bcff5c), var(--realm-cyan, #41dce8))",
+              color: "var(--realm-void, #07090d)",
               border: 0,
               padding: "0.55rem 1.1rem",
               borderRadius: 8,
@@ -318,11 +319,11 @@ function Toggle({
         justifyContent: "space-between",
         gap: "0.75rem",
         padding: "0.6rem 0.8rem",
-        background: "rgba(15, 23, 42, 0.55)",
-        border: "1px solid rgba(148, 163, 184, 0.25)",
+        background: "var(--realm-panel, rgba(7, 11, 18, 0.58))",
+        border: "1px solid var(--realm-border, rgba(247, 243, 223, 0.18))",
         borderRadius: 10,
         cursor: disabled ? "progress" : "pointer",
-        color: "#f8fafc",
+        color: "var(--realm-ink, #f7f3df)",
         textAlign: "left",
         opacity: disabled ? 0.7 : 1,
       }}
@@ -332,7 +333,7 @@ function Toggle({
         <div
           style={{
             fontSize: 11,
-            color: "#94a3b8",
+            color: "var(--realm-mist, #aab9bd)",
             letterSpacing: 0.1,
             marginTop: 2,
           }}
@@ -346,7 +347,9 @@ function Toggle({
           width: 40,
           height: 22,
           borderRadius: 999,
-          background: checked ? "#38bdf8" : "rgba(148, 163, 184, 0.4)",
+          background: checked
+            ? "var(--realm-cyan, #41dce8)"
+            : "var(--realm-border, rgba(247, 243, 223, 0.28))",
           position: "relative",
           transition: "background 160ms ease",
           flexShrink: 0,
@@ -360,7 +363,7 @@ function Toggle({
             width: 18,
             height: 18,
             borderRadius: "50%",
-            background: "#f8fafc",
+            background: "var(--realm-ink, #f7f3df)",
             transition: "left 160ms ease",
           }}
         />

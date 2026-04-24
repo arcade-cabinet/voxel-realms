@@ -69,7 +69,7 @@ export function RealmCollapsedScreen({
         >
           <div
             style={{
-              color: "#7dd3fc",
+              color: "var(--realm-cyan, #41dce8)",
               fontSize: 11,
               letterSpacing: 0.3,
               textTransform: "uppercase",
@@ -80,7 +80,7 @@ export function RealmCollapsedScreen({
           </div>
           <div
             style={{
-              color: "#cbd5e1",
+              color: "var(--realm-mist, #aab9bd)",
               fontSize: 12,
               letterSpacing: 0,
               textTransform: "uppercase",
@@ -98,8 +98,8 @@ export function RealmCollapsedScreen({
             data-testid="realm-collapsed-retry"
             style={{
               background: "transparent",
-              border: "1px solid rgba(56, 189, 248, 0.5)",
-              color: "#7dd3fc",
+              border: "1px solid rgba(65, 220, 232, 0.5)",
+              color: "var(--realm-cyan, #41dce8)",
               padding: "0.55rem 1rem",
               borderRadius: 6,
               fontSize: 12,
@@ -116,8 +116,8 @@ export function RealmCollapsedScreen({
             onClick={onRestart}
             style={{
               background: "transparent",
-              border: "1px solid rgba(148, 163, 184, 0.4)",
-              color: "#cbd5e1",
+              border: "1px solid var(--realm-border, rgba(247, 243, 223, 0.22))",
+              color: "var(--realm-mist, #aab9bd)",
               padding: "0.5rem 1rem",
               borderRadius: 6,
               fontSize: 12,
