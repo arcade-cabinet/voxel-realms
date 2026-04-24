@@ -121,7 +121,10 @@ persists across native and web sessions.
       (scan complete, gate arm/open, extract, collapse, jump).
       Settings audio toggle invalidates the cache on flip. 3 unit tests.
 - [ ] P6.2 optional ambient music
-- [ ] P6.3 haptics on native
+- [x] P6.3 haptics on native — @capacitor/haptics wrapper with web
+      navigator.vibrate fallback; AudioBindings fires haptics alongside
+      SFX (jump-land, scan-complete, extract, collapse); Settings
+      invalidates the haptics cache on toggle. 3 unit tests.
 - [ ] P6.4 splash→first-frame polish
 
 ### Pillar 7

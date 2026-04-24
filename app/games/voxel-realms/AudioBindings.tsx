@@ -1,4 +1,5 @@
 import { playCue } from "@app/shared/audio/sfx";
+import { fireHaptic } from "@app/shared/platform/haptics";
 import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
 import { RealmTrait, VoxelTrait } from "@logic/games/voxel-realms/store/traits";
 import { voxelEntity } from "@logic/games/voxel-realms/store/world";
@@ -34,6 +35,7 @@ export function AudioBindings() {
   useEffect(() => {
     if (realm.discoveredAnomalies.length > lastScanCount.current) {
       void playCue("scan-complete");
+      void fireHaptic("scan-complete");
     }
     lastScanCount.current = realm.discoveredAnomalies.length;
   }, [realm.discoveredAnomalies.length]);
@@ -58,8 +60,10 @@ export function AudioBindings() {
     if (previous !== realm.extractionState) {
       if (realm.extractionState === "extracted") {
         void playCue("extract");
+        void fireHaptic("extract");
       } else if (realm.extractionState === "collapsed") {
         void playCue("collapse");
+        void fireHaptic("collapse");
       }
     }
     lastExtractionState.current = realm.extractionState;
@@ -70,6 +74,7 @@ export function AudioBindings() {
     const handleJump = () => {
       lastJumpCount.current = (lastJumpCount.current ?? 0) + 1;
       void playCue("jump");
+      void fireHaptic("jump-land");
     };
     window.addEventListener("voxel:jump", handleJump);
     return () => window.removeEventListener("voxel:jump", handleJump);

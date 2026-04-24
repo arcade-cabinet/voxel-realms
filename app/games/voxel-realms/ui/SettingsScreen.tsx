@@ -1,4 +1,5 @@
 import { invalidateAudioPreferencesCache } from "@app/shared/audio/sfx";
+import { invalidateHapticsPreferencesCache } from "@app/shared/platform/haptics";
 import {
   DEFAULT_REALM_PREFERENCES,
   loadRealmPreferences,
@@ -57,6 +58,9 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
     setPrefs(next);
     if (key === "audioEnabled") {
       invalidateAudioPreferencesCache();
+    }
+    if (key === "hapticsEnabled") {
+      invalidateHapticsPreferencesCache();
     }
     try {
       await updateRealmPreferences(next);
