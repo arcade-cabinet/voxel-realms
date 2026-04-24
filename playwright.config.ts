@@ -8,7 +8,10 @@ const CHROMIUM_CHANNEL =
 const DEFAULT_PORT = 41744;
 const configuredPort = Number(process.env.PLAYWRIGHT_PORT ?? process.env.PW_PORT);
 const PORT = Number.isInteger(configuredPort) && configuredPort > 0 ? configuredPort : DEFAULT_PORT;
-const BASE_URL = `http://127.0.0.1:${PORT}/`;
+const PROD_SURFACE_MODE = process.env.PW_PROD_SURFACE === "1";
+const BASE_URL = PROD_SURFACE_MODE
+  ? `http://127.0.0.1:${PORT}/voxel-realms/`
+  : `http://127.0.0.1:${PORT}/`;
 const REUSE_SERVER = !IS_CI && process.env.PW_REUSE_SERVER === "1";
 
 const GAME_ARGS = [
@@ -42,12 +45,21 @@ export default defineConfig({
     },
   },
 
-  webServer: {
-    command: `pnpm exec vite --host 127.0.0.1 --port ${PORT}`,
-    url: BASE_URL,
-    reuseExistingServer: REUSE_SERVER,
-    timeout: 120_000,
-  },
+  webServer: PROD_SURFACE_MODE
+    ? {
+        // Serves the built dist/ under /voxel-realms/ so @prod-surface
+        // specs exercise the exact layout users hit on GitHub Pages.
+        command: `node scripts/serve-prod-surface.mjs --port ${PORT}`,
+        url: BASE_URL,
+        reuseExistingServer: REUSE_SERVER,
+        timeout: 60_000,
+      }
+    : {
+        command: `pnpm exec vite --host 127.0.0.1 --port ${PORT}`,
+        url: BASE_URL,
+        reuseExistingServer: REUSE_SERVER,
+        timeout: 120_000,
+      },
 
   projects: [
     {
