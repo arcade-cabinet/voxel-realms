@@ -1,3 +1,4 @@
+import { invalidateAudioPreferencesCache } from "@app/shared/audio/sfx";
 import {
   DEFAULT_REALM_PREFERENCES,
   loadRealmPreferences,
@@ -54,6 +55,9 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
   const toggle = async (key: keyof SettingsFlags) => {
     const next = { ...prefs, [key]: !prefs[key] };
     setPrefs(next);
+    if (key === "audioEnabled") {
+      invalidateAudioPreferencesCache();
+    }
     try {
       await updateRealmPreferences(next);
     } catch {
