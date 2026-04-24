@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { createInitialRealmRuntime } from "@store/traits";
+import { describe, expect, test } from "vitest";
 
 /**
  * P3.2 failure-recovery retry contract: re-creating the realm with the

@@ -117,9 +117,7 @@ function coerceCappedString(value: unknown, fallback: string, max: number): stri
   return value.length > max ? value.slice(0, max) : value;
 }
 
-function coerceExpeditionRecord(
-  value: unknown
-): RealmExpeditionRecord | null {
+function coerceExpeditionRecord(value: unknown): RealmExpeditionRecord | null {
   if (!value || typeof value !== "object") {
     return null;
   }

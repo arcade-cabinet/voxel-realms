@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { generateRealmClimb } from "@world/climber";
 import { evaluateRealmHazardExposure, evaluateRealmInstability } from "@world/instability";
+import { describe, expect, test } from "vitest";
 
 describe("realm instability", () => {
   test("detects active hazard exposure by proximity", () => {

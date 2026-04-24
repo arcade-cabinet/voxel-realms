@@ -178,9 +178,15 @@ export async function playCue(cue: VoxelRealmsCue): Promise<void> {
     osc.start(now);
     osc.stop(now + durationSec);
     osc.onended = () => {
-      try { osc.disconnect(); } catch {}
-      try { filter?.disconnect(); } catch {}
-      try { envelope.disconnect(); } catch {}
+      try {
+        osc.disconnect();
+      } catch {}
+      try {
+        filter?.disconnect();
+      } catch {}
+      try {
+        envelope.disconnect();
+      } catch {}
     };
   } catch {
     // Any audio error is non-fatal.

@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { REALM_ARCHETYPE_IDS } from "@world/climber";
+import { describe, expect, test } from "vitest";
 import {
   advanceRealmRuntime,
   createInitialRealmRuntime,

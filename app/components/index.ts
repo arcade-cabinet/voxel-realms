@@ -1,3 +1,4 @@
+export * from "./audio-bindings";
 export * from "./expedition-summary";
 export * from "./extraction-beat";
 export * from "./first-run-coach";

@@ -49,19 +49,18 @@ if (!fs.existsSync(distPath)) {
   addMaxCheck("copied-public-assets", copiedPublicBytes, 30 * 1024 * 1024);
   addMinCheck("pruned-source-assets", prunedBytes, 250 * 1024 * 1024);
 
-  // vendor-physics grew when @react-three/rapier bumped 1.5 → 2.2. The new
-  // Rapier bundle is ~2.3 MB; budget is set just above to catch further
-  // drift. Revisit if a future Rapier release shrinks the footprint.
-  addChunkMaxCheck(jsEntries, "vendor-physics", 2_400_000);
+  // Budgets after the JP port. vendor-jp is the JP engine + runtime +
+  // voxel renderer. vendor-three is the raw three.js the JP packages
+  // depend on. @react-three/* are gone; their chunks no longer exist.
+  addChunkMaxCheck(jsEntries, "vendor-jp", 900_000);
   addChunkMaxCheck(jsEntries, "vendor-three", 760_000);
-  addChunkMaxCheck(jsEntries, "vendor-r3f", 300_000);
   addChunkMaxCheck(jsEntries, "vendor-react", 300_000);
-  addChunkMaxCheck(jsEntries, "realm-engine", 75_000);
-  // index grew during the 1.0 polish batch (ambient music, boot splash,
-  // overlay brand polish, a11y wiring, auto-pause hook). 95 KB gives a
-  // narrow headroom — revisit if it climbs past that, which would
-  // indicate a real regression rather than scope growth.
-  addChunkMaxCheck(jsEntries, "index", 95_000);
+  addChunkMaxCheck(jsEntries, "vendor-ecs", 60_000);
+  addChunkMaxCheck(jsEntries, "realm-engine", 120_000);
+  // index caps the top-level chunk (main.tsx + hud overlay + scene
+  // wiring). 120 KB gives headroom for the scene bootstrap code that
+  // moved out of Game.tsx.
+  addChunkMaxCheck(jsEntries, "index", 120_000);
   addChunkMaxCheck(jsEntries, "vendor-sqlite", 380_000);
   addChunkMaxCheck(jsEntries, "vendor-misc", 60_000);
 }

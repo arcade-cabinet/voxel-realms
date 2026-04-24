@@ -1,7 +1,7 @@
-import { describe, expect, test } from "vitest";
-import { generateRealmClimb, REALM_ARCHETYPE_IDS, type RealmClimb } from "@world/climber";
 import { validateRealmPathfindingContract } from "@engine/pathfinding";
+import { generateRealmClimb, REALM_ARCHETYPE_IDS, type RealmClimb } from "@world/climber";
 import { createRealmSequenceEntry } from "@world/sequence";
+import { describe, expect, test } from "vitest";
 
 describe("validateRealmPathfindingContract", () => {
   test("derives a start-to-exit route from platform geometry across archetypes", () => {

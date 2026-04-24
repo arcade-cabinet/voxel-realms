@@ -5,28 +5,29 @@ status: current
 domain: plan
 ---
 
-> **Batch status (2026-04-24, restructure shipped / JP port queued for
-> remote execution)**: the restructure to flat domain folders
-> (`src/world|engine|ai|assets|audio|store|platform|workers|shared`,
-> `app/views|components|atoms|hooks|styles|test`) is in the open PR
-> on `feat/restructure-and-jp-port` and ready to squash-merge once
-> CI is green. The JP port + audit fixes have been split into their
-> own remote-executed turboplan at
-> [jp-port-turboplan.md](./jp-port-turboplan.md) to keep the
-> restructure PR reviewable. The turboplan covers: R3F deletion,
-> `src/scene/` buildout on `@jolly-pixel/*`, `src/world/voxel-bake.ts`,
-> rewired `app/main.tsx` bootstrap order, 6 performance findings, 4
-> correctness findings, 6 security findings, and the Vite chunk-split
-> update — all in one PR executed remotely.
+> **Batch status (2026-04-24, restructure + JP port bundled into one
+> PR)**: `feat/restructure-and-jp-port` ships the full restructure
+> (flat domain folders under `src/` and `app/`, every domain behind
+> an `index.ts` barrel), the Jolly Pixel scene port (`src/scene/`
+> on `@jolly-pixel/{engine,runtime,voxel.renderer}`, R3F deletion,
+> `@react-three/*` deps dropped), `src/world/voxel-bake.ts` (pure
+> RealmClimb → VoxelWorldJSON function), rewired `app/main.tsx`
+> bootstrap (platform → scene → HUD overlay), and every fix from
+> the pre-merge security + performance audit: 6 perf findings
+> (circular-gallery rAF setState, audio re-entrancy + onended +
+> dispose, sfx filter cleanup, use-auto-pause listener churn), 2
+> correctness findings (bootstrap order, script path rewrites), 6
+> security findings (android/ios keystore gitignore, preferences
+> validation + size cap, sqlite CHECK + size guard, fail-soft
+> getItem, closeDatabase cleanup). Tsc + biome clean locally; CI
+> runs vitest/playwright under xvfb.
 >
-> `.claude/state/DONE` is not set — it's only written after the
-> turboplan PR is merged, CI is green across every job, and live
-> Pages renders the JP scene with the HUD overlay on desktop + mobile
-> portrait.
+> `.claude/state/DONE` is written once this PR is merged, CI is
+> green across every job, and live Pages renders the JP scene on
+> desktop + mobile portrait.
 >
-> Pillars 1–9 below are frozen as record-keeping of what the R3F
-> build shipped. Pillar 10 is now in two phases: restructure (this
-> PR) and JP port (turboplan).
+> Pillars 1–9 are frozen as record-keeping of what the R3F build
+> shipped. Pillar 10 completes when this PR merges.
 
 # Voxel Realms 1.0 — Batch Tracker
 
@@ -71,8 +72,7 @@ not done — even if every sub-task below is checked.
 | 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred. Golden-path browser test deflaked via PR #78 (timer clamp + test-file split + unique screenshot paths). |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness, trailer capture ✅; icons/secrets provisioning deferred |
 | 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
-| 10a | **Restructure (shipping)** | READY TO MERGE | `feat/restructure-and-jp-port` PR flattens the tree into flat domain folders (`src/world`, `src/engine`, `src/ai`, `src/assets`, `src/audio`, `src/store`, `src/platform`, `src/workers`, `src/shared`; `app/views`, `app/components`, `app/atoms`, `app/hooks`, `app/styles`, `app/test`); every domain behind an `index.ts` barrel. Adds path aliases to `tsconfig.json`, `vite.config.ts`, `vitest.config.ts`. No behavior change. `tsc --noEmit` clean locally; CI validates runtime. |
-| 10b | **JP port + audit fixes (remote)** | QUEUED | Follow-up PR executed via turboplan at [jp-port-turboplan.md](./jp-port-turboplan.md). Covers: R3F deletion, `src/scene/` buildout on `@jolly-pixel/{engine,runtime,voxel.renderer}`, `src/world/voxel-bake.ts`, rewired `app/main.tsx`, 6 perf findings (P1–P6), 2 correctness findings (C1–C2), 6 security findings (S1–S6), Vite chunk-split update, `@react-three/*` drop. Done when `ci.yml` + `cd.yml` green and live Pages renders JP scene on desktop + mobile portrait. |
+| 10 | **Restructure + JP port (single PR)** | READY TO MERGE | `feat/restructure-and-jp-port` PR. Flattens tree into flat domain folders with barrels. Adds `@jolly-pixel/{engine,runtime,voxel.renderer}`, drops `@react-three/*`. Builds `src/scene/` (runtime, terrain actor, camera) and `src/world/voxel-bake.ts`. Rewires `app/main.tsx` bootstrap order. Fixes audit findings: P1 (circular-gallery rAF), P2/P3/P4/P5 (audio leaks), P6 (use-auto-pause), C1 (bootstrap race), C2 (scripts paths), S1/S6 (keystores + dead config), S2 (preferences shape/size), S3/S4/S5 (SQLite hardening). `tsc --noEmit` + biome clean locally; CI validates runtime via xvfb-run. |
 
 ## Completed subtasks (quick index)
 

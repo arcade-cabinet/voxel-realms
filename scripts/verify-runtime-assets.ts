@@ -6,11 +6,7 @@ import {
   REALM_RENDER_OVERRIDE_BY_ID,
   REALM_STATIC_VARIANT_BY_ID,
 } from "@world/asset-budget";
-import {
-  REALM_ARCHETYPE_IDS,
-  REALM_ARCHETYPES,
-  type RealmArchetypeId,
-} from "@world/climber";
+import { REALM_ARCHETYPE_IDS, REALM_ARCHETYPES, type RealmArchetypeId } from "@world/climber";
 
 interface CliOptions {
   dist?: boolean;

@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
 import { createRealmSequenceEntry } from "@world/sequence";
+import { describe, expect, test } from "vitest";
 
 /**
  * P4.6 — archetype-level budgets. Lock-in thresholds so future

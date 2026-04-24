@@ -1,5 +1,5 @@
-import type { RealmAnomaly, RealmAssetRef } from "@world/climber";
 import type { Vec3 } from "@engine/types";
+import type { RealmAnomaly, RealmAssetRef } from "@world/climber";
 
 export type RealmAssetPromotionTier = "inline" | "safe" | "deferred" | "reference";
 export type RealmAssetModelSource = "source" | "static-variant" | "render-override" | "none";

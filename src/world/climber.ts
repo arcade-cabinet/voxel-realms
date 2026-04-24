@@ -1,5 +1,5 @@
-import { getRealmAssetRuntimeModel } from "@world/asset-budget";
 import type { Vec3 } from "@engine/types";
+import { getRealmAssetRuntimeModel } from "@world/asset-budget";
 
 export type RealmArchetypeId = "jungle" | "ocean" | "steampunk" | "dinosaur" | "arctic";
 export type RealmPlatformKind = "start" | "route" | "rest" | "branch" | "gate";

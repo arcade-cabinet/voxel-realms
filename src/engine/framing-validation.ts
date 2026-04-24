@@ -1,11 +1,11 @@
+import { getPlatformBodyPosition } from "@engine/spatial-validation";
+import type { Vec3 } from "@engine/types";
 import type { RealmAnomaly, RealmClimb, RealmPlatform } from "@world/climber";
 import {
   createRealmPlaythroughPlan,
   type RealmPlaythroughCheckpoint,
   type RealmPlaythroughPlan,
 } from "@world/playthrough-plan";
-import { getPlatformBodyPosition } from "@engine/spatial-validation";
-import type { Vec3 } from "@engine/types";
 
 export type RealmFramingIssueCode =
   | "missing-start-capture"

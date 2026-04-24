@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
-import { REALM_ARCHETYPE_IDS } from "@world/climber";
 import { validateRealmBatch } from "@engine/validation";
+import { REALM_ARCHETYPE_IDS } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 describe("realm validation batch", () => {
   test("validates deterministic generator and agent runs across a seed batch", () => {

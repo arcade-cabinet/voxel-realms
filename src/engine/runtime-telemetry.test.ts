@@ -1,10 +1,10 @@
-import { describe, expect, test } from "vitest";
+import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
 import { createInitialRealmRuntime } from "@store/traits";
 import { generateRealmClimb } from "@world/climber";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
-import { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
 import { createRealmSequenceEntry } from "@world/sequence";
-import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { describe, expect, test } from "vitest";
 
 describe("validateRealmRuntimeTelemetry", () => {
   test("replays every Yuka frame through runtime progress without regressions", () => {

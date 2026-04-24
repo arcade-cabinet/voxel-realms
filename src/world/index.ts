@@ -10,3 +10,4 @@ export * from "./route-guidance";
 export * from "./sequence";
 export * from "./signal-pulse";
 export * from "./signals";
+export * from "./voxel-bake";

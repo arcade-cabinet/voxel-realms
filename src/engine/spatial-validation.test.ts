@@ -1,7 +1,7 @@
-import { describe, expect, test } from "vitest";
 import { runRealmAgent } from "@engine/agent";
-import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
 import { validateRealmSpatialContract } from "@engine/spatial-validation";
+import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 describe("realm spatial validation", () => {
   test("validates clean goal posts, route links, hazard lanes, and agent samples", () => {

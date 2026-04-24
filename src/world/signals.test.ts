@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { summarizeRealmSignalFocus } from "@world/signals";
+import { describe, expect, test } from "vitest";
 
 describe("realm signal focus", () => {
   test("reaches full focus inside scan radius", () => {

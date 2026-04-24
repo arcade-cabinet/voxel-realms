@@ -1,3 +1,4 @@
+import type { RealmArchetypeId } from "@world/climber";
 import { describe, expect, test } from "vitest";
 import {
   COLLAPSE_PENALTY,
@@ -6,8 +7,6 @@ import {
   SIGNAL_WEIGHT,
   scoreExpedition,
 } from "./progression";
-
-import type { RealmArchetypeId } from "@world/climber";
 
 type CompletedRealm = {
   seed: string;

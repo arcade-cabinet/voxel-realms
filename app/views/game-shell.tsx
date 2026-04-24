@@ -1,9 +1,10 @@
-import { browserTestCanvasGlOptions } from "@shared";
-import { GameViewport } from "@atoms";
-import { useAutoPauseOnBackground } from "@hooks/use-auto-pause";
-import { scoreExpeditionFromRealmState } from "@world/progression";
-import { createRealmSequenceEntry } from "@world/sequence";
+import { AudioBindings } from "@components/audio-bindings";
+import { ExtractionBeat } from "@components/extraction-beat";
+import { FirstRunCoach } from "@components/first-run-coach";
+import { HUD } from "@components/hud";
+import { NextRealmSplash } from "@components/next-realm-splash";
 import { createInitialVoxelState } from "@engine/voxel-simulation";
+import { useAutoPauseOnBackground } from "@hooks/use-auto-pause";
 import {
   createInitialRealmRuntime,
   createNextRealmRuntime,
@@ -12,28 +13,28 @@ import {
   VoxelTrait,
 } from "@store/traits";
 import { voxelEntity, voxelWorld } from "@store/world";
-import { Canvas } from "@react-three/fiber";
-import { useTrait, WorldProvider } from "koota/react";
-import { useCallback, useEffect, useState } from "react";
-import { AudioBindings } from "./AudioBindings";
-import { World } from "./r3f/World";
-import { ExtractionBeat } from "@components/extraction-beat";
-import { FirstRunCoach } from "@components/first-run-coach";
-import { HUD } from "@components/hud";
-import { NextRealmSplash } from "@components/next-realm-splash";
+import { RealmLanding } from "@views/landing";
 import { PauseOverlay } from "@views/pause";
 import { RealmCollapsedScreen } from "@views/realm-collapsed";
-import { RealmLanding } from "@views/landing";
 import { SettingsScreen } from "@views/settings";
+import { scoreExpeditionFromRealmState } from "@world/progression";
+import { createRealmSequenceEntry } from "@world/sequence";
+import { useTrait, WorldProvider } from "koota/react";
+import { useCallback, useEffect, useState } from "react";
 
-const MENU_PREVIEW_DELAY_MS = 900;
-const PLAY_SCENE_DELAY_MS = 120;
-
+/**
+ * Root React shell over the Jolly Pixel canvas. Owns phase switching
+ * (landing / playing / gameover) and pause modals. Does NOT own the
+ * scene — the JP Runtime is mounted by app/main.tsx against the
+ * <canvas id="scene-canvas"> element in index.html and reads state from
+ * the same Koota traits this component does.
+ *
+ * The shell is a fullscreen overlay above the canvas with
+ * pointer-events: none on the root; children opt back in per element.
+ */
 function VoxelApp() {
   const state = useTrait(voxelEntity, VoxelTrait);
   const realmState = useTrait(voxelEntity, RealmTrait);
-  const sceneMounted = useDeferredSceneMount(state.phase);
-  const worldInteractive = useDeferredWorldInteractivity(state.phase === "playing");
   const [paused, setPaused] = useState(false);
   const [pauseSettingsOpen, setPauseSettingsOpen] = useState(false);
 
@@ -82,22 +83,19 @@ function VoxelApp() {
   }, [state.phase, paused]);
 
   return (
-    <GameViewport
-      background="#9fd7e8"
+    <div
+      id="hud-root"
       data-realm-extraction-state={realmState.extractionState}
       data-realm-path-index={realmState.agentPathIndex}
       data-realm-scanned={realmState.discoveredAnomalies.length}
       data-realm-valid={realmState.activeRealm.validation.valid ? "true" : "false"}
+      style={{
+        position: "fixed",
+        inset: 0,
+        pointerEvents: "none",
+        zIndex: 10,
+      }}
     >
-      <Canvas shadows camera={{ fov: 72, position: [0, 4.6, 0] }} gl={browserTestCanvasGlOptions}>
-        {sceneMounted && state.phase !== "gameover" && (
-          <World
-            key={worldInteractive ? "interactive" : "preview"}
-            interactive={worldInteractive}
-          />
-        )}
-      </Canvas>
-
       {state.phase === "menu" && <RealmLanding onStart={handleStart} />}
 
       {state.phase === "playing" && (
@@ -141,6 +139,7 @@ function VoxelApp() {
               fontWeight: 800,
               cursor: "pointer",
               backdropFilter: "blur(6px)",
+              pointerEvents: "auto",
             }}
           >
             ⏸ Pause
@@ -220,66 +219,16 @@ function VoxelApp() {
           onRestart={handleStart}
         />
       )}
-    </GameViewport>
+    </div>
   );
 }
 
-function useDeferredSceneMount(phase: "menu" | "playing" | "gameover") {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    if (phase === "gameover") {
-      setMounted(false);
-      return undefined;
-    }
-
-    setMounted(false);
-
-    const delay = phase === "playing" ? PLAY_SCENE_DELAY_MS : MENU_PREVIEW_DELAY_MS;
-    let frame = 0;
-    const timer = window.setTimeout(() => {
-      frame = window.requestAnimationFrame(() => {
-        setMounted(true);
-      });
-    }, delay);
-
-    return () => {
-      window.clearTimeout(timer);
-      if (frame) {
-        window.cancelAnimationFrame(frame);
-      }
-    };
-  }, [phase]);
-
-  return mounted;
-}
-
-function useDeferredWorldInteractivity(isPlaying: boolean) {
-  const [interactive, setInteractive] = useState(false);
-
-  useEffect(() => {
-    if (!isPlaying) {
-      setInteractive(false);
-      return undefined;
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      setInteractive(true);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      setInteractive(false);
-    };
-  }, [isPlaying]);
-
-  return isPlaying && interactive;
-}
-
-export default function Game() {
+export function GameShell() {
   return (
     <WorldProvider world={voxelWorld}>
       <VoxelApp />
     </WorldProvider>
   );
 }
+
+export default GameShell;

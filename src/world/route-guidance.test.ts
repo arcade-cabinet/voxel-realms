@@ -1,7 +1,7 @@
-import { describe, expect, test } from "vitest";
 import { generateRealmClimb } from "@world/climber";
 import { describeRealmHazard } from "@world/hazard-vocabulary";
 import { summarizeRealmRouteGuidance } from "@world/route-guidance";
+import { describe, expect, test } from "vitest";
 
 describe("realm route guidance", () => {
   test("summarizes the active golden-path link", () => {

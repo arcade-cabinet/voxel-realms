@@ -1,4 +1,5 @@
-import { trait } from "koota";
+import type { Vec3 } from "@engine/types";
+import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   DEFAULT_REALM_SEED,
   evaluateRealmProgress,
@@ -14,8 +15,7 @@ import {
   type RealmInstabilityLevel,
 } from "@world/instability";
 import { createRealmSequenceEntry } from "@world/sequence";
-import type { Vec3 } from "@engine/types";
-import { createInitialVoxelState } from "@engine/voxel-simulation";
+import { trait } from "koota";
 
 export type RealmExtractionState = "camp" | "ascending" | "extracted" | "collapsed";
 

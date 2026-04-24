@@ -1,8 +1,8 @@
 import { resetRealmPreferencesForTests } from "@platform";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { SettingsScreen } from "@views/settings";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("SettingsScreen", () => {
   beforeEach(async () => {

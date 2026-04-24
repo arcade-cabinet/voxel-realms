@@ -1,11 +1,4 @@
 import { FloatingJoystick } from "@atoms";
-import {
-  DEFAULT_REALM_RENDERABLE_ASSET_POLICY,
-  formatRealmAssetBytes,
-  summarizeRenderableRealmAnomalies,
-} from "@world/asset-budget";
-import { summarizeRealmExitGate } from "@world/exit-gate";
-import { summarizeRealmRouteGuidance } from "@world/route-guidance";
 import { createInitialVoxelState } from "@engine/voxel-simulation";
 import {
   createNextRealmRuntime,
@@ -14,6 +7,13 @@ import {
   VoxelTrait,
 } from "@store/traits";
 import { voxelEntity } from "@store/world";
+import {
+  DEFAULT_REALM_RENDERABLE_ASSET_POLICY,
+  formatRealmAssetBytes,
+  summarizeRenderableRealmAnomalies,
+} from "@world/asset-budget";
+import { summarizeRealmExitGate } from "@world/exit-gate";
+import { summarizeRealmRouteGuidance } from "@world/route-guidance";
 import { useTrait } from "koota/react";
 
 type ControlEvent = "voxel:jump";

@@ -28,27 +28,17 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     copyPublicDir: false,
-    // Rapier's compat ESM bundle is a single ~2 MB module. Keep that as an
-    // explicit vendor budget so Vite warnings still catch growth beyond it.
     chunkSizeWarningLimit: 2200,
     outDir: "dist",
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("@dimforge") || id.includes("@react-three/rapier")) {
-              return "vendor-physics";
+            if (id.includes("@jolly-pixel")) {
+              return "vendor-jp";
             }
 
-            if (
-              id.includes("@react-three/fiber") ||
-              id.includes("@react-three/drei") ||
-              id.includes("three-stdlib")
-            ) {
-              return "vendor-r3f";
-            }
-
-            if (id.includes(`${path.sep}three${path.sep}`)) {
+            if (id.includes(`${path.sep}three${path.sep}`) || id.includes("three-stdlib")) {
               return "vendor-three";
             }
 
@@ -75,7 +65,12 @@ export default defineConfig({
             return "vendor-misc";
           }
 
-          if (id.includes(`${path.sep}src${path.sep}games${path.sep}voxel-realms${path.sep}`)) {
+          if (
+            id.includes(`${path.sep}src${path.sep}world${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}engine${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}ai${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}assets${path.sep}`)
+          ) {
             return "realm-engine";
           }
         },
@@ -104,15 +99,7 @@ export default defineConfig({
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
       three: path.resolve(__dirname, "node_modules/three"),
     },
-    dedupe: [
-      "react",
-      "react-dom",
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
-      "koota",
-    ],
+    dedupe: ["react", "react-dom", "three", "koota"],
   },
   optimizeDeps: {
     include: [
@@ -120,11 +107,11 @@ export default defineConfig({
       "react-dom",
       "react-dom/client",
       "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
       "koota",
       "lucide-react",
+      "@jolly-pixel/engine",
+      "@jolly-pixel/runtime",
+      "@jolly-pixel/voxel.renderer",
     ],
   },
 });

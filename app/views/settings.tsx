@@ -1,8 +1,11 @@
-import { invalidateAmbientPreferencesCache, stopAmbient } from "@audio";
-import { invalidateAudioPreferencesCache } from "@audio";
-import { invalidateHapticsPreferencesCache } from "@platform";
+import {
+  invalidateAmbientPreferencesCache,
+  invalidateAudioPreferencesCache,
+  stopAmbient,
+} from "@audio";
 import {
   DEFAULT_REALM_PREFERENCES,
+  invalidateHapticsPreferencesCache,
   loadRealmPreferences,
   type RealmPlayerPreferences,
   updateRealmPreferences,

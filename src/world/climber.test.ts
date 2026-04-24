@@ -1,4 +1,3 @@
-import { describe, expect, test } from "vitest";
 import {
   canLoadRealmAssetAtRuntime,
   DEFAULT_MOVEMENT_ENVELOPE,
@@ -7,6 +6,7 @@ import {
   REALM_ARCHETYPE_IDS,
   validateGoldenPath,
 } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 describe("realm climber generator", () => {
   test("generates deterministic seeded climbs", () => {

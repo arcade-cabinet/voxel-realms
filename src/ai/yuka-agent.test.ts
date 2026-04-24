@@ -1,9 +1,9 @@
-import { describe, expect, test } from "vitest";
+import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
 import { createInitialRealmRuntime } from "@store/traits";
 import { generateRealmClimb } from "@world/climber";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
 import { createRealmSequenceEntry } from "@world/sequence";
-import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { describe, expect, test } from "vitest";
 
 describe("createYukaRealmPlaythroughRun", () => {
   test("follows the default realm checkpoints with landed capture frames", () => {

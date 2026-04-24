@@ -1,4 +1,12 @@
+import { createYukaRealmPlaythroughRun, type RealmYukaPlaythroughIssue } from "@ai/yuka-agent";
 import { runRealmAgent } from "@engine/agent";
+import { type RealmFramingIssue, validateRealmFramingContract } from "@engine/framing-validation";
+import { type RealmPathfindingIssue, validateRealmPathfindingContract } from "@engine/pathfinding";
+import {
+  type RealmRuntimeTelemetryIssue,
+  validateRealmRuntimeTelemetry,
+} from "@engine/runtime-telemetry";
+import { type RealmSpatialIssue, validateRealmSpatialContract } from "@engine/spatial-validation";
 import {
   canLoadRealmAssetAtRuntime,
   type GoldenPathIssue,
@@ -9,19 +17,8 @@ import {
   type RealmMovementEnvelope,
   type RealmRouteMove,
 } from "@world/climber";
-import { type RealmFramingIssue, validateRealmFramingContract } from "@engine/framing-validation";
-import { type RealmPathfindingIssue, validateRealmPathfindingContract } from "@engine/pathfinding";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
-import {
-  type RealmRuntimeTelemetryIssue,
-  validateRealmRuntimeTelemetry,
-} from "@engine/runtime-telemetry";
 import { createRealmSequence } from "@world/sequence";
-import { type RealmSpatialIssue, validateRealmSpatialContract } from "@engine/spatial-validation";
-import {
-  createYukaRealmPlaythroughRun,
-  type RealmYukaPlaythroughIssue,
-} from "@ai/yuka-agent";
 
 export interface RealmValidationOptions {
   seedPrefix?: string;

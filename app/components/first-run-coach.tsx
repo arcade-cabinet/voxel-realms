@@ -1,8 +1,4 @@
-import {
-  DEFAULT_REALM_PREFERENCES,
-  loadRealmPreferences,
-  updateRealmPreferences,
-} from "@platform";
+import { DEFAULT_REALM_PREFERENCES, loadRealmPreferences, updateRealmPreferences } from "@platform";
 import { useEffect, useState } from "react";
 
 interface CoachStep {

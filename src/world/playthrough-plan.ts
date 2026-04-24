@@ -1,6 +1,6 @@
-import type { RealmAnomaly, RealmClimb, RealmPlatform } from "@world/climber";
 import { getPlatformBodyPosition } from "@engine/spatial-validation";
 import type { Vec3 } from "@engine/types";
+import type { RealmAnomaly, RealmClimb, RealmPlatform } from "@world/climber";
 
 export type RealmPlaythroughCheckpointKind = "start" | "route" | "signal" | "goal";
 export type RealmPlaythroughCapture = "route-start" | "signal" | "goal";

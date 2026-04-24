@@ -1,9 +1,9 @@
-import { describe, expect, test } from "vitest";
+import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
 import { DEFAULT_REALM_SEED, generateRealmClimb } from "@world/climber";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
-import { validateRealmRuntimeTelemetry } from "@engine/runtime-telemetry";
 import { createRealmSequence } from "@world/sequence";
-import { createYukaRealmPlaythroughRun } from "@ai/yuka-agent";
+import { describe, expect, test } from "vitest";
 
 /**
  * Full-sequence replay check (P7.3). Walks the first N realms the game

@@ -47,15 +47,7 @@ export default defineConfig({
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
       three: path.resolve(__dirname, "node_modules/three"),
     },
-    dedupe: [
-      "react",
-      "react-dom",
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
-      "koota",
-    ],
+    dedupe: ["react", "react-dom", "three", "koota"],
   },
   optimizeDeps: {
     include: [
@@ -63,9 +55,6 @@ export default defineConfig({
       "react-dom",
       "react-dom/client",
       "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
       "koota",
       "lucide-react",
       "@testing-library/jest-dom/vitest",

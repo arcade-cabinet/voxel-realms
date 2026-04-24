@@ -1,10 +1,10 @@
+import type { RealmYukaPlaythroughFrame } from "@ai/yuka-agent";
 import {
   evaluateRealmProgress,
   type RealmClimb,
   type RealmProgressEvaluation,
 } from "@world/climber";
 import { evaluateRealmHazardExposure, evaluateRealmInstability } from "@world/instability";
-import type { RealmYukaPlaythroughFrame } from "@ai/yuka-agent";
 
 export type RealmRuntimeTelemetryIssueCode =
   | "empty-frames"

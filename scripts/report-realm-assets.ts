@@ -8,11 +8,7 @@ import {
   REALM_STATIC_VARIANT_BY_ID,
   summarizeRealmAssetBudgets,
 } from "@world/asset-budget";
-import {
-  REALM_ARCHETYPE_IDS,
-  REALM_ARCHETYPES,
-  type RealmArchetypeId,
-} from "@world/climber";
+import { REALM_ARCHETYPE_IDS, REALM_ARCHETYPES, type RealmArchetypeId } from "@world/climber";
 
 interface CliOptions {
   json?: boolean;

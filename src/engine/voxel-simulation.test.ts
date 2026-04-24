@@ -1,4 +1,3 @@
-import { describe, expect, test } from "vitest";
 import { CONFIG } from "@engine/types";
 import {
   advanceVoxelState,
@@ -15,6 +14,7 @@ import {
   getProceduralHeight,
   VOXEL_SIM_MAX_FRAME_DELTA_MS,
 } from "@engine/voxel-simulation";
+import { describe, expect, test } from "vitest";
 
 describe("voxel simulation", () => {
   test("creates a complete boot state for menu and play", () => {

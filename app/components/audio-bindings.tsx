@@ -1,17 +1,15 @@
-import { playAmbientForArchetype, stopAmbient } from "@audio";
-import { playCue } from "@audio";
+import { playAmbientForArchetype, playCue, stopAmbient } from "@audio";
 import { fireHaptic } from "@platform";
-import { summarizeRealmExitGate } from "@world/exit-gate";
 import { RealmTrait, VoxelTrait } from "@store/traits";
 import { voxelEntity } from "@store/world";
+import { summarizeRealmExitGate } from "@world/exit-gate";
 import { useTrait } from "koota/react";
 import { useEffect, useRef } from "react";
 
 /**
  * Rendered only while state.phase === "playing". Subscribes to a
- * handful of state transitions and fires synthesized SFX cues. All
- * logic is effect-only (no DOM / no R3F) so the component is safe to
- * mount alongside HUD without affecting layout or input.
+ * handful of state transitions and fires synthesized SFX cues + ambient
+ * music bed. Effect-only (no DOM output).
  *
  * Cues fire on rising edges — we track the last value we saw in a ref
  * and only play the cue when the value crosses a threshold.
@@ -41,8 +39,7 @@ export function AudioBindings() {
     lastScanCount.current = realm.discoveredAnomalies.length;
   }, [realm.discoveredAnomalies.length]);
 
-  // Gate state transition: locked → primed (arm), primed → open (open),
-  // anything → collapsed (muted via collapse cue).
+  // Gate state transitions.
   useEffect(() => {
     const previous = lastGateState.current;
     if (previous !== gate.state) {
@@ -82,16 +79,14 @@ export function AudioBindings() {
   }, []);
 
   // Ambient music bed — switches when the realm archetype changes and
-  // stops when the scene unmounts (phase !== "playing" unmounts this
-  // component).
+  // stops when this component unmounts.
   useEffect(() => {
     void playAmbientForArchetype(realm.activeRealm.archetype.id);
     return () => stopAmbient();
   }, [realm.activeRealm.archetype.id]);
 
-  // Reference state.phase only to keep the linter happy about the
-  // koota subscription — the effects above already drive their own
-  // re-runs when relevant state changes.
+  // Reference state.phase only to keep the koota subscription alive —
+  // the effects above already drive their own re-runs.
   void state.phase;
 
   return null;

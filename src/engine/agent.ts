@@ -1,3 +1,4 @@
+import type { Vec3 } from "@engine/types";
 import type {
   RealmAnomaly,
   RealmClimb,
@@ -5,7 +6,6 @@ import type {
   RealmRouteLink,
   RealmRouteMove,
 } from "@world/climber";
-import type { Vec3 } from "@engine/types";
 
 export type RealmAgentSampleState =
   | "landed"

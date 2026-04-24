@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { REALM_SIGNAL_PULSE_CONSTANTS, summarizeRealmSignalPulse } from "@world/signal-pulse";
+import { describe, expect, test } from "vitest";
 
 describe("realm signal pulse", () => {
   test("reports idle when player is out of range and far away", () => {

@@ -1,7 +1,7 @@
-import { describe, expect, test } from "vitest";
-import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
 import { validateRealmFramingContract } from "@engine/framing-validation";
+import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
+import { describe, expect, test } from "vitest";
 
 describe("realm framing validation", () => {
   test("keeps generated checkpoint cameras pointed at readable route targets", () => {

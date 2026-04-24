@@ -1,8 +1,8 @@
-import { describe, expect, test } from "vitest";
 import {
   describeRealmArchetypeLighting,
   REALM_LIGHTING_ARCHETYPES,
 } from "@world/archetype-lighting";
+import { describe, expect, test } from "vitest";
 
 describe("realm archetype lighting", () => {
   test("every archetype exposes a non-empty lighting descriptor", () => {

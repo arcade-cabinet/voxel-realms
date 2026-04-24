@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { REALM_ARCHETYPE_IDS, REALM_ARCHETYPES } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 describe("realm archetype verbs", () => {
   test("every archetype exposes a non-empty verb and verbDetail", () => {

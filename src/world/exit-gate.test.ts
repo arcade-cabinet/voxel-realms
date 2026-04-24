@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { summarizeRealmExitGate } from "@world/exit-gate";
+import { describe, expect, test } from "vitest";
 
 describe("realm exit gate", () => {
   test("locks until at least one anomaly is scanned", () => {

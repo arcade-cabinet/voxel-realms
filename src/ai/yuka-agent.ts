@@ -1,10 +1,10 @@
-import { FollowPathBehavior, OnPathBehavior, Path, Vehicle, Vector3 as YukaVector3 } from "yuka";
+import type { Vec3 } from "@engine/types";
 import type {
   RealmPlaythroughCapture,
   RealmPlaythroughCheckpoint,
   RealmPlaythroughPlan,
 } from "@world/playthrough-plan";
-import type { Vec3 } from "@engine/types";
+import { FollowPathBehavior, OnPathBehavior, Path, Vehicle, Vector3 as YukaVector3 } from "yuka";
 
 export interface RealmYukaPlaythroughOptions {
   fixedStepMs: number;

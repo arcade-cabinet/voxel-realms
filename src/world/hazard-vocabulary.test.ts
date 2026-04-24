@@ -1,10 +1,10 @@
-import { describe, expect, test } from "vitest";
 import {
   describeRealmHazard,
   REALM_HAZARD_KINDS,
   realmHazardAdvice,
   realmHazardLabel,
 } from "@world/hazard-vocabulary";
+import { describe, expect, test } from "vitest";
 
 describe("realm hazard vocabulary", () => {
   test("covers every hazard kind with non-trivial copy", () => {

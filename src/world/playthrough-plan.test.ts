@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
 import { createRealmPlaythroughPlan } from "@world/playthrough-plan";
+import { describe, expect, test } from "vitest";
 
 describe("realm playthrough plan", () => {
   test("creates deterministic checkpoint plans for every generated golden path", () => {

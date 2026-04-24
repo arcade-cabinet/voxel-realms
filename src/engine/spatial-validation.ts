@@ -1,4 +1,5 @@
 import { type RealmAgentRun, runRealmAgent } from "@engine/agent";
+import type { Vec3 } from "@engine/types";
 import type {
   RealmClimb,
   RealmHazard,
@@ -6,7 +7,6 @@ import type {
   RealmPlatform,
   RealmRouteLink,
 } from "@world/climber";
-import type { Vec3 } from "@engine/types";
 
 export type RealmSpatialIssueCode =
   | "missing-start-platform"

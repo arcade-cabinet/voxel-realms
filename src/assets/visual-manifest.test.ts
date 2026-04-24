@@ -1,5 +1,5 @@
-import { describe, expect, test } from "vitest";
 import { type RealmVisualManifest, validateRealmVisualManifest } from "@assets/visual-manifest";
+import { describe, expect, test } from "vitest";
 
 describe("validateRealmVisualManifest", () => {
   test("accepts a complete visual manifest contract", () => {

@@ -1,5 +1,5 @@
-import { loadRealmPreferences } from "@platform";
 import { Haptics, ImpactStyle } from "@capacitor/haptics";
+import { loadRealmPreferences } from "@platform";
 
 /**
  * Native haptic cue helper. On native platforms (iOS / Android through

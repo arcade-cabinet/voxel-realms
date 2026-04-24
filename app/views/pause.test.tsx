@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { afterEach, describe, expect, test, vi } from "vitest";
 import { PauseOverlay } from "@views/pause";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("PauseOverlay", () => {
   afterEach(() => {

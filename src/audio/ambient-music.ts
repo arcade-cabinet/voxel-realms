@@ -254,11 +254,13 @@ export async function playAmbientForArchetype(archetype: string): Promise<void> 
     }
   });
 
-  const tracked: Promise<void> = run.catch(() => undefined).finally(() => {
-    if (playInFlight === tracked) {
-      playInFlight = null;
-    }
-  });
+  const tracked: Promise<void> = run
+    .catch(() => undefined)
+    .finally(() => {
+      if (playInFlight === tracked) {
+        playInFlight = null;
+      }
+    });
   playInFlight = tracked;
 
   return run;

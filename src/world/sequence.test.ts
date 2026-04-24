@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { REALM_ARCHETYPE_IDS } from "@world/climber";
 import { createRealmSequence, createRealmSequenceEntry } from "@world/sequence";
+import { describe, expect, test } from "vitest";
 
 describe("realm sequence", () => {
   test("creates deterministic sequence entries with stable seeds", () => {

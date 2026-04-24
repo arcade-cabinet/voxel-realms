@@ -1,8 +1,5 @@
-import {
-  REALM_ARCHETYPE_IDS,
-  type RealmArchetypeId,
-} from "@world/climber";
 import { validateRealmBatch } from "@engine/validation";
+import { REALM_ARCHETYPE_IDS, type RealmArchetypeId } from "@world/climber";
 
 interface CliOptions {
   seedPrefix?: string;

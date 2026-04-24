@@ -1,4 +1,3 @@
-import { describe, expect, test } from "vitest";
 import {
   canPromoteRealmAsset,
   getPromotedRealmAssets,
@@ -13,6 +12,7 @@ import {
   summarizeRenderableRealmAnomalies,
 } from "@world/asset-budget";
 import { REALM_ARCHETYPES, type RealmAnomaly } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 const allArchetypeAssets = Object.values(REALM_ARCHETYPES).flatMap((archetype) => archetype.assets);
 const uniqueAssets = [...new Map(allArchetypeAssets.map((asset) => [asset.id, asset])).values()];

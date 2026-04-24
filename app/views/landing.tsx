@@ -1,7 +1,7 @@
-import type { CSSProperties } from "react";
-import { useState } from "react";
 import { ExpeditionSummaryCard } from "@components/expedition-summary";
 import { SettingsScreen } from "@views/settings";
+import type { CSSProperties } from "react";
+import { useState } from "react";
 
 interface RealmLandingProps {
   onStart: () => void;

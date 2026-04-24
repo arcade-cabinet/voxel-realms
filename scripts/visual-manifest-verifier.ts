@@ -1,10 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import {
-  type RealmVisualManifest,
-  validateRealmVisualManifest,
-} from "@assets/visual-manifest";
+import { type RealmVisualManifest, validateRealmVisualManifest } from "@assets/visual-manifest";
 
 export interface VisualManifestVerifierOptions {
   manifestPath: string;

@@ -1,5 +1,5 @@
-import type { RealmClimb, RealmHazard, RealmHazardKind } from "@world/climber";
 import type { Vec3 } from "@engine/types";
+import type { RealmClimb, RealmHazard, RealmHazardKind } from "@world/climber";
 
 export type RealmInstabilityLevel = "stable" | "unstable" | "critical" | "collapsed";
 

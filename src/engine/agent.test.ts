@@ -1,6 +1,6 @@
-import { describe, expect, test } from "vitest";
 import { createRealmAgentWaypoints, runRealmAgent } from "@engine/agent";
 import { generateRealmClimb, REALM_ARCHETYPE_IDS } from "@world/climber";
+import { describe, expect, test } from "vitest";
 
 describe("realm golden-path agent", () => {
   test("runs deterministically over a seeded golden path", () => {
