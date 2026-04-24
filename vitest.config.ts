@@ -47,8 +47,6 @@ export default defineConfig({
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
       "three/addons": path.resolve(__dirname, "node_modules/three/examples/jsm"),
       three: path.resolve(__dirname, "node_modules/three"),
-      "@dimforge/rapier3d": path.resolve(__dirname, "src/scene/rapier-stub.ts"),
-      "@dimforge/rapier3d-compat": path.resolve(__dirname, "src/scene/rapier-stub.ts"),
     },
     dedupe: ["react", "react-dom", "three", "koota"],
   },
