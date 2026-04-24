@@ -50,83 +50,9 @@
         color: #aab9bd;
         margin: 0;
       }
-      #boot-splash {
-        position: fixed;
-        inset: 0;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1.4rem;
-        background: radial-gradient(ellipse at center, #0c1420 0%, #07090d 70%);
-        z-index: 9999;
-        transition: opacity 380ms ease-out;
-      }
-      #boot-splash[data-hidden="true"] {
-        opacity: 0;
-        pointer-events: none;
-      }
-      #boot-splash .brand-mark {
-        display: grid;
-        grid-template-columns: repeat(3, 18px);
-        grid-template-rows: repeat(3, 18px);
-        gap: 4px;
-        animation: boot-pulse 1400ms ease-in-out infinite;
-      }
-      #boot-splash .brand-mark span {
-        display: block;
-        width: 18px;
-        height: 18px;
-        border-radius: 2px;
-        background: #41dce8;
-        opacity: 0.22;
-      }
-      #boot-splash .brand-mark span:nth-child(1) {
-        background: #bcff5c;
-        opacity: 0.95;
-      }
-      #boot-splash .brand-mark span:nth-child(5) {
-        background: #ffc44d;
-        opacity: 0.95;
-      }
-      #boot-splash .brand-mark span:nth-child(9) {
-        background: #ff6f59;
-        opacity: 0.95;
-      }
-      #boot-splash .wordmark {
-        font-size: 14px;
-        letter-spacing: 0.4em;
-        text-transform: uppercase;
-        font-weight: 800;
-        color: #aab9bd;
-      }
-      @keyframes boot-pulse {
-        0%,
-        100% {
-          transform: scale(1);
-          filter: brightness(1);
-        }
-        50% {
-          transform: scale(1.06);
-          filter: brightness(1.3);
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        #boot-splash .brand-mark {
-          animation: none;
-        }
-      }
     </style>
   </head>
   <body>
-    <div id="boot-splash" role="status" aria-label="Voxel Realms loading">
-      <div class="brand-mark" aria-hidden="true">
-        <span></span><span></span><span></span>
-        <span></span><span></span><span></span>
-        <span></span><span></span><span></span>
-      </div>
-      <div class="wordmark">Voxel Realms</div>
-    </div>
     <noscript>
       <div id="noscript-banner">
         <h1>Voxel Realms</h1>

@@ -23,7 +23,6 @@ import { createRoot, type Root } from "react-dom/client";
 let activeRoot: Root | null = null;
 let activeSceneHandle: SceneHandle | null = null;
 let unloadListener: (() => void) | null = null;
-let splashTimer: ReturnType<typeof setTimeout> | null = null;
 
 async function main(): Promise<void> {
   const rootElement = document.getElementById("root");
@@ -56,8 +55,6 @@ async function main(): Promise<void> {
   activeRoot = createRoot(rootElement);
   activeRoot.render(<GameShell />);
 
-  dismissBootSplash();
-
   // Tear the scene down on navigation / HMR so Runtime.stop() fires
   // and three.js resources are released. Keep a reference so disposeAll
   // can also remove the listener to avoid leaving a dead handler.
@@ -71,10 +68,6 @@ async function main(): Promise<void> {
 }
 
 function disposeAll(): void {
-  if (splashTimer !== null) {
-    clearTimeout(splashTimer);
-    splashTimer = null;
-  }
   if (unloadListener) {
     window.removeEventListener("beforeunload", unloadListener);
     unloadListener = null;
@@ -96,18 +89,10 @@ function isTestHarness(): boolean {
   );
 }
 
-function dismissBootSplash(): void {
-  const splash = document.getElementById("boot-splash");
-  if (!splash) return;
-  splash.setAttribute("data-hidden", "true");
-  splashTimer = setTimeout(() => {
-    splash.remove();
-    splashTimer = null;
-  }, 420);
-}
-
-// Two rAFs defer main() past the initial paint so the boot splash
-// has a chance to render before we block the thread on JP init.
+// JP's loadRuntime injects its own <jolly-loading> custom element
+// and fades the canvas in once GPU detection + asset loading complete.
+// One rAF still defers main() past the initial paint so the JP loader
+// can render before we block on construction.
 if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
   window.requestAnimationFrame(() => {
     void main();
