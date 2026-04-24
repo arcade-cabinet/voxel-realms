@@ -99,6 +99,11 @@ export default defineConfig({
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
       "three/addons": path.resolve(__dirname, "node_modules/three/examples/jsm"),
       three: path.resolve(__dirname, "node_modules/three"),
+      // JP voxel-renderer re-exports VoxelColliderBuilder which pulls in
+      // rapier3d (3+ MB WASM). We don't use physics — alias to a stub
+      // so vite's transform doesn't OOM inlining the WASM as base64.
+      "@dimforge/rapier3d": path.resolve(__dirname, "src/scene/rapier-stub.ts"),
+      "@dimforge/rapier3d-compat": path.resolve(__dirname, "src/scene/rapier-stub.ts"),
     },
     dedupe: ["react", "react-dom", "three", "koota"],
   },
@@ -114,5 +119,6 @@ export default defineConfig({
       "@jolly-pixel/runtime",
       "@jolly-pixel/voxel.renderer",
     ],
+    exclude: ["@dimforge/rapier3d", "@dimforge/rapier3d-compat"],
   },
 });
