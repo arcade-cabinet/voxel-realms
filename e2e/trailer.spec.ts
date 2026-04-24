@@ -9,17 +9,24 @@ import { test } from "@playwright/test";
  *
  * Invoke via `pnpm test:trailer`. Single-run (no retries, no
  * fullyParallel) so the output is deterministic.
+ *
+ * `test.use({ video })` lives at module scope — Playwright rejects
+ * it inside `describe()` because recording forces a new worker, and
+ * spec collection blows up with "Cannot use({ video }) in a describe
+ * group" even for specs excluded by grep. Keeping it top-level makes
+ * the spec load cleanly under `test:e2e:ci` without recording video
+ * for the untagged runs.
  */
 
-test.describe("voxel realms trailer capture @trailer", () => {
-  test.use({
-    video: {
-      mode: "on",
-      size: { width: 1280, height: 720 },
-    },
-    viewport: { width: 1280, height: 720 },
-  });
+test.use({
+  video: {
+    mode: "on",
+    size: { width: 1280, height: 720 },
+  },
+  viewport: { width: 1280, height: 720 },
+});
 
+test.describe("voxel realms trailer capture @trailer", () => {
   test("cold player → realm mount → HUD populated", async ({ page }) => {
     // 1. Landing (2.5 s — enough to read the hero copy)
     await page.goto("/");
