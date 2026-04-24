@@ -1,3 +1,4 @@
+import { invalidateAmbientPreferencesCache, stopAmbient } from "@app/shared/audio/ambientMusic";
 import { invalidateAudioPreferencesCache } from "@app/shared/audio/sfx";
 import { invalidateHapticsPreferencesCache } from "@app/shared/platform/haptics";
 import {
@@ -66,6 +67,10 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
     setPrefs(next);
     if (key === "audioEnabled") {
       invalidateAudioPreferencesCache();
+      invalidateAmbientPreferencesCache();
+      if (!next.audioEnabled) {
+        stopAmbient();
+      }
     }
     if (key === "hapticsEnabled") {
       invalidateHapticsPreferencesCache();
