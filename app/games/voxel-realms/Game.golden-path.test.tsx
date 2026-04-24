@@ -109,7 +109,7 @@ test("Voxel Realms follows the deterministic golden path to goal capture", async
           result.host,
           result.rootElement,
           viewport,
-          `test-screenshots/voxel-realms-${viewport.name}.png`
+          `test-screenshots/voxel-realms-route-start-${viewport.name}.png`
         )
       );
     }
