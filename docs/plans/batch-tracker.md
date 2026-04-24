@@ -104,11 +104,13 @@ persists across native and web sessions.
 - [ ] P4.5 brand polish pass (palette vars, typography)
 - [ ] P4.6 perf budget per archetype (triangles, draw calls, MB)
 
-### Pillar 5
+### Pillar 5 — branch feat/pillar-5-settings
 - [ ] P5.1 touch controls rework (left-look, right-move, action thumb)
 - [ ] P5.2 safe-area, orientation, status bar
 - [ ] P5.3 resume flow (Resume CTA on landing)
-- [ ] P5.4 settings surface (SFX, music, haptics, reduce-motion, tutorial-reset, debug-HUD)
+- [x] P5.4 settings surface — SettingsScreen.tsx (audio / haptics /
+      reduce-motion toggles + replay-tutorial) wired from a landing-side
+      button. Persists via @capacitor/preferences wrapper. 4 unit tests.
 - [ ] P5.5 pause overlay with hardware back
 - [ ] P5.6 a11y sweep (aria, contrast, reduced motion)
 
