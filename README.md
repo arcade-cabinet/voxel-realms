@@ -37,6 +37,12 @@ pnpm test
 pnpm test:browser
 pnpm test:golden
 pnpm test:visual-verifier
+pnpm test:coverage               # engine coverage (src/ only, v8 provider)
+pnpm test:e2e                    # full Playwright matrix
+pnpm test:e2e:ci                 # desktop-chromium only (CI fast path)
+pnpm test:e2e:matrix             # desktop + mobile-portrait + tablet-portrait
+pnpm test:store-screenshots      # capture store-listing PNGs
+pnpm test:trailer                # record the 25s trailer WebM
 pnpm typecheck
 pnpm realm:validate
 pnpm realm:validate -- --sequence-count 10
@@ -71,4 +77,12 @@ pnpm run cap:run:ios
 - [Production](docs/PRODUCTION.md)
 - [Launch readiness](docs/LAUNCH_READINESS.md)
 - [State and remaining work](docs/STATE.md)
+- [Android signing](docs/ANDROID_SIGNING.md)
+- [iOS signing](docs/iOS_SIGNING.md)
+- [Crash reporting strategy](docs/CRASH_REPORTING.md)
+- [Trailer capture](docs/TRAILER.md)
+- [Privacy posture](docs/PRIVACY.md)
+- [Support channels](docs/SUPPORT.md)
+- [Feedback channel](docs/FEEDBACK.md)
+- [Physical QA rubric](docs/QA.md)
 - [Changelog](CHANGELOG.md)
