@@ -19,6 +19,7 @@ export interface RealmPlayerPreferences {
   motionReduced: boolean;
   hapticsEnabled: boolean;
   onboardingSeen: boolean;
+  telemetryOptIn: boolean;
   bestExpedition: RealmExpeditionRecord | null;
   lastExpedition: RealmExpeditionRecord | null;
 }
@@ -28,6 +29,7 @@ export const DEFAULT_REALM_PREFERENCES: RealmPlayerPreferences = {
   motionReduced: false,
   hapticsEnabled: true,
   onboardingSeen: false,
+  telemetryOptIn: false,
   bestExpedition: null,
   lastExpedition: null,
 };

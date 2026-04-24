@@ -6,6 +6,7 @@ import {
   type RealmPlayerPreferences,
   updateRealmPreferences,
 } from "@app/shared/platform/persistence/preferences";
+import { disableErrorTelemetry, enableErrorTelemetry } from "@app/shared/telemetry/errors";
 import { useEffect, useState } from "react";
 
 interface SettingsScreenProps {
@@ -19,7 +20,7 @@ interface SettingsScreenProps {
 
 type SettingsFlags = Pick<
   RealmPlayerPreferences,
-  "audioEnabled" | "motionReduced" | "hapticsEnabled"
+  "audioEnabled" | "motionReduced" | "hapticsEnabled" | "telemetryOptIn"
 >;
 
 export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProps) {
@@ -27,6 +28,7 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
     audioEnabled: DEFAULT_REALM_PREFERENCES.audioEnabled,
     motionReduced: DEFAULT_REALM_PREFERENCES.motionReduced,
     hapticsEnabled: DEFAULT_REALM_PREFERENCES.hapticsEnabled,
+    telemetryOptIn: DEFAULT_REALM_PREFERENCES.telemetryOptIn,
   });
   const [ready, setReady] = useState(false);
 
@@ -40,7 +42,13 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             audioEnabled: loaded.audioEnabled,
             motionReduced: loaded.motionReduced,
             hapticsEnabled: loaded.hapticsEnabled,
+            telemetryOptIn: loaded.telemetryOptIn,
           });
+          if (loaded.telemetryOptIn) {
+            enableErrorTelemetry();
+          } else {
+            disableErrorTelemetry();
+          }
         }
       } catch {
         // Fall back to defaults on storage failure.
@@ -61,6 +69,13 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
     }
     if (key === "hapticsEnabled") {
       invalidateHapticsPreferencesCache();
+    }
+    if (key === "telemetryOptIn") {
+      if (next.telemetryOptIn) {
+        enableErrorTelemetry();
+      } else {
+        disableErrorTelemetry();
+      }
     }
     try {
       await updateRealmPreferences(next);
@@ -184,6 +199,14 @@ export function SettingsScreen({ onClose, onReplayTutorial }: SettingsScreenProp
             onChange={() => toggle("motionReduced")}
             disabled={!ready}
             testId="settings-toggle-motion"
+          />
+          <Toggle
+            label="Error telemetry"
+            description="Anonymous local error log to help diagnose crashes. No data leaves the device yet."
+            checked={prefs.telemetryOptIn}
+            onChange={() => toggle("telemetryOptIn")}
+            disabled={!ready}
+            testId="settings-toggle-telemetry"
           />
         </div>
 
