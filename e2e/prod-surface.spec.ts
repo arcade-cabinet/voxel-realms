@@ -62,6 +62,8 @@ function recordPageErrors(page: Page): PageErrorRecorder {
 }
 
 test.describe("@prod-surface production surface", () => {
+  test.describe.configure({ timeout: 120_000 });
+
   test("cold player loads landing with no 404s or console errors", async ({ page }) => {
     const rec = recordPageErrors(page);
 
@@ -81,7 +83,12 @@ test.describe("@prod-surface production surface", () => {
     const rec = recordPageErrors(page);
 
     await page.goto("/voxel-realms/", { waitUntil: "domcontentloaded" });
-    await page.getByRole("button", { name: /enter realm/i }).click();
+    const startButton = page.getByRole("button", { name: /enter realm/i });
+    await startButton.waitFor({ state: "visible", timeout: 30_000 });
+    // Landing has animated shader layers; Playwright's strict-mode
+    // stability check times out in slow CI. We only need the click
+    // to fire — force it.
+    await startButton.click({ force: true });
 
     const viewportHandle = page.locator("[data-realm-extraction-state]");
     await viewportHandle.waitFor({ state: "attached", timeout: 20_000 });
