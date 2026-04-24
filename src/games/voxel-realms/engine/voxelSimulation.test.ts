@@ -4,6 +4,7 @@ import {
   advanceVoxelState,
   calculateJumpVelocity,
   calculateMovementVelocity,
+  clampVoxelFrameDeltaMs,
   classifyBiome,
   createInitialVoxelState,
   createSpawnCampLayout,
@@ -12,6 +13,7 @@ import {
   findNearestResourceDistance,
   generateChunkData,
   getProceduralHeight,
+  VOXEL_SIM_MAX_FRAME_DELTA_MS,
 } from "./voxelSimulation";
 
 describe("voxel simulation", () => {
@@ -92,6 +94,15 @@ describe("voxel simulation", () => {
     expect(next.coordinates).toEqual({ x: 36, y: 8, z: -48 });
     expect(next.timeSurvived).toBe(1_500);
     expect(state.score).toBe(0);
+  });
+
+  test("clampVoxelFrameDeltaMs caps huge wall-clock deltas so the simulation is frame-rate independent", () => {
+    expect(clampVoxelFrameDeltaMs(-5)).toBe(0);
+    expect(clampVoxelFrameDeltaMs(0)).toBe(0);
+    expect(clampVoxelFrameDeltaMs(16)).toBe(16);
+    expect(clampVoxelFrameDeltaMs(VOXEL_SIM_MAX_FRAME_DELTA_MS)).toBe(VOXEL_SIM_MAX_FRAME_DELTA_MS);
+    expect(clampVoxelFrameDeltaMs(500)).toBe(VOXEL_SIM_MAX_FRAME_DELTA_MS);
+    expect(clampVoxelFrameDeltaMs(5_000)).toBe(VOXEL_SIM_MAX_FRAME_DELTA_MS);
   });
 
   test("finds nearest authored landmark and applies fall damage", () => {

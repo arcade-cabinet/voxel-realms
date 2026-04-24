@@ -150,6 +150,12 @@ export function createSpawnCampLayout(): SpawnCampLayout {
   };
 }
 
+export const VOXEL_SIM_MAX_FRAME_DELTA_MS = 50;
+
+export function clampVoxelFrameDeltaMs(deltaMs: number) {
+  return Math.min(VOXEL_SIM_MAX_FRAME_DELTA_MS, Math.max(0, deltaMs));
+}
+
 export function advanceVoxelState(
   state: VoxelState,
   deltaMs: number,
