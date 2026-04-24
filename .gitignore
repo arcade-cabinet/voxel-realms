@@ -18,3 +18,4 @@ raw-assets/
 test-results/
 playwright-report/
 .playwright/
+.claude/scheduled_tasks.lock

@@ -220,62 +220,68 @@ export function HUD() {
               </span>
             </div>
           ) : null}
-          <div style={{ color: "#f8fafc", fontWeight: 800, lineHeight: 1.25 }}>
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            style={{ color: "#f8fafc", fontWeight: 800, lineHeight: 1.25 }}
+          >
             {realm.objective}
           </div>
           {debugHud ? <ModelBudgetReadout budget={renderBudget} /> : null}
-          {recentPickup ? (
-            <div
-              style={{
-                color: "#facc15",
-                fontSize: 12,
-                fontWeight: 900,
-                marginTop: 6,
-                textTransform: "uppercase",
-              }}
-            >
-              Pickup {recentPickup.label}
-            </div>
-          ) : null}
-          {recentBiome ? (
-            <div
-              style={{
-                color: "#a3e635",
-                fontSize: 12,
-                fontWeight: 900,
-                marginTop: 4,
-                textTransform: "uppercase",
-              }}
-            >
-              Biome discovered: {recentBiome.biome}
-            </div>
-          ) : null}
-          {recentScan ? (
-            <div
-              style={{
-                color: "#38bdf8",
-                fontSize: 12,
-                fontWeight: 900,
-                marginTop: 4,
-                textTransform: "uppercase",
-              }}
-            >
-              Signal scanned: {recentScan.label}
-            </div>
-          ) : null}
-          {recentHazard ? (
-            <div
-              style={{
-                color: "#fb7185",
-                fontSize: 12,
-                fontWeight: 900,
-                marginTop: 4,
-                textTransform: "uppercase",
-              }}
-            >
-              Hazard pressure: {recentHazard.kind}
-            </div>
-          ) : null}
+          <div aria-live="polite" aria-atomic="false" style={{ display: "contents" }}>
+            {recentPickup ? (
+              <div
+                style={{
+                  color: "#facc15",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  marginTop: 6,
+                  textTransform: "uppercase",
+                }}
+              >
+                Pickup {recentPickup.label}
+              </div>
+            ) : null}
+            {recentBiome ? (
+              <div
+                style={{
+                  color: "#a3e635",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  marginTop: 4,
+                  textTransform: "uppercase",
+                }}
+              >
+                Biome discovered: {recentBiome.biome}
+              </div>
+            ) : null}
+            {recentScan ? (
+              <div
+                style={{
+                  color: "#38bdf8",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  marginTop: 4,
+                  textTransform: "uppercase",
+                }}
+              >
+                Signal scanned: {recentScan.label}
+              </div>
+            ) : null}
+            {recentHazard ? (
+              <div
+                style={{
+                  color: "#fb7185",
+                  fontSize: 12,
+                  fontWeight: 900,
+                  marginTop: 4,
+                  textTransform: "uppercase",
+                }}
+              >
+                Hazard pressure: {recentHazard.kind}
+              </div>
+            ) : null}
+          </div>
           <div
             style={{
               marginTop: "0.52rem",
