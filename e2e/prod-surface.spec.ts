@@ -99,13 +99,21 @@ test.describe("@prod-surface production surface", () => {
     // Let any late-mount preload + runtime GLB fetches settle.
     await page.waitForTimeout(3_000);
 
-    const { clientWidth, clientHeight } = await page.evaluate(() => {
+    const layout = await page.evaluate(() => {
       const c = document.querySelector("canvas") as HTMLCanvasElement | null;
+      const root = document.getElementById("root");
       return {
         clientWidth: c?.clientWidth ?? 0,
         clientHeight: c?.clientHeight ?? 0,
+        rootHeight: root?.clientHeight ?? 0,
+        rootWidth: root?.clientWidth ?? 0,
+        bodyHeight: document.body?.clientHeight ?? 0,
+        windowInnerHeight: window.innerHeight,
+        windowInnerWidth: window.innerWidth,
       };
     });
+    const { clientWidth, clientHeight } = layout;
+    const layoutMessage = JSON.stringify(layout);
 
     // Canvas must fill the layout viewport. Before PR #81 this
     // collapsed to ~150px tall on mobile (GameViewport:height:100%
@@ -116,11 +124,11 @@ test.describe("@prod-surface production surface", () => {
     const targetWidth = viewport?.width ?? 320;
     expect(
       clientHeight,
-      `canvas clientHeight (${clientHeight}) should fill viewport (${targetHeight})`
+      `canvas clientHeight (${clientHeight}) should fill viewport (${targetHeight}). layout=${layoutMessage}`
     ).toBeGreaterThan(targetHeight * 0.6);
     expect(
       clientWidth,
-      `canvas clientWidth (${clientWidth}) should fill viewport (${targetWidth})`
+      `canvas clientWidth (${clientWidth}) should fill viewport (${targetWidth}). layout=${layoutMessage}`
     ).toBeGreaterThan(targetWidth * 0.6);
 
     await expect(page.getByText(/RUN\s*1/i).first()).toBeVisible({ timeout: 10_000 });
