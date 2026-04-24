@@ -5,6 +5,7 @@ import type {
   RealmRouteLink,
   RealmRouteMove,
 } from "./realmClimber";
+import { describeRealmHazard } from "./realmHazardVocabulary";
 
 export type RealmRouteGuidanceState = "route" | "exit";
 
@@ -70,7 +71,7 @@ export function summarizeRealmRouteGuidance(
     detail: activeLink
       ? formatLinkDetail(activeLink, activeHazard)
       : "Find the next validated platform.",
-    hazardLabel: activeHazard ? `${activeHazard.kind} lane` : null,
+    hazardLabel: activeHazard ? describeRealmHazard(activeHazard.kind).label : null,
   };
 }
 
@@ -93,7 +94,7 @@ function formatMoveLabel(move: RealmRouteMove) {
 function formatLinkDetail(link: RealmRouteLink, hazard: RealmHazard | null) {
   const gap = `${link.horizontalGap.toFixed(1)}m gap`;
   const vertical = Math.abs(link.verticalDelta) < 0.1 ? "level" : `${signed(link.verticalDelta)}m`;
-  const hazardLabel = hazard ? ` / ${hazard.kind} hazard` : "";
+  const hazardLabel = hazard ? ` / ${describeRealmHazard(hazard.kind).shortLabel}` : "";
 
   return `${gap} / ${vertical}${hazardLabel}`;
 }

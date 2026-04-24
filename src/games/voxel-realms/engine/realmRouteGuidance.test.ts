@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { generateRealmClimb } from "./realmClimber";
+import { describeRealmHazard } from "./realmHazardVocabulary";
 import { summarizeRealmRouteGuidance } from "./realmRouteGuidance";
 
 describe("realm route guidance", () => {
@@ -32,9 +33,11 @@ describe("realm route guidance", () => {
     const { realm, pathIndex } = findRealmWithLinkedHazard();
     const guidance = summarizeRealmRouteGuidance(realm, pathIndex);
 
-    expect(guidance.activeHazard).toBeTruthy();
-    expect(guidance.hazardLabel).toContain("lane");
-    expect(guidance.detail).toContain("hazard");
+    const hazard = guidance.activeHazard;
+    if (!hazard) throw new Error("expected hazard on linked route");
+    const vocabulary = describeRealmHazard(hazard.kind);
+    expect(guidance.hazardLabel).toBe(vocabulary.label);
+    expect(guidance.detail).toContain(vocabulary.shortLabel);
     expect(guidance.activeHazard?.between).toEqual([
       guidance.activeLink?.from,
       guidance.activeLink?.to,
