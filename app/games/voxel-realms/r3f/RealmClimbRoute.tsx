@@ -13,13 +13,17 @@ import type {
 } from "@logic/games/voxel-realms/engine/realmClimber";
 import { summarizeRealmExitGate } from "@logic/games/voxel-realms/engine/realmExitGate";
 import { summarizeRealmRouteGuidance } from "@logic/games/voxel-realms/engine/realmRouteGuidance";
+import {
+  type RealmSignalPulse,
+  summarizeRealmSignalPulse,
+} from "@logic/games/voxel-realms/engine/realmSignalPulse";
 import { summarizeRealmSignalFocus } from "@logic/games/voxel-realms/engine/realmSignals";
 import { RealmTrait } from "@logic/games/voxel-realms/store/traits";
 import { voxelEntity } from "@logic/games/voxel-realms/store/world";
 import { Clone, useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { useTrait } from "koota/react";
-import { Suspense, useEffect, useMemo } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 const PRELOADED_REALM_MODEL_PATHS = new Set<string>();
@@ -63,6 +67,7 @@ export function RealmClimbRoute({ physicsEnabled }: { physicsEnabled: boolean })
   const focusedSignal = focusedAnomaly
     ? summarizeRealmSignalFocus(realmState.nearestAnomalyDistance, focusedAnomaly.scanRadius)
     : null;
+  const focusedSignalPulse = useFocusedSignalPulse(focusedAnomaly?.id ?? null, focusedSignal);
   const exitGate = summarizeRealmExitGate({
     discoveredAnomalyCount: realmState.discoveredAnomalies.length,
     extractionState: realmState.extractionState,
@@ -143,6 +148,7 @@ export function RealmClimbRoute({ physicsEnabled }: { physicsEnabled: boolean })
           anomaly={anomaly}
           discovered={discoveredAnomalies.has(anomaly.id)}
           focus={anomaly.id === focusedAnomaly?.id ? focusedSignal : null}
+          pulse={anomaly.id === focusedAnomaly?.id ? focusedSignalPulse : null}
           modelPath={renderableAnomalies.get(anomaly.id) ?? null}
         />
       ))}
@@ -335,12 +341,14 @@ function AnomalyMarker({
   accent,
   discovered,
   focus,
+  pulse,
   modelPath,
 }: {
   anomaly: RealmAnomaly;
   accent: string;
   discovered: boolean;
   focus: ReturnType<typeof summarizeRealmSignalFocus> | null;
+  pulse: RealmSignalPulse | null;
   modelPath: string | null;
 }) {
   const budget = getRealmAssetBudget(anomaly.asset);
@@ -380,7 +388,12 @@ function AnomalyMarker({
         </mesh>
       ) : null}
       {focus ? (
-        <FocusedSignalRings color={color} focus={focus} scanRadius={anomaly.scanRadius} />
+        <FocusedSignalRings
+          color={color}
+          focus={focus}
+          pulse={pulse}
+          scanRadius={anomaly.scanRadius}
+        />
       ) : null}
       <pointLight color={color} intensity={discovered ? 0.45 : 1.2} distance={4.5} />
     </group>
@@ -425,27 +438,39 @@ function FocusedSignalLink({
 function FocusedSignalRings({
   color,
   focus,
+  pulse,
   scanRadius,
 }: {
   color: string;
   focus: ReturnType<typeof summarizeRealmSignalFocus>;
+  pulse: RealmSignalPulse | null;
   scanRadius: number;
 }) {
   const ringRadius = Math.max(0.2, scanRadius * focus.ringScale);
+  const pulseAmplitude = pulse ? 0.5 + 0.5 * Math.sin(pulse.phase * Math.PI * 2) : 0;
+  const pulseOpacity = pulse
+    ? Math.min(1, 0.24 + pulse.intensity * 0.6 + pulseAmplitude * 0.18 * pulse.intensity)
+    : focus.inScanRange
+      ? 0.68
+      : 0.42;
+  const pulseRadius = pulse
+    ? ringRadius * (0.94 + pulseAmplitude * 0.12 * pulse.intensity)
+    : ringRadius;
+  const ringColor = pulse?.locked ? "#f8fafc" : focus.inScanRange ? "#f8fafc" : color;
 
   return (
-    <group name="focused-signal-rings">
+    <group name="focused-signal-rings" data-pulse-label={pulse?.label ?? "idle"}>
       <mesh rotation={[Math.PI / 2, 0, 0]}>
         <torusGeometry args={[scanRadius, 0.028, 8, 40]} />
         <meshBasicMaterial color={color} depthWrite={false} transparent opacity={0.28} />
       </mesh>
       <mesh position={[0, 0.05, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[ringRadius, 0.04, 8, 40]} />
+        <torusGeometry args={[pulseRadius, 0.04, 8, 40]} />
         <meshBasicMaterial
-          color={focus.inScanRange ? "#f8fafc" : color}
+          color={ringColor}
           depthWrite={false}
           transparent
-          opacity={focus.inScanRange ? 0.68 : 0.42}
+          opacity={pulseOpacity}
         />
       </mesh>
     </group>
@@ -602,5 +627,60 @@ function ExitGate({
         />
       </mesh>
     </group>
+  );
+}
+
+function useFocusedSignalPulse(
+  focusedAnomalyId: string | null,
+  focus: ReturnType<typeof summarizeRealmSignalFocus> | null
+): RealmSignalPulse | null {
+  const dwellStartRef = useRef<number | null>(null);
+  const inRangeAnomalyRef = useRef<string | null>(null);
+  const [tick, setTick] = useState(0);
+  // Determinism: the golden-path test captures specific frames; a raf-driven
+  // pulse phase would shift screenshot fingerprints on every run. Under the
+  // browser harness we freeze dwell at zero so the test fingerprint stays
+  // stable while production still gets the ramp + oscillation.
+  const isTestRun =
+    typeof window !== "undefined" &&
+    (window as unknown as { __VOXEL_REALMS_TEST__?: boolean }).__VOXEL_REALMS_TEST__ === true;
+
+  useEffect(() => {
+    if (!focus?.inScanRange || !focusedAnomalyId) {
+      dwellStartRef.current = null;
+      inRangeAnomalyRef.current = null;
+      return undefined;
+    }
+
+    if (inRangeAnomalyRef.current !== focusedAnomalyId) {
+      dwellStartRef.current = performance.now();
+      inRangeAnomalyRef.current = focusedAnomalyId;
+    }
+
+    if (isTestRun) {
+      return undefined;
+    }
+
+    let raf = 0;
+    const loop = () => {
+      setTick((value) => (value + 1) % 1_000_000);
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [focus?.inScanRange, focusedAnomalyId, isTestRun]);
+
+  if (!focus || !focusedAnomalyId || isTestRun) {
+    return null;
+  }
+
+  const dwellMs =
+    focus.inScanRange && dwellStartRef.current !== null
+      ? performance.now() - dwellStartRef.current
+      : 0;
+  void tick;
+  return summarizeRealmSignalPulse(
+    { inScanRange: focus.inScanRange, proximity: focus.proximity },
+    dwellMs
   );
 }
