@@ -4,6 +4,7 @@ import {
   advanceVoxelState,
   calculateJumpVelocity,
   calculateMovementVelocity,
+  clampVoxelFrameDeltaMs,
   classifyBiome,
   findNearestLandmarkDistance,
   getProceduralHeight,
@@ -322,7 +323,7 @@ export function Player({ onChunkChange }: { onChunkChange: (chunk: ChunkCoords) 
         Math.floor(currentTrans.x),
         Math.floor(currentTrans.z)
       );
-      const nextVoxelState = advanceVoxelState(state, _delta * 1000, {
+      const nextVoxelState = advanceVoxelState(state, clampVoxelFrameDeltaMs(_delta * 1000), {
         position: currentTrans,
         velocity: currentVel,
         grounded,
