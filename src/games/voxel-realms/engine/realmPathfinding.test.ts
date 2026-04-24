@@ -63,6 +63,22 @@ describe("validateRealmPathfindingContract", () => {
     expect(pathfinding.traversableGoldenStepCount).toBeLessThan(pathfinding.goldenStepCount);
   });
 
+  test("excludes branch platforms from the golden-path shortest-path comparison", () => {
+    const realm = generateRealmClimb({
+      archetype: "steampunk",
+      seed: "realm-validation-steampunk-23",
+    });
+    const branchCount = realm.platforms.filter((platform) => platform.kind === "branch").length;
+
+    expect(branchCount).toBeGreaterThan(0);
+
+    const pathfinding = validateRealmPathfindingContract(realm);
+
+    expect(pathfinding.valid).toBe(true);
+    expect(pathfinding.discoveredPath).toEqual(realm.goldenPath);
+    expect(pathfinding.discoveredPath.every((id) => !id.includes("-branch-"))).toBe(true);
+  });
+
   test("reports a missing exit platform before trying to build a route", () => {
     const realm = generateRealmClimb({ archetype: "arctic", seed: "pathfinding-missing-exit" });
     const broken = {

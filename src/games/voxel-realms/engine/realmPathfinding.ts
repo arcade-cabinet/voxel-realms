@@ -63,6 +63,12 @@ export function validateRealmPathfindingContract(realm: RealmClimb): RealmPathfi
   const edges = createTraversalEdges(realm.platforms, realm.movement);
   const edgeByKey = new Map(edges.map((edge) => [routeKey(edge.from, edge.to), edge]));
   const adjacency = createAdjacency(edges);
+  const nonBranchPlatformIds = new Set(
+    realm.platforms.filter((platform) => platform.kind !== "branch").map((platform) => platform.id)
+  );
+  const routeOnlyAdjacency = createAdjacency(
+    edges.filter((edge) => nonBranchPlatformIds.has(edge.from) && nonBranchPlatformIds.has(edge.to))
+  );
 
   if (!start) {
     issues.push({
@@ -80,7 +86,7 @@ export function validateRealmPathfindingContract(realm: RealmClimb): RealmPathfi
     });
   }
 
-  const search = start && exit ? findShortestPath(adjacency, start.id, exit.id) : null;
+  const search = start && exit ? findShortestPath(routeOnlyAdjacency, start.id, exit.id) : null;
   if (start && exit && search.path.length === 0) {
     issues.push({
       code: "exit-unreachable",
