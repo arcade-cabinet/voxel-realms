@@ -120,7 +120,7 @@ export function HUD() {
         <Metric label="Survey" value={`${realm.objectiveProgress}%`} accent="#38bdf8" />
         <Metric
           label="Realm"
-          value={`${realm.realmIndex + 1} ${realm.activeRealm.archetype.name}`}
+          value={`${realm.realmIndex + 1} ${realm.activeRealm.archetype.name} · ${realm.activeRealm.archetype.verb}`}
           accent="#a3e635"
         />
         <Metric
