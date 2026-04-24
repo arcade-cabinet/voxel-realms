@@ -7,12 +7,12 @@ import {
   getRealmAssetRuntimeModel,
   REALM_STATIC_VARIANT_BY_ID,
   summarizeRealmAssetBudgets,
-} from "../src/games/voxel-realms/engine/realmAssetBudget";
+} from "@world/asset-budget";
 import {
   REALM_ARCHETYPE_IDS,
   REALM_ARCHETYPES,
   type RealmArchetypeId,
-} from "../src/games/voxel-realms/engine/realmClimber";
+} from "@world/climber";
 
 interface CliOptions {
   json?: boolean;

@@ -4,7 +4,7 @@ import path from "node:path";
 import {
   type RealmVisualManifest,
   validateRealmVisualManifest,
-} from "../src/games/voxel-realms/engine/realmVisualManifest";
+} from "@assets/visual-manifest";
 
 export interface VisualManifestVerifierOptions {
   manifestPath: string;

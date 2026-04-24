@@ -1,8 +1,8 @@
 import {
   REALM_ARCHETYPE_IDS,
   type RealmArchetypeId,
-} from "../src/games/voxel-realms/engine/realmClimber";
-import { validateRealmBatch } from "../src/games/voxel-realms/engine/realmValidation";
+} from "@world/climber";
+import { validateRealmBatch } from "@engine/validation";
 
 interface CliOptions {
   seedPrefix?: string;

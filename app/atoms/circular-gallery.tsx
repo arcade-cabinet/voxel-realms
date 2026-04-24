@@ -2,9 +2,9 @@ import {
   forwardRef,
   type HTMLAttributes,
   type MouseEvent,
+  useCallback,
   useEffect,
   useRef,
-  useState,
 } from "react";
 import { CartridgeLabel, type CartridgeLabelProps } from "./cartridge";
 
@@ -36,24 +36,57 @@ interface CircularGalleryProps extends HTMLAttributes<HTMLDivElement> {
 
 export const CircularGallery = forwardRef<HTMLDivElement, CircularGalleryProps>(
   ({ items, className, radius = 600, autoRotateSpeed = 0.02, ...props }, ref) => {
-    const [rotation, setRotation] = useState(0);
-    const [isScrolling, setIsScrolling] = useState(false);
+    const rotationRef = useRef(0);
+    const isScrollingRef = useRef(false);
     const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const animationFrameRef = useRef<number | null>(null);
+    const rotatorRef = useRef<HTMLDivElement | null>(null);
+    const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+
+    const anglePerItem = items.length > 0 ? 360 / items.length : 0;
+
+    const applyRotation = useCallback(
+      (rotation: number) => {
+        const rotator = rotatorRef.current;
+        if (rotator) {
+          rotator.style.transform = `rotateY(${rotation}deg)`;
+        }
+        for (let i = 0; i < items.length; i++) {
+          const el = itemRefs.current[i];
+          if (!el) continue;
+          const itemAngle = i * anglePerItem;
+          const totalRotation = rotation % 360;
+          const relativeAngle = (itemAngle + totalRotation + 360) % 360;
+          const normalizedAngle = Math.abs(
+            relativeAngle > 180 ? 360 - relativeAngle : relativeAngle
+          );
+          const opacity = Math.max(0.28, 1 - normalizedAngle / 180);
+          const scale = 0.86 + (1 - normalizedAngle / 180) * 0.14;
+          el.style.opacity = `${opacity}`;
+          el.style.transform = `rotateY(${itemAngle}deg) translateZ(${radius}px) scale(${scale})`;
+        }
+      },
+      [items.length, anglePerItem, radius]
+    );
+
+    useEffect(() => {
+      applyRotation(rotationRef.current);
+    }, [applyRotation]);
 
     useEffect(() => {
       const handleScroll = () => {
-        setIsScrolling(true);
+        isScrollingRef.current = true;
         if (scrollTimeoutRef.current) {
           clearTimeout(scrollTimeoutRef.current);
         }
 
         const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight;
         const scrollProgress = scrollableHeight > 0 ? window.scrollY / scrollableHeight : 0;
-        setRotation(scrollProgress * 360);
+        rotationRef.current = scrollProgress * 360;
+        applyRotation(rotationRef.current);
 
         scrollTimeoutRef.current = setTimeout(() => {
-          setIsScrolling(false);
+          isScrollingRef.current = false;
         }, 150);
       };
 
@@ -64,12 +97,13 @@ export const CircularGallery = forwardRef<HTMLDivElement, CircularGalleryProps>(
           clearTimeout(scrollTimeoutRef.current);
         }
       };
-    }, []);
+    }, [applyRotation]);
 
     useEffect(() => {
       const autoRotate = () => {
-        if (!isScrolling) {
-          setRotation((prev) => prev + autoRotateSpeed);
+        if (!isScrollingRef.current) {
+          rotationRef.current += autoRotateSpeed;
+          applyRotation(rotationRef.current);
         }
         animationFrameRef.current = requestAnimationFrame(autoRotate);
       };
@@ -79,11 +113,10 @@ export const CircularGallery = forwardRef<HTMLDivElement, CircularGalleryProps>(
       return () => {
         if (animationFrameRef.current) {
           cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
         }
       };
-    }, [autoRotateSpeed, isScrolling]);
-
-    const anglePerItem = items.length > 0 ? 360 / items.length : 0;
+    }, [autoRotateSpeed, applyRotation]);
 
     return (
       <div
@@ -93,21 +126,11 @@ export const CircularGallery = forwardRef<HTMLDivElement, CircularGalleryProps>(
         {...props}
       >
         <div
+          ref={rotatorRef}
           className="relative h-full w-full"
-          style={{
-            transform: `rotateY(${rotation}deg)`,
-            transformStyle: "preserve-3d",
-          }}
+          style={{ transformStyle: "preserve-3d", willChange: "transform" }}
         >
           {items.map((item, index) => {
-            const itemAngle = index * anglePerItem;
-            const totalRotation = rotation % 360;
-            const relativeAngle = (itemAngle + totalRotation + 360) % 360;
-            const normalizedAngle = Math.abs(
-              relativeAngle > 180 ? 360 - relativeAngle : relativeAngle
-            );
-            const opacity = Math.max(0.28, 1 - normalizedAngle / 180);
-            const scale = 0.86 + (1 - normalizedAngle / 180) * 0.14;
             const content = item.cartridge ? (
               <div className="group relative grid h-full w-full grid-rows-[auto_minmax(0,1fr)] overflow-hidden rounded-md border border-white/15 bg-[#121217] p-2 shadow-2xl backdrop-blur-lg">
                 <div className="flex items-center justify-between gap-2 px-1 pb-2 font-mono text-[0.55rem] font-black uppercase tracking-[0.2em] text-white/46">
@@ -153,15 +176,17 @@ export const CircularGallery = forwardRef<HTMLDivElement, CircularGalleryProps>(
             return (
               <div
                 key={`${item.common}-${item.href ?? item.binomial}`}
+                ref={(el) => {
+                  itemRefs.current[index] = el;
+                }}
                 className="absolute h-[340px] w-[245px] sm:h-[400px] sm:w-[300px]"
                 style={{
                   left: "50%",
                   marginLeft: "clamp(-150px, -38vw, -122px)",
                   marginTop: "clamp(-200px, -42vh, -170px)",
-                  opacity,
                   top: "50%",
-                  transform: `rotateY(${itemAngle}deg) translateZ(${radius}px) scale(${scale})`,
                   transition: "opacity 0.3s linear",
+                  willChange: "transform, opacity",
                 }}
               >
                 {item.href ? (

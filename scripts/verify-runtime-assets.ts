@@ -5,12 +5,12 @@ import {
   getRealmAssetRuntimeModel,
   REALM_RENDER_OVERRIDE_BY_ID,
   REALM_STATIC_VARIANT_BY_ID,
-} from "../src/games/voxel-realms/engine/realmAssetBudget";
+} from "@world/asset-budget";
 import {
   REALM_ARCHETYPE_IDS,
   REALM_ARCHETYPES,
   type RealmArchetypeId,
-} from "../src/games/voxel-realms/engine/realmClimber";
+} from "@world/climber";
 
 interface CliOptions {
   dist?: boolean;

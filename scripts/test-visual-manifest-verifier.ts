@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import type { RealmVisualManifest } from "../src/games/voxel-realms/engine/realmVisualManifest";
+import type { RealmVisualManifest } from "@assets/visual-manifest";
 import { verifyVisualManifest } from "./visual-manifest-verifier";
 
 interface Fixture {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Fires `onBackground` when the page becomes hidden (tab switch,
@@ -10,6 +10,13 @@ import { useEffect } from "react";
  * deterministic when Playwright loses focus mid-run.
  */
 export function useAutoPauseOnBackground(onBackground: () => void): void {
+  // Stable ref so effect runs once and every listener call sees the
+  // latest callback identity without re-binding.
+  const callbackRef = useRef(onBackground);
+  useEffect(() => {
+    callbackRef.current = onBackground;
+  }, [onBackground]);
+
   useEffect(() => {
     if (typeof document === "undefined" || typeof window === "undefined") {
       return undefined;
@@ -22,14 +29,14 @@ export function useAutoPauseOnBackground(onBackground: () => void): void {
 
     const handleVisibilityChange = () => {
       if (document.visibilityState === "hidden") {
-        onBackground();
+        callbackRef.current();
       }
     };
 
     const handleBlur = () => {
       // Some mobile browsers fire `blur` before `visibilitychange` when the
       // user swipes to the app switcher. Treat it as a pause signal too.
-      onBackground();
+      callbackRef.current();
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
@@ -41,5 +48,5 @@ export function useAutoPauseOnBackground(onBackground: () => void): void {
       window.removeEventListener("pagehide", handleBlur);
       window.removeEventListener("blur", handleBlur);
     };
-  }, [onBackground]);
+  }, []);
 }

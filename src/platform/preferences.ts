@@ -48,11 +48,22 @@ export async function loadRealmPreferences(): Promise<RealmPlayerPreferences> {
   return normalizeRealmPreferences(safeParse(raw));
 }
 
+const PREFERENCES_MAX_BYTES = 64 * 1024;
+
 export async function saveRealmPreferences(
   preferences: Partial<RealmPlayerPreferences>
 ): Promise<RealmPlayerPreferences> {
   const next = normalizeRealmPreferences(preferences);
-  await setPreferenceValue(REALM_PREFERENCES_KEY, JSON.stringify(next));
+  const serialized = JSON.stringify(next);
+  if (serialized.length > PREFERENCES_MAX_BYTES) {
+    console.warn(
+      `[preferences] rejected oversized payload (${serialized.length} > ${PREFERENCES_MAX_BYTES}), falling back to defaults`
+    );
+    const safe = { ...DEFAULT_REALM_PREFERENCES };
+    await setPreferenceValue(REALM_PREFERENCES_KEY, JSON.stringify(safe));
+    return safe;
+  }
+  await setPreferenceValue(REALM_PREFERENCES_KEY, serialized);
   return next;
 }
 
@@ -88,12 +99,56 @@ export async function resetRealmPreferencesForTests(): Promise<void> {
   await Preferences.remove({ key: REALM_PREFERENCES_KEY });
 }
 
+const RANK_MAX_LENGTH = 32;
+const RANK_LABEL_MAX_LENGTH = 64;
+
+function coerceBoolean(value: unknown, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
+function coerceFiniteNumber(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+}
+
+function coerceCappedString(value: unknown, fallback: string, max: number): string {
+  if (typeof value !== "string") {
+    return fallback;
+  }
+  return value.length > max ? value.slice(0, max) : value;
+}
+
+function coerceExpeditionRecord(
+  value: unknown
+): RealmExpeditionRecord | null {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  const r = value as Record<string, unknown>;
+  return {
+    score: coerceFiniteNumber(r.score, 0),
+    totalSignals: coerceFiniteNumber(r.totalSignals, 0),
+    extractedCount: coerceFiniteNumber(r.extractedCount, 0),
+    collapsedCount: coerceFiniteNumber(r.collapsedCount, 0),
+    completedCount: coerceFiniteNumber(r.completedCount, 0),
+    bestStabilityRemaining: coerceFiniteNumber(r.bestStabilityRemaining, 0),
+    rank: coerceCappedString(r.rank, "", RANK_MAX_LENGTH),
+    rankLabel: coerceCappedString(r.rankLabel, "", RANK_LABEL_MAX_LENGTH),
+    recordedAt: coerceFiniteNumber(r.recordedAt, 0),
+  };
+}
+
 function normalizeRealmPreferences(
   preferences: Partial<RealmPlayerPreferences> | null
 ): RealmPlayerPreferences {
+  const source = (preferences ?? {}) as Record<string, unknown>;
   return {
-    ...DEFAULT_REALM_PREFERENCES,
-    ...preferences,
+    audioEnabled: coerceBoolean(source.audioEnabled, DEFAULT_REALM_PREFERENCES.audioEnabled),
+    motionReduced: coerceBoolean(source.motionReduced, DEFAULT_REALM_PREFERENCES.motionReduced),
+    hapticsEnabled: coerceBoolean(source.hapticsEnabled, DEFAULT_REALM_PREFERENCES.hapticsEnabled),
+    onboardingSeen: coerceBoolean(source.onboardingSeen, DEFAULT_REALM_PREFERENCES.onboardingSeen),
+    telemetryOptIn: coerceBoolean(source.telemetryOptIn, DEFAULT_REALM_PREFERENCES.telemetryOptIn),
+    bestExpedition: coerceExpeditionRecord(source.bestExpedition),
+    lastExpedition: coerceExpeditionRecord(source.lastExpedition),
   };
 }
 

@@ -163,8 +163,9 @@ export async function playCue(cue: VoxelRealmsCue): Promise<void> {
     envelope.gain.linearRampToValueAtTime(descriptor.volume, now + Math.min(0.02, durationSec / 3));
     envelope.gain.exponentialRampToValueAtTime(0.0001, now + durationSec);
 
+    let filter: BiquadFilterNode | null = null;
     if (descriptor.filterHz) {
-      const filter = ctx.createBiquadFilter();
+      filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
       filter.frequency.value = descriptor.filterHz;
       osc.connect(filter);
@@ -177,12 +178,9 @@ export async function playCue(cue: VoxelRealmsCue): Promise<void> {
     osc.start(now);
     osc.stop(now + durationSec);
     osc.onended = () => {
-      try {
-        osc.disconnect();
-        envelope.disconnect();
-      } catch {
-        // Already disconnected — no-op.
-      }
+      try { osc.disconnect(); } catch {}
+      try { filter?.disconnect(); } catch {}
+      try { envelope.disconnect(); } catch {}
     };
   } catch {
     // Any audio error is non-fatal.
@@ -193,6 +191,11 @@ export async function playCue(cue: VoxelRealmsCue): Promise<void> {
  * Teardown hook for tests and HMR.
  */
 export function disposeAudioForTests(): void {
+  if (masterGain) {
+    try {
+      masterGain.disconnect();
+    } catch {}
+  }
   if (audioContext) {
     audioContext.close().catch(() => undefined);
   }

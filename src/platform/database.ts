@@ -9,13 +9,16 @@ import { defineCustomElements as defineJeepSqlite } from "jeep-sqlite/loader";
 const DB_NAME = "voxel_realms";
 const DB_VERSION = 1;
 
+export const APP_KV_VALUE_MAX_BYTES = 128 * 1024;
+
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS app_kv (
   namespace TEXT NOT NULL,
   item_key TEXT NOT NULL,
   value TEXT NOT NULL,
   updated_at TEXT NOT NULL,
-  PRIMARY KEY (namespace, item_key)
+  PRIMARY KEY (namespace, item_key),
+  CHECK (length(value) <= ${APP_KV_VALUE_MAX_BYTES})
 );
 `;
 
@@ -60,6 +63,13 @@ export async function closeDatabase(): Promise<void> {
     await sqlite.closeConnection(DB_NAME, false);
   }
   connectionPromise = null;
+  webReadyPromise = null;
+  writeQueue = Promise.resolve();
+
+  if (typeof document !== "undefined") {
+    const jeep = document.querySelector("jeep-sqlite");
+    jeep?.remove();
+  }
 }
 
 async function initializeDatabase(): Promise<SQLiteDBConnection> {

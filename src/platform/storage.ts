@@ -1,5 +1,7 @@
-import { getDatabase, withDatabaseWriteLock } from "./database";
+import { APP_KV_VALUE_MAX_BYTES, getDatabase, withDatabaseWriteLock } from "./database";
 import { initializeRealmPreferences } from "./preferences";
+
+let storageInitFailureLogged = false;
 
 const RUN_NAMESPACE = "realm-runs";
 const SETTINGS_NAMESPACE = "settings";
@@ -72,18 +74,34 @@ async function getItem<T>(namespace: string, key: string): Promise<T | null> {
     return value ? safeParse<T>(value, scopedKey(namespace, key)) : null;
   }
 
-  const db = await getDatabase();
-  const result = await db.query(
-    "SELECT value FROM app_kv WHERE namespace = ? AND item_key = ? LIMIT 1",
-    [namespace, key]
-  );
-  const row = result.values?.[0];
-  return row ? safeParse<T>(String(row.value), `${namespace}::${key}`) : null;
+  try {
+    const db = await getDatabase();
+    const result = await db.query(
+      "SELECT value FROM app_kv WHERE namespace = ? AND item_key = ? LIMIT 1",
+      [namespace, key]
+    );
+    const row = result.values?.[0];
+    return row ? safeParse<T>(String(row.value), `${namespace}::${key}`) : null;
+  } catch (error) {
+    if (!storageInitFailureLogged) {
+      console.warn("[persistence] database unavailable, returning null for reads", error);
+      storageInitFailureLogged = true;
+    }
+    return null;
+  }
 }
 
 async function setItem<T>(namespace: string, key: string, value: T): Promise<void> {
+  const serialized = JSON.stringify(value);
+  if (serialized.length > APP_KV_VALUE_MAX_BYTES) {
+    console.warn(
+      `[persistence] rejected oversized value for ${namespace}::${key} (${serialized.length} > ${APP_KV_VALUE_MAX_BYTES})`
+    );
+    return;
+  }
+
   if (isBrowserTestEnv()) {
-    testStore.set(scopedKey(namespace, key), JSON.stringify(value));
+    testStore.set(scopedKey(namespace, key), serialized);
     return;
   }
 
@@ -94,7 +112,7 @@ async function setItem<T>(namespace: string, key: string, value: T): Promise<voi
         VALUES (?, ?, ?, ?)
         ON CONFLICT(namespace, item_key)
         DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
-      [namespace, key, JSON.stringify(value), now]
+      [namespace, key, serialized, now]
     );
   });
 }

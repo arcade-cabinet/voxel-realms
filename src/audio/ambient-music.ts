@@ -105,6 +105,7 @@ let audioContext: AudioContext | null = null;
 let ambientBus: GainNode | null = null;
 let active: AmbientGraph | null = null;
 let audioEnabledCache: { value: boolean; expiresAt: number } | null = null;
+let playInFlight: Promise<void> | null = null;
 
 function isTestRun(): boolean {
   return (
@@ -168,130 +169,167 @@ export async function playAmbientForArchetype(archetype: string): Promise<void> 
 
   if (active?.archetype === archetype) return;
 
-  const enabled = await isAudioEnabled();
-  if (!enabled) {
-    stopAmbient();
-    return;
-  }
+  // Serialise all play/stop transitions. Without this, rapid consecutive
+  // calls (StrictMode double-invoke, phase-change bursts) interleave
+  // their awaits, each building a node graph while believing it's the
+  // only one — leaking every previous graph.
+  const prior = playInFlight ?? Promise.resolve();
+  const run = prior.then(async () => {
+    if (active?.archetype === archetype) return;
 
-  const ctx = ensureAudioContext();
-  if (!ctx || !ambientBus) return;
-
-  try {
-    if (ctx.state === "suspended") {
-      await ctx.resume().catch(() => undefined);
-    }
-  } catch {
-    return;
-  }
-
-  stopAmbient();
-
-  try {
-    const oscA = ctx.createOscillator();
-    oscA.type = voice.oscA;
-    oscA.frequency.value = voice.rootHz;
-    oscA.detune.value = -voice.detuneCents;
-
-    const oscB = ctx.createOscillator();
-    oscB.type = voice.oscB;
-    oscB.frequency.value = voice.fifthHz;
-    oscB.detune.value = voice.detuneCents;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = "lowpass";
-    filter.Q.value = 0.7;
-    filter.frequency.value = voice.filterBaseHz;
-
-    const envelope = ctx.createGain();
-    const now = ctx.currentTime;
-    envelope.gain.setValueAtTime(0.0001, now);
-    envelope.gain.exponentialRampToValueAtTime(voice.volume, now + FADE_IN_MS / 1_000);
-
-    oscA.connect(filter);
-    oscB.connect(filter);
-    filter.connect(envelope);
-    envelope.connect(ambientBus);
-
-    let lfo: OscillatorNode | null = null;
-    let lfoDepth: GainNode | null = null;
-    if (!isReducedMotion()) {
-      lfo = ctx.createOscillator();
-      lfo.type = "sine";
-      lfo.frequency.value = 0.13;
-      lfoDepth = ctx.createGain();
-      lfoDepth.gain.value = voice.filterSweepHz;
-      lfo.connect(lfoDepth);
-      lfoDepth.connect(filter.frequency);
-      lfo.start(now);
+    const enabled = await isAudioEnabled();
+    if (!enabled) {
+      stopAmbient();
+      return;
     }
 
-    oscA.start(now);
-    oscB.start(now);
+    const ctx = ensureAudioContext();
+    if (!ctx || !ambientBus) return;
 
-    active = {
-      archetype: archetype as AmbientArchetypeId,
-      oscA,
-      oscB,
-      filter,
-      lfo,
-      lfoDepth,
-      envelope,
-    };
-  } catch {
+    try {
+      if (ctx.state === "suspended") {
+        await ctx.resume().catch(() => undefined);
+      }
+    } catch {
+      return;
+    }
+
+    // Tear down any previous graph before building a new one. tearDownGraph
+    // is synchronous, so this cannot race with node creation below.
     stopAmbient();
-  }
+
+    try {
+      const oscA = ctx.createOscillator();
+      oscA.type = voice.oscA;
+      oscA.frequency.value = voice.rootHz;
+      oscA.detune.value = -voice.detuneCents;
+
+      const oscB = ctx.createOscillator();
+      oscB.type = voice.oscB;
+      oscB.frequency.value = voice.fifthHz;
+      oscB.detune.value = voice.detuneCents;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.Q.value = 0.7;
+      filter.frequency.value = voice.filterBaseHz;
+
+      const envelope = ctx.createGain();
+      const now = ctx.currentTime;
+      envelope.gain.setValueAtTime(0.0001, now);
+      envelope.gain.exponentialRampToValueAtTime(voice.volume, now + FADE_IN_MS / 1_000);
+
+      oscA.connect(filter);
+      oscB.connect(filter);
+      filter.connect(envelope);
+      envelope.connect(ambientBus);
+
+      let lfo: OscillatorNode | null = null;
+      let lfoDepth: GainNode | null = null;
+      if (!isReducedMotion()) {
+        lfo = ctx.createOscillator();
+        lfo.type = "sine";
+        lfo.frequency.value = 0.13;
+        lfoDepth = ctx.createGain();
+        lfoDepth.gain.value = voice.filterSweepHz;
+        lfo.connect(lfoDepth);
+        lfoDepth.connect(filter.frequency);
+        lfo.start(now);
+      }
+
+      oscA.start(now);
+      oscB.start(now);
+
+      active = {
+        archetype: archetype as AmbientArchetypeId,
+        oscA,
+        oscB,
+        filter,
+        lfo,
+        lfoDepth,
+        envelope,
+      };
+    } catch {
+      stopAmbient();
+    }
+  });
+
+  const tracked: Promise<void> = run.catch(() => undefined).finally(() => {
+    if (playInFlight === tracked) {
+      playInFlight = null;
+    }
+  });
+  playInFlight = tracked;
+
+  return run;
+}
+
+function tearDownGraph(graph: AmbientGraph): void {
+  // Stop + disconnect unconditionally in try/catches. We do not rely on
+  // onended because it may never fire if the oscillator never started
+  // (suspended context, already stopped, etc.) — that would leak the
+  // whole node graph.
+  try {
+    graph.oscA.stop();
+  } catch {}
+  try {
+    graph.oscB.stop();
+  } catch {}
+  try {
+    graph.lfo?.stop();
+  } catch {}
+  try {
+    graph.oscA.disconnect();
+  } catch {}
+  try {
+    graph.oscB.disconnect();
+  } catch {}
+  try {
+    graph.filter.disconnect();
+  } catch {}
+  try {
+    graph.envelope.disconnect();
+  } catch {}
+  try {
+    graph.lfo?.disconnect();
+  } catch {}
+  try {
+    graph.lfoDepth?.disconnect();
+  } catch {}
 }
 
 export function stopAmbient(): void {
-  if (!active || !audioContext) return;
+  if (!active) return;
 
   const graph = active;
   active = null;
-  const now = audioContext.currentTime;
 
-  try {
-    graph.envelope.gain.cancelScheduledValues(now);
-    graph.envelope.gain.setValueAtTime(graph.envelope.gain.value, now);
-    graph.envelope.gain.exponentialRampToValueAtTime(0.0001, now + FADE_OUT_MS / 1_000);
-  } catch {
-    // ignore ramp errors
-  }
-
-  const stopAt = now + FADE_OUT_MS / 1_000 + 0.05;
-  try {
-    graph.oscA.stop(stopAt);
-    graph.oscB.stop(stopAt);
-    if (graph.lfo) graph.lfo.stop(stopAt);
-  } catch {
-    // Node may already be stopped.
-  }
-
-  const disconnectLater = () => {
+  // Best-effort fade-out so the user doesn't hear a click. The teardown
+  // still happens even if the ramp throws.
+  if (audioContext) {
+    const now = audioContext.currentTime;
     try {
-      graph.oscA.disconnect();
-      graph.oscB.disconnect();
-      graph.filter.disconnect();
-      graph.envelope.disconnect();
-      if (graph.lfo) graph.lfo.disconnect();
-      if (graph.lfoDepth) graph.lfoDepth.disconnect();
+      graph.envelope.gain.cancelScheduledValues(now);
+      graph.envelope.gain.setValueAtTime(graph.envelope.gain.value, now);
+      graph.envelope.gain.exponentialRampToValueAtTime(0.0001, now + FADE_OUT_MS / 1_000);
     } catch {
-      // already torn down
+      // ignore ramp errors
     }
-  };
-  graph.oscA.onended = disconnectLater;
+  }
+
+  tearDownGraph(graph);
 }
 
 export function disposeAmbientForTests(): void {
-  if (active && audioContext) {
-    try {
-      active.oscA.stop();
-      active.oscB.stop();
-      if (active.lfo) active.lfo.stop();
-    } catch {
-      // ignore
-    }
+  if (active) {
+    const graph = active;
     active = null;
+    tearDownGraph(graph);
+  }
+  if (ambientBus) {
+    try {
+      ambientBus.disconnect();
+    } catch {}
   }
   if (audioContext) {
     audioContext.close().catch(() => undefined);
@@ -299,6 +337,7 @@ export function disposeAmbientForTests(): void {
   audioContext = null;
   ambientBus = null;
   audioEnabledCache = null;
+  playInFlight = null;
 }
 
 export const AMBIENT_ARCHETYPE_IDS: AmbientArchetypeId[] = [
