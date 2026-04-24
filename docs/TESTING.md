@@ -76,9 +76,15 @@ pnpm build
 ### End-to-End (Playwright)
 
 ```bash
-pnpm test:e2e          # run full E2E matrix (desktop + mobile-portrait + tablet-portrait)
-pnpm test:e2e:ci       # CI-facing subset (desktop-chromium project only, headless)
+pnpm test:e2e                  # run full E2E matrix (desktop + mobile-portrait + tablet-portrait)
+pnpm test:e2e:ci               # CI-facing subset (desktop-chromium project only, headless)
+pnpm test:store-screenshots    # capture landing + HUD PNGs for store listings (see e2e/store-screenshots.spec.ts)
 ```
+
+Store screenshots are tagged `@store` and excluded from the default
+E2E runs. Output lands in `test-screenshots/store/` and needs a
+designer pass (overlay copy, device frame) before store submission —
+the raw PNGs are the starting point, not the final artifact.
 
 The E2E harness lives in `e2e/` and uses the Vite dev server via
 `playwright.config.ts`. Specs:
