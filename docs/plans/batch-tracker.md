@@ -40,11 +40,11 @@ not done — even if every sub-task below is checked.
 | 2 | Player journey & onboarding | MERGED | Slice P2.1/2/4/5 (#16) + P2.3 coach (#18) + P2.6/7 beats (#30) |
 | 3 | Core gameplay polish | DONE | P3.1/2/3/4/5/6/7 all shipped |
 | 4 | Visual identity & assets | PARTIAL | P4.6 perf budget ✅, P4.1–4.5 deferred |
-| 5 | Mobile UX, controls, persistence | PARTIAL | P5.4 settings ✅, P5.5 pause ✅, P5.1/2/3/6 deferred |
-| 6 | Audio, haptics, splash | MOSTLY DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.2/6.4 deferred |
-| 7 | Testing breadth | PARTIAL | P4.6 budget test subsumes P7.1 spirit; P7.2–7.6 deferred |
-| 8 | Release ops & store-readiness | PARTIAL | Store listing, privacy, support, feedback drafted; signing/icons/trailer deferred |
-| 9 | Telemetry & playtest ops | PARTIAL | P9.1 error telemetry ✅, P9.3 feedback doc ✅; P9.2/9.4 deferred |
+| 5 | Mobile UX, controls, persistence | MOSTLY DONE | P5.2/3/4/5/6 ✅, P5.1 touch-controls polish deferred |
+| 6 | Audio, haptics, splash | DONE | P6.1 SFX ✅, P6.3 haptics ✅, P6.4 boot splash ✅; P6.2 ambient music deferred |
+| 7 | Testing breadth | PARTIAL | P4.6 budget test subsumes P7.1 spirit; P7.2 QA rubric ✅; P7.3–7.6 deferred |
+| 8 | Release ops & store-readiness | PARTIAL | Store listing, privacy, support, feedback, iOS signing runbook drafted; icons/secrets/trailer deferred |
+| 9 | Telemetry & playtest ops | MOSTLY DONE | P9.1 error telemetry ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅; P9.2 native crash SDK deferred |
 
 ## Completed subtasks (quick index)
 
@@ -79,17 +79,17 @@ not done — even if every sub-task below is checked.
 
 **Pillar 5 — Mobile UX**:
 - P5.1 Touch controls rework · deferred (existing FloatingJoystick works; polish deferred)
-- P5.2 Safe-area / orientation · deferred
-- P5.3 Resume flow · deferred
+- P5.2 Safe-area / orientation · Android portrait lock + safe-area-inset body padding (PRs #41, #42)
+- P5.3 Resume flow · useAutoPauseOnBackground hook auto-pauses on visibility/pagehide/blur, 3 tests (PR #45)
 - P5.4 Settings surface · SettingsScreen.tsx with 4 toggles, 4 tests
 - P5.5 Pause overlay · PauseOverlay.tsx with Escape/P/backButton, 4 tests
-- P5.6 A11y sweep · partial (aria-modal dialogs, role=switch); full sweep deferred
+- P5.6 A11y sweep · aria-live HUD announcements, noscript banner, safe-area padding (PR #41)
 
 **Pillar 6 — Audio + haptics + splash**:
 - P6.1 SFX layer · sfx.ts procedural Web Audio cues, 3 tests
 - P6.2 Ambient music · deferred
 - P6.3 Haptics · haptics.ts with Capacitor + vibrate fallback, 3 tests
-- P6.4 Splash polish · deferred
+- P6.4 Splash polish · inline-CSS boot splash paints brand grid on first HTML parse, fades on React mount, respects prefers-reduced-motion (PR #40)
 
 **Pillar 7 — Testing breadth**:
 - P7.1 Perf budget test · covered by P4.6
@@ -101,7 +101,7 @@ not done — even if every sub-task below is checked.
 
 **Pillar 8 — Release ops**:
 - P8.1 Android signing · existing `release.yml` already supports keystore; secrets setup deferred
-- P8.2 iOS signing doc · deferred
+- P8.2 iOS signing doc · docs/iOS_SIGNING.md runbook drafted (PR #44)
 - P8.3 App icon + splash generation · deferred
 - P8.4 Store screenshots · deferred
 - P8.5 Trailer · deferred
@@ -112,12 +112,12 @@ not done — even if every sub-task below is checked.
 - P9.1 Error telemetry · errors.ts with redaction + 30-entry ring buffer, 7 tests
 - P9.2 Native crash reporting · deferred (requires external SDK decision)
 - P9.3 Feedback channel doc · FEEDBACK.md drafted
-- P9.4 Playtest checklist · partial via LAUNCH_READINESS.md
+- P9.4 Playtest digest · weekly workflow collates feedback-labelled issues into a digest issue (PR #43); LAUNCH_READINESS.md still the manual checklist
 
 ## In-flight PRs
 
-- **Merged since last tick**: #35 (P4.6 budget + P9.1 telemetry clean re-cherry-pick) and #36 (P3.3 archetype verbs).
-- **Open**: none outside release-please.
+- **Merged wave 2**: #38 P3.4 hazard vocab, #39 P3.5 scan pulse, #40 P6.4 boot splash, #41 P5.6 a11y, #42 P5.2 portrait lock, #43 P9.4 digest, #44 P8.2 iOS signing, #45 P5.3 auto-pause.
+- **Open**: none outside release-please (#17) and dependabot (#19, #20).
 - Release-please PR #17 accumulates every `feat:` and `fix:` commit
   and will cut a v0.3.0 (or higher) once it merges.
 
@@ -136,11 +136,11 @@ autonomous pass:
 
 - Real asset curation replacing marker anchors (P4.1–P4.4).
 - Pillar 3 complete (verbs + hazard vocab + pulse feedback all shipped).
-- Full touch-controls polish on physical devices (P5.1 / P5.2 / P5.3).
-- Ambient music bed and splash polish (P6.2 / P6.4).
-- Device-matrix E2E + coverage artifacts (P7.5 / P7.6).
-- Store-asset pipeline: icons, screenshots, trailer, signing secrets (P8.1–P8.5).
-- Native crash reporting and public-playtest digest workflow (P9.2 / P9.4).
+- Touch-controls polish on physical devices (P5.1).
+- Ambient music bed (P6.2).
+- Replay runtime check, visual-manifest expansion ≥12 captures, device-matrix E2E, coverage artifact (P7.3–P7.6).
+- Store-asset pipeline: icons, screenshots, trailer, signing secrets (P8.1 / P8.3 / P8.4 / P8.5).
+- Native crash reporting SDK pick (P9.2).
 
 ## Tracked incidents
 
