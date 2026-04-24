@@ -3,6 +3,7 @@ import path from "node:path";
 import {
   getRealmAssetBudget,
   getRealmAssetRuntimeModel,
+  REALM_RENDER_OVERRIDE_BY_ID,
   REALM_STATIC_VARIANT_BY_ID,
 } from "../src/games/voxel-realms/engine/realmAssetBudget";
 import {
@@ -19,7 +20,13 @@ interface CliOptions {
 
 interface AssetCheck {
   scope: "public" | "dist";
-  kind: "source" | "runtime" | "static-variant" | "pruned-source" | "prune-report";
+  kind:
+    | "source"
+    | "runtime"
+    | "static-variant"
+    | "render-override"
+    | "pruned-source"
+    | "prune-report";
   id: string;
   publicPath: string;
   ok: boolean;
@@ -54,6 +61,15 @@ for (const asset of uniqueAssets) {
       })
     );
   }
+
+  const renderOverride = REALM_RENDER_OVERRIDE_BY_ID[asset.id];
+  if (renderOverride) {
+    checks.push(
+      checkPath("public", "render-override", asset.id, renderOverride.publicPath, {
+        expectedBytes: renderOverride.sizeBytes,
+      })
+    );
+  }
 }
 
 if (options.dist) {
@@ -68,6 +84,11 @@ if (options.dist) {
       runtimeModel.source === "static-variant"
     ) {
       checks.push(checkPrunedSource(asset.id, asset.publicPath));
+    }
+
+    const renderOverride = REALM_RENDER_OVERRIDE_BY_ID[asset.id];
+    if (renderOverride) {
+      checks.push(checkPath("dist", "render-override", asset.id, renderOverride.publicPath));
     }
   }
 
@@ -236,10 +257,13 @@ function printHumanReport(checks: AssetCheck[], failed: AssetCheck[]) {
   const staticVariants = checks.filter(
     (check) => check.kind === "static-variant" && check.ok
   ).length;
+  const renderOverrides = checks.filter(
+    (check) => check.kind === "render-override" && check.ok
+  ).length;
 
   console.log(
     `Runtime asset verification: ${checks.length - failed.length}/${checks.length} checks passed ` +
-      `(${runtime} runtime paths, ${staticVariants} static variants, ${pruned} pruned sources)`
+      `(${runtime} runtime paths, ${staticVariants} static variants, ${renderOverrides} render overrides, ${pruned} pruned sources)`
   );
 
   if (failed.length > 0) {

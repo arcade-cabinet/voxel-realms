@@ -3,6 +3,7 @@ import {
   canPromoteRealmAsset,
   getPromotedRealmAssets,
   getRealmAssetBudget,
+  getRealmAssetRenderModel,
   getRealmAssetRuntimeModel,
   REALM_ASSET_INLINE_MAX_BYTES,
   REALM_ASSET_SAFE_MAX_BYTES,
@@ -135,7 +136,7 @@ describe("realm asset budget", () => {
       createAnomaly("safe-tree", "tree", { x: 3, y: 0, z: 0 }),
       createAnomaly("safe-anky", "ankylosaurus", { x: 4, y: 0, z: 0 }),
       createAnomaly("deferred-viking", "viking", { x: 1.5, y: 0, z: 0 }),
-      createAnomaly("reference-house", "house-piece", { x: 2, y: 0, z: 0 }),
+      createAnomaly("override-house", "house-piece", { x: 2, y: 0, z: 0 }),
     ];
     const policy = {
       maxActiveModels: 3,
@@ -145,16 +146,16 @@ describe("realm asset budget", () => {
     const selections = selectRenderableRealmAnomalies(anomalies, { x: 0, y: 0, z: 0 }, policy);
     const summary = summarizeRenderableRealmAnomalies(anomalies, { x: 0, y: 0, z: 0 }, policy);
 
-    expect(renderedIds(selections)).toEqual(["inline-trap", "safe-tree", "deferred-viking"]);
+    expect(renderedIds(selections)).toEqual(["inline-trap", "deferred-viking", "override-house"]);
     expect(summary.selectedModels).toBe(3);
-    expect(summary.selectedBytes).toBe(2_780_328);
+    expect(summary.selectedBytes).toBe(1_279_564);
     expect(summary.markerOnlyAnomalies).toBe(2);
-    expect(summary.selectedInlineModels).toBe(2);
-    expect(summary.selectedSafeModels).toBe(1);
+    expect(summary.selectedInlineModels).toBe(3);
+    expect(summary.selectedSafeModels).toBe(0);
     expect(summary.deferredAnomalies).toBe(1);
     expect(summary.referenceAnomalies).toBe(1);
     expect(summary.nearestSelected?.anomalyId).toBe("inline-trap");
-    expect(selections.find((selection) => selection.anomalyId === "safe-anky")?.reason).toContain(
+    expect(selections.find((selection) => selection.anomalyId === "safe-tree")?.reason).toContain(
       "budget"
     );
     expect(selections.find((selection) => selection.anomalyId === "deferred-viking")?.tier).toBe(
@@ -166,9 +167,15 @@ describe("realm asset budget", () => {
     expect(
       selections.find((selection) => selection.anomalyId === "deferred-viking")?.shouldRenderModel
     ).toBe(true);
+    expect(selections.find((selection) => selection.anomalyId === "override-house")?.tier).toBe(
+      "reference"
+    );
     expect(
-      selections.find((selection) => selection.anomalyId === "reference-house")?.shouldRenderModel
-    ).toBe(false);
+      selections.find((selection) => selection.anomalyId === "override-house")?.modelSource
+    ).toBe("render-override");
+    expect(
+      selections.find((selection) => selection.anomalyId === "override-house")?.shouldRenderModel
+    ).toBe(true);
   });
 
   test("can restrict runtime selection to inline assets only", () => {
@@ -187,6 +194,42 @@ describe("realm asset budget", () => {
     ).toBe(false);
   });
 
+  test("render-override promotes reference-tier sources to GLB without touching pool determinism", () => {
+    const housePiece = findAsset("house-piece");
+    const voxHouse = findAsset("vox-house");
+
+    const housePieceBudget = getRealmAssetBudget(housePiece);
+    const voxHouseBudget = getRealmAssetBudget(voxHouse);
+    expect(housePieceBudget.tier).toBe("reference");
+    expect(housePieceBudget.canLoadAtRuntime).toBe(false);
+    expect(voxHouseBudget.tier).toBe("reference");
+    expect(voxHouseBudget.canLoadAtRuntime).toBe(false);
+
+    const housePieceRuntime = getRealmAssetRuntimeModel(housePiece);
+    const voxHouseRuntime = getRealmAssetRuntimeModel(voxHouse);
+    expect(housePieceRuntime.canLoadAtRuntime).toBe(false);
+    expect(housePieceRuntime.source).toBe("none");
+    expect(voxHouseRuntime.canLoadAtRuntime).toBe(false);
+    expect(voxHouseRuntime.source).toBe("none");
+
+    const housePieceRender = getRealmAssetRenderModel(housePiece);
+    const voxHouseRender = getRealmAssetRenderModel(voxHouse);
+    expect(housePieceRender.source).toBe("render-override");
+    expect(housePieceRender.publicPath).toBe(
+      "/assets/models/chaos-slice/voxel-props-pack-ruin/treasure-chest.glb"
+    );
+    expect(housePieceRender.tier).toBe("inline");
+    expect(housePieceRender.sizeBytes).toBe(338_752);
+    expect(housePieceRender.canLoadAtRuntime).toBe(true);
+    expect(voxHouseRender.source).toBe("render-override");
+    expect(voxHouseRender.publicPath).toBe(
+      "/assets/models/chaos-slice/voxel-props-pack-ruin/closet.glb"
+    );
+    expect(voxHouseRender.tier).toBe("inline");
+    expect(voxHouseRender.sizeBytes).toBe(163_860);
+    expect(voxHouseRender.canLoadAtRuntime).toBe(true);
+  });
+
   test("keeps safe assets marker-only when outside safe load radius", () => {
     const selections = selectRenderableRealmAnomalies(
       [createAnomaly("safe-tree", "tree", { x: 16, y: 0, z: 0 })],
@@ -203,7 +246,7 @@ describe("realm asset budget", () => {
       createAnomaly("safe-tree", "tree", { x: 24, y: 0, z: 0 }),
       createAnomaly("inline-trap", "trap", { x: 50, y: 0, z: 0 }),
       createAnomaly("deferred-viking", "viking", { x: 52, y: 0, z: 0 }),
-      createAnomaly("reference-house", "house-piece", { x: 4, y: 0, z: 0 }),
+      createAnomaly("override-house", "house-piece", { x: 4, y: 0, z: 0 }),
       createAnomaly("safe-anky", "ankylosaurus", { x: 48, y: 0, z: 0 }),
       createAnomaly("safe-griffin", "griffin", { x: 49, y: 0, z: 0 }),
     ];
@@ -212,11 +255,14 @@ describe("realm asset budget", () => {
       .map((selection) => selection.modelPublicPath);
     const preloadPaths = selectPreloadRealmModelPaths(anomalies, { x: 0, y: 0, z: 0 });
 
-    expect(renderPaths).toEqual([]);
+    expect(renderPaths).toEqual([
+      "/assets/models/chaos-slice/voxel-props-pack-ruin/treasure-chest.glb",
+    ]);
     expect(preloadPaths).toEqual([
       "/assets/models/chaos-slice/all-trees-uploads/Tree 10_2.glb",
       "/assets/models/chaos-slice/trap-pack-upload/trap 18.glb",
       "/assets/models/static-variants/viking/male-d1.static.glb",
+      "/assets/models/chaos-slice/voxel-props-pack-ruin/treasure-chest.glb",
     ]);
   });
 });
