@@ -55,11 +55,14 @@ store-submission attempt. Automated CI/CD is assumed green first.
 
 ## Store-Submission Blockers
 
-- [ ] Android signing secrets configured
-- [ ] iOS signing and distribution credentials configured
-- [ ] Store listing copy finalized
-- [ ] Screenshots and trailer assets prepared
-- [ ] Privacy/support/legal requirements reviewed
+- [ ] Android signing secrets configured (keystore decoded in `release.yml`)
+- [ ] iOS signing and distribution credentials configured (documented in `docs/RELEASE.md`)
+- [x] Store listing copy drafted — see [store-listing.md](./store-listing.md) (open questions still remain)
+- [ ] Screenshots and trailer assets prepared (P8.4 / P8.5)
+- [x] Privacy policy drafted — see [PRIVACY.md](./PRIVACY.md)
+- [x] Support doc drafted — see [SUPPORT.md](./SUPPORT.md)
+- [x] Feedback channel doc drafted — see [FEEDBACK.md](./FEEDBACK.md)
+- [ ] Privacy / support / legal documents pass legal review and are hosted at stable URLs
 
 ## Sign-Off
 
