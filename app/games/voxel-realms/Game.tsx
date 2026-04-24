@@ -19,8 +19,10 @@ import { ExtractionBeat } from "./ui/ExtractionBeat";
 import { FirstRunCoach } from "./ui/FirstRunCoach";
 import { HUD } from "./ui/HUD";
 import { NextRealmSplash } from "./ui/NextRealmSplash";
+import { PauseOverlay } from "./ui/PauseOverlay";
 import { RealmCollapsedScreen } from "./ui/RealmCollapsedScreen";
 import { RealmLanding } from "./ui/RealmLanding";
+import { SettingsScreen } from "./ui/SettingsScreen";
 
 const MENU_PREVIEW_DELAY_MS = 900;
 const PLAY_SCENE_DELAY_MS = 120;
@@ -30,11 +32,45 @@ function VoxelApp() {
   const realmState = useTrait(voxelEntity, RealmTrait);
   const sceneMounted = useDeferredSceneMount(state.phase);
   const worldInteractive = useDeferredWorldInteractivity(state.phase === "playing");
+  const [paused, setPaused] = useState(false);
+  const [pauseSettingsOpen, setPauseSettingsOpen] = useState(false);
 
   const handleStart = () => {
+    setPaused(false);
+    setPauseSettingsOpen(false);
     voxelEntity.set(RealmTrait, createInitialRealmRuntime());
     voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
   };
+
+  const handleRestartRealm = () => {
+    voxelEntity.set(
+      RealmTrait,
+      createInitialRealmRuntime(
+        realmState.baseSeed,
+        realmState.realmIndex,
+        realmState.completedRealms
+      )
+    );
+    voxelEntity.set(VoxelTrait, createInitialVoxelState("playing"));
+    window.dispatchEvent(new Event("voxel:reset-player"));
+    setPaused(false);
+  };
+
+  useEffect(() => {
+    if (state.phase !== "playing") return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.code === "KeyP") {
+        event.preventDefault();
+        setPaused((v) => !v);
+      }
+      if (event.code === "Escape" && !paused) {
+        event.preventDefault();
+        setPaused(true);
+      }
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [state.phase, paused]);
 
   return (
     <GameViewport
@@ -73,6 +109,47 @@ function VoxelApp() {
             archetypeId={realmState.activeRealm.archetype.id}
             archetypeName={realmState.activeRealm.archetype.name}
           />
+          <button
+            type="button"
+            onClick={() => setPaused(true)}
+            aria-label="Pause"
+            data-testid="hud-pause-button"
+            style={{
+              position: "absolute",
+              top: "clamp(0.5rem, 2vh, 1rem)",
+              right: "clamp(0.5rem, 2vw, 1rem)",
+              zIndex: 20,
+              background: "rgba(8, 20, 24, 0.7)",
+              color: "#f8fafc",
+              border: "1px solid rgba(56, 189, 248, 0.45)",
+              borderRadius: 8,
+              padding: "0.5rem 0.8rem",
+              fontSize: 11,
+              letterSpacing: 0.3,
+              textTransform: "uppercase",
+              fontWeight: 800,
+              cursor: "pointer",
+              backdropFilter: "blur(6px)",
+            }}
+          >
+            ⏸ Pause
+          </button>
+          {paused ? (
+            <PauseOverlay
+              onResume={() => setPaused(false)}
+              onOpenSettings={() => setPauseSettingsOpen(true)}
+              onRestartRealm={handleRestartRealm}
+              onAbandon={handleStart}
+            />
+          ) : null}
+          {pauseSettingsOpen ? (
+            <SettingsScreen
+              onClose={() => setPauseSettingsOpen(false)}
+              onReplayTutorial={() => {
+                setPaused(false);
+              }}
+            />
+          ) : null}
           <div
             style={{
               position: "absolute",
