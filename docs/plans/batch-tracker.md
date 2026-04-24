@@ -5,6 +5,14 @@ status: current
 domain: plan
 ---
 
+> **Batch status (2026-04-24)**: autonomous polish slice closed against
+> [batch-completion-gate.md](./batch-completion-gate.md). All six hard
+> gates green, live Pages HTTP 200, tracker truthful, no open
+> regressions outside release-please + dependabot-major PRs.
+> `.claude/state/DONE` created; keep-going hook releases control.
+> Remaining deferred items need external inputs (design source,
+> physical devices, repo secrets) and are safe for a follow-up batch.
+
 # Voxel Realms 1.0 — Batch Tracker
 
 Authoritative live tracker for the autonomous 1.0 batch. Committed to the
