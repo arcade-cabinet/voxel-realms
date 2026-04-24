@@ -14,7 +14,14 @@ export function useContainerSize<T extends HTMLElement>(ref: RefObject<T | null>
     }
 
     const update = () => {
-      setSize({ width: element.clientWidth, height: element.clientHeight });
+      const width = element.clientWidth;
+      const height = element.clientHeight;
+      // Only setState if the dimensions actually changed. ResizeObserver
+      // can fire frequently during layout; identity-stable updates keep
+      // consumers from re-rendering on every pass.
+      setSize((prev) =>
+        prev.width === width && prev.height === height ? prev : { width, height }
+      );
     };
 
     update();

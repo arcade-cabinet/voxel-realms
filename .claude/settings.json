@@ -11,28 +11,8 @@
         ]
       }
     ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/keep-going.sh"
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash .claude/hooks/task-batch-flush.sh"
-          }
-        ]
-      }
-    ]
+    "Stop": [],
+    "PreCompact": []
   },
   "permissions": {
     "defaultMode": "acceptEdits",

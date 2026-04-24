@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface ExtractionBeatProps {
   extractionState: "camp" | "ascending" | "extracted" | "collapsed";
@@ -31,6 +31,12 @@ export function ExtractionBeat({
   onBeatComplete,
 }: ExtractionBeatProps) {
   const [phase, setPhase] = useState<BeatPhase>("hidden");
+  // Stable ref for the callback so identity churn from the parent
+  // doesn't cancel+restart the beat timers mid-animation.
+  const onBeatCompleteRef = useRef(onBeatComplete);
+  useEffect(() => {
+    onBeatCompleteRef.current = onBeatComplete;
+  }, [onBeatComplete]);
 
   useEffect(() => {
     if (extractionState !== "extracted") {
@@ -57,7 +63,7 @@ export function ExtractionBeat({
         () => {
           if (!cancelled) {
             setPhase("done");
-            onBeatComplete?.();
+            onBeatCompleteRef.current?.();
           }
         },
         BEAT_REVEAL_MS + BEAT_HOLD_MS + BEAT_EXIT_MS
@@ -68,7 +74,7 @@ export function ExtractionBeat({
       cancelled = true;
       for (const t of timers) window.clearTimeout(t);
     };
-  }, [extractionState, onBeatComplete]);
+  }, [extractionState]);
 
   if (phase === "hidden" || phase === "done") return null;
 

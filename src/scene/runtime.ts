@@ -90,10 +90,12 @@ export async function startScene(
   const { world } = runtime;
 
   // Scene background matches the project's dark/teal landing palette
-  // so a cold-start doesn't flash white.
+  // so a cold-start doesn't flash white. Retain references to every
+  // resource we own so dispose() can release them deterministically.
   const sceneSource = world.sceneManager.getSource();
   sceneSource.background = new THREE.Color("#07090d");
-  sceneSource.add(new THREE.AmbientLight(new THREE.Color("#ffffff"), 2.0));
+  const ambientLight = new THREE.AmbientLight(new THREE.Color("#ffffff"), 2.0);
+  sceneSource.add(ambientLight);
   const dirLight = new THREE.DirectionalLight(new THREE.Color("#f6faff"), 1.4);
   dirLight.position.set(20, 40, 30);
   sceneSource.add(dirLight);
@@ -135,8 +137,22 @@ export async function startScene(
     dispose() {
       if (disposed) return;
       disposed = true;
+      // Stop the main loop first so no more render ticks run against
+      // resources we're about to release.
       try {
         runtime.stop();
+      } catch {}
+      // Remove lights from the scene graph so they can be collected.
+      try {
+        sceneSource.remove(ambientLight);
+        sceneSource.remove(dirLight);
+        ambientLight.dispose();
+        dirLight.dispose();
+      } catch {}
+      // Clear scene background so the THREE.Color allocation is not
+      // retained by the still-referenced Scene instance.
+      try {
+        sceneSource.background = null;
       } catch {}
     },
   };

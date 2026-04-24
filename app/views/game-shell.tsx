@@ -20,7 +20,7 @@ import { SettingsScreen } from "@views/settings";
 import { scoreExpeditionFromRealmState } from "@world/progression";
 import { createRealmSequenceEntry } from "@world/sequence";
 import { useTrait, WorldProvider } from "koota/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Root React shell over the Jolly Pixel canvas. Owns phase switching
@@ -66,6 +66,14 @@ function VoxelApp() {
   }, [state.phase]);
   useAutoPauseOnBackground(handleBackground);
 
+  // Ref mirror of `paused` so the keydown listener doesn't need to
+  // re-bind every time the pause state toggles. The listener reads the
+  // latest value synchronously on keypress.
+  const pausedRef = useRef(paused);
+  useEffect(() => {
+    pausedRef.current = paused;
+  }, [paused]);
+
   useEffect(() => {
     if (state.phase !== "playing") return;
     const handleKey = (event: KeyboardEvent) => {
@@ -73,14 +81,14 @@ function VoxelApp() {
         event.preventDefault();
         setPaused((v) => !v);
       }
-      if (event.code === "Escape" && !paused) {
+      if (event.code === "Escape" && !pausedRef.current) {
         event.preventDefault();
         setPaused(true);
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [state.phase, paused]);
+  }, [state.phase]);
 
   return (
     <div

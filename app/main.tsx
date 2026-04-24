@@ -4,8 +4,7 @@ import { type SceneHandle, startScene } from "@scene";
 import { RealmTrait } from "@store/traits";
 import { voxelEntity } from "@store/world";
 import { GameShell } from "@views/game-shell";
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, type Root } from "react-dom/client";
 
 /**
  * Bootstraps the app in the required order:
@@ -15,7 +14,17 @@ import { createRoot } from "react-dom/client";
  *
  * The HUD root sits on top of the canvas with pointer-events: none on
  * the root; interactive children opt back in.
+ *
+ * StrictMode is intentionally off: JP's Runtime owns the WebGL context
+ * and main loop, and double-mount would kick the scene layer
+ * unnecessarily.
  */
+
+let activeRoot: Root | null = null;
+let activeSceneHandle: SceneHandle | null = null;
+let unloadListener: (() => void) | null = null;
+let splashTimer: ReturnType<typeof setTimeout> | null = null;
+
 async function main(): Promise<void> {
   const rootElement = document.getElementById("root");
   if (!rootElement) {
@@ -35,31 +44,49 @@ async function main(): Promise<void> {
   // Mount the scene if the canvas is present. In the browser test
   // harness we leave the canvas out intentionally so the HUD stays
   // testable without a WebGL context.
-  let sceneHandle: SceneHandle | null = null;
   if (canvas && !isTestHarness()) {
     try {
       const initialRealm = voxelEntity.get(RealmTrait)?.activeRealm;
-      sceneHandle = await startScene(canvas, initialRealm);
+      activeSceneHandle = await startScene(canvas, initialRealm);
     } catch (error) {
       console.error("Scene bootstrap failed", error);
     }
   }
 
-  // StrictMode intentionally disabled here: JP's Runtime owns the
-  // WebGL context and main loop, and double-mount would kick the
-  // scene layer unnecessarily. The overlay is side-effect-light.
-  createRoot(rootElement).render(<GameShell />);
+  activeRoot = createRoot(rootElement);
+  activeRoot.render(<GameShell />);
 
   dismissBootSplash();
 
-  // Tear the scene down on navigation / HMR so Runtime.stop() fires.
-  if (sceneHandle) {
-    const handle = sceneHandle;
-    window.addEventListener("beforeunload", () => handle.dispose(), { once: true });
-    if (import.meta.hot) {
-      import.meta.hot.dispose(() => handle.dispose());
-    }
+  // Tear the scene down on navigation / HMR so Runtime.stop() fires
+  // and three.js resources are released. Keep a reference so disposeAll
+  // can also remove the listener to avoid leaving a dead handler.
+  if (activeSceneHandle) {
+    const handle = activeSceneHandle;
+    unloadListener = () => {
+      handle.dispose();
+    };
+    window.addEventListener("beforeunload", unloadListener, { once: true });
   }
+}
+
+function disposeAll(): void {
+  if (splashTimer !== null) {
+    clearTimeout(splashTimer);
+    splashTimer = null;
+  }
+  if (unloadListener) {
+    window.removeEventListener("beforeunload", unloadListener);
+    unloadListener = null;
+  }
+  try {
+    activeSceneHandle?.dispose();
+  } catch {}
+  activeSceneHandle = null;
+  try {
+    activeRoot?.unmount();
+  } catch {}
+  activeRoot = null;
 }
 
 function isTestHarness(): boolean {
@@ -73,10 +100,14 @@ function dismissBootSplash(): void {
   const splash = document.getElementById("boot-splash");
   if (!splash) return;
   splash.setAttribute("data-hidden", "true");
-  window.setTimeout(() => splash.remove(), 420);
+  splashTimer = setTimeout(() => {
+    splash.remove();
+    splashTimer = null;
+  }, 420);
 }
 
-// Use two rAFs only as a no-op when not available (SSR / node).
+// Two rAFs defer main() past the initial paint so the boot splash
+// has a chance to render before we block the thread on JP init.
 if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "function") {
   window.requestAnimationFrame(() => {
     void main();
@@ -85,7 +116,8 @@ if (typeof window !== "undefined" && typeof window.requestAnimationFrame === "fu
   void main();
 }
 
-// StrictMode is exported to satisfy the linter if something else
-// decides to consume it; keep the reference so esbuild doesn't tree-
-// shake the import in an unexpected way.
-export { StrictMode };
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    disposeAll();
+  });
+}

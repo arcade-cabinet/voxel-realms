@@ -58,9 +58,13 @@ export async function withDatabaseWriteLock<T>(
 }
 
 export async function closeDatabase(): Promise<void> {
-  const existing = await sqlite.isConnection(DB_NAME, false);
-  if (existing.result) {
-    await sqlite.closeConnection(DB_NAME, false);
+  try {
+    const existing = await sqlite.isConnection(DB_NAME, false);
+    if (existing.result) {
+      await sqlite.closeConnection(DB_NAME, false);
+    }
+  } catch {
+    // Plugin unavailable or already closed — clear state either way.
   }
   connectionPromise = null;
   webReadyPromise = null;
@@ -106,7 +110,12 @@ async function prepareWebStore(): Promise<void> {
     }
 
     await sqlite.initWebStore();
-  })();
+  })().catch((error) => {
+    // Clear the cached promise on failure so the next call can retry
+    // instead of forever returning the rejected one.
+    webReadyPromise = null;
+    throw error;
+  });
 
   return webReadyPromise;
 }

@@ -21,9 +21,19 @@ const testStore = new Map<string, string>();
 
 export async function initializePersistence(): Promise<void> {
   if (!initializationPromise) {
-    initializationPromise = isBrowserTestEnv()
-      ? initializeRealmPreferences()
-      : Promise.all([getDatabase(), initializeRealmPreferences()]).then(() => undefined);
+    // Fail-soft: catch init errors so a single flaky SQLite /
+    // preferences failure doesn't make every subsequent read/write
+    // reject. getItem / setItem already tolerate null/throw downstream.
+    initializationPromise = (
+      isBrowserTestEnv()
+        ? initializeRealmPreferences()
+        : Promise.all([getDatabase(), initializeRealmPreferences()]).then(() => undefined)
+    ).catch((error) => {
+      if (!storageInitFailureLogged) {
+        console.warn("[persistence] initialization failed, persistence is degraded", error);
+        storageInitFailureLogged = true;
+      }
+    });
   }
 
   return initializationPromise;
@@ -106,15 +116,22 @@ async function setItem<T>(namespace: string, key: string, value: T): Promise<voi
   }
 
   const now = new Date().toISOString();
-  await withDatabaseWriteLock(async (db) => {
-    await db.run(
-      `INSERT INTO app_kv(namespace, item_key, value, updated_at)
-        VALUES (?, ?, ?, ?)
-        ON CONFLICT(namespace, item_key)
-        DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
-      [namespace, key, serialized, now]
-    );
-  });
+  try {
+    await withDatabaseWriteLock(async (db) => {
+      await db.run(
+        `INSERT INTO app_kv(namespace, item_key, value, updated_at)
+          VALUES (?, ?, ?, ?)
+          ON CONFLICT(namespace, item_key)
+          DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at`,
+        [namespace, key, serialized, now]
+      );
+    });
+  } catch (error) {
+    if (!storageInitFailureLogged) {
+      console.warn("[persistence] database unavailable, dropping write", error);
+      storageInitFailureLogged = true;
+    }
+  }
 }
 
 async function deleteItem(namespace: string, key: string): Promise<void> {
@@ -123,9 +140,16 @@ async function deleteItem(namespace: string, key: string): Promise<void> {
     return;
   }
 
-  await withDatabaseWriteLock(async (db) => {
-    await db.run("DELETE FROM app_kv WHERE namespace = ? AND item_key = ?", [namespace, key]);
-  });
+  try {
+    await withDatabaseWriteLock(async (db) => {
+      await db.run("DELETE FROM app_kv WHERE namespace = ? AND item_key = ?", [namespace, key]);
+    });
+  } catch (error) {
+    if (!storageInitFailureLogged) {
+      console.warn("[persistence] database unavailable, dropping delete", error);
+      storageInitFailureLogged = true;
+    }
+  }
 }
 
 function scopedKey(namespace: string, key: string): string {

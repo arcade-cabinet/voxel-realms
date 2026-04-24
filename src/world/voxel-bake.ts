@@ -65,6 +65,15 @@ interface BakeOptions {
 }
 
 /**
+ * Defensive cap on per-platform voxel count. Prevents a pathological
+ * realm (platform size > 32 in any axis) from allocating millions of
+ * voxels and OOMing the browser. If this cap is ever hit, the bake
+ * silently clamps the platform's half-extents rather than throwing —
+ * the realm renders as a bounded approximation instead of crashing.
+ */
+const MAX_PLATFORM_HALF_EXTENT = 16;
+
+/**
  * Bake a deterministic RealmClimb into a JP VoxelWorldJSON.
  *
  * Same seed → same bake.
@@ -118,9 +127,9 @@ function addPlatformVoxels(
   scale: number,
   out: Record<VoxelEntryKey, { block: number; transform: number }>
 ): void {
-  const halfX = Math.max(1, Math.round((platform.size.x * scale) / 2));
-  const halfY = Math.max(1, Math.round((platform.size.y * scale) / 2));
-  const halfZ = Math.max(1, Math.round((platform.size.z * scale) / 2));
+  const halfX = clampHalfExtent((platform.size.x * scale) / 2);
+  const halfY = clampHalfExtent((platform.size.y * scale) / 2);
+  const halfZ = clampHalfExtent((platform.size.z * scale) / 2);
   const cx = Math.round(platform.position.x * scale);
   const cy = Math.round(platform.position.y * scale);
   const cz = Math.round(platform.position.z * scale);
@@ -133,6 +142,12 @@ function addPlatformVoxels(
       }
     }
   }
+}
+
+function clampHalfExtent(raw: number): number {
+  const rounded = Math.round(raw);
+  const clamped = Math.min(MAX_PLATFORM_HALF_EXTENT, Math.max(1, rounded));
+  return clamped;
 }
 
 function addHazardVoxels(

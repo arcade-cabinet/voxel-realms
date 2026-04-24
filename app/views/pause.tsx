@@ -1,5 +1,5 @@
 import { App as CapacitorApp } from "@capacitor/app";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 interface PauseOverlayProps {
   onResume: () => void;
@@ -24,16 +24,23 @@ export function PauseOverlay({
   onRestartRealm,
   onAbandon,
 }: PauseOverlayProps) {
+  // Stable ref so effects register listeners once, regardless of
+  // parent callback identity churn.
+  const onResumeRef = useRef(onResume);
+  useEffect(() => {
+    onResumeRef.current = onResume;
+  }, [onResume]);
+
   useEffect(() => {
     const handleKey = (event: KeyboardEvent) => {
       if (event.code === "Escape") {
         event.preventDefault();
-        onResume();
+        onResumeRef.current();
       }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [onResume]);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -41,7 +48,7 @@ export function PauseOverlay({
     (async () => {
       try {
         const listener = await CapacitorApp.addListener("backButton", () => {
-          onResume();
+          onResumeRef.current();
         });
         if (cancelled) {
           await listener.remove();
@@ -56,7 +63,7 @@ export function PauseOverlay({
       cancelled = true;
       handle?.remove().catch(() => undefined);
     };
-  }, [onResume]);
+  }, []);
 
   return (
     <div

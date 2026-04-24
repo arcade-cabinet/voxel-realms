@@ -15,18 +15,26 @@ export function useDevice(): DeviceInfo {
   });
 
   useEffect(() => {
+    let cancelled = false;
     const checkDevice = async () => {
-      const device = await Device.getInfo();
-      const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
-      setInfo({
-        platform: device.platform as "web" | "ios" | "android",
-        isNative: device.platform !== "web",
-        hasTouch,
-      });
+      try {
+        const device = await Device.getInfo();
+        if (cancelled) return;
+        const hasTouch = "ontouchstart" in window || navigator.maxTouchPoints > 0;
+        setInfo({
+          platform: device.platform as "web" | "ios" | "android",
+          isNative: device.platform !== "web",
+          hasTouch,
+        });
+      } catch {
+        // Device API unavailable (SSR / unsupported shell). Keep defaults.
+      }
     };
 
-    checkDevice();
+    void checkDevice();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return info;
