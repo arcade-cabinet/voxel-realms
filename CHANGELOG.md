@@ -5,6 +5,33 @@
 - Added biome discovery milestones and resource pickup event state.
 - Added pickup pulses, resource effects, biome silhouettes, survey HUD feedback, and shared cartridge landing identity.
 
+## [0.6.0](https://github.com/arcade-cabinet/voxel-realms/compare/v0.5.1...v0.6.0) (2026-04-24)
+
+
+### Features
+
+* **assets:** P4.2 render-override for house-piece and vox-house GLBs ([#75](https://github.com/arcade-cabinet/voxel-realms/issues/75)) ([853fd55](https://github.com/arcade-cabinet/voxel-realms/commit/853fd55dd22c8a90a2363e3ce729f174f2b791f6))
+* **brand:** migrate overlay modals to brand CSS variables (P4.5) ([#67](https://github.com/arcade-cabinet/voxel-realms/issues/67)) ([4c7bf6c](https://github.com/arcade-cabinet/voxel-realms/commit/4c7bf6c4eaf86ffa7f0efb13a346f3d16b1e2a43))
+* **engine:** per-archetype lighting descriptors (P4.4 data layer) ([#66](https://github.com/arcade-cabinet/voxel-realms/issues/66)) ([05aa229](https://github.com/arcade-cabinet/voxel-realms/commit/05aa22932af87a7d3bcdc59fa51800fa470b094a))
+* **ops:** deterministic trailer capture via Playwright video (P8.5) ([#62](https://github.com/arcade-cabinet/voxel-realms/issues/62)) ([bb9ba20](https://github.com/arcade-cabinet/voxel-realms/commit/bb9ba20b42a660581bc36dc93250eca02cc82228))
+
+
+### Bug Fixes
+
+* **build:** bump index chunk budget after 1.0 polish scope growth ([#69](https://github.com/arcade-cabinet/voxel-realms/issues/69)) ([74347e1](https://github.com/arcade-cabinet/voxel-realms/commit/74347e19256e172f9d3386cf4bdc15c8bac91e91))
+* **e2e:** hoist trailer spec test.use to module scope ([#70](https://github.com/arcade-cabinet/voxel-realms/issues/70)) ([c4fe570](https://github.com/arcade-cabinet/voxel-realms/commit/c4fe570482bc0fe4ace245bb240d976ce9269d97))
+* **engine:** exclude branch platforms from golden-path shortest-path ([#77](https://github.com/arcade-cabinet/voxel-realms/issues/77)) ([e4a396b](https://github.com/arcade-cabinet/voxel-realms/commit/e4a396b68df577d91746c6916747beafb571cd64))
+* **game:** cap per-frame sim deltaMs at 50ms for frame-rate-independent instability ([#78](https://github.com/arcade-cabinet/voxel-realms/issues/78)) ([a883b16](https://github.com/arcade-cabinet/voxel-realms/commit/a883b161643f10631441829556830d886b91fd71))
+* **pages:** route GLB fetches through BASE_URL; drop invalid R3F data-* attr ([#80](https://github.com/arcade-cabinet/voxel-realms/issues/80)) ([495e325](https://github.com/arcade-cabinet/voxel-realms/commit/495e325c6c4f94fdc24632856793b264b314dab5))
+
+
+### Documentation
+
+* **assets:** commit pnpm realm:assets snapshot (P4.1) ([#73](https://github.com/arcade-cabinet/voxel-realms/issues/73)) ([04e24aa](https://github.com/arcade-cabinet/voxel-realms/commit/04e24aa56bc231bb25c33a5f49d2de1dace06f2f))
+* **plan:** batch completion gate — exact "done" definition ([#71](https://github.com/arcade-cabinet/voxel-realms/issues/71)) ([5fd0a49](https://github.com/arcade-cabinet/voxel-realms/commit/5fd0a4926d6133138f1544ed5b31033da65a7695))
+* **plans:** pivot from R3F shell to Jolly Pixel engine (migration PRD + tracker update) ([#82](https://github.com/arcade-cabinet/voxel-realms/issues/82)) ([c673e83](https://github.com/arcade-cabinet/voxel-realms/commit/c673e8365c023355a46140ca72ebaa44805d40d9))
+* **readme:** surface polished command inventory + new runbooks ([#64](https://github.com/arcade-cabinet/voxel-realms/issues/64)) ([dac9d86](https://github.com/arcade-cabinet/voxel-realms/commit/dac9d86b4c0128d0e3c4656b2134500667b2f852))
+
 ## [0.5.1](https://github.com/arcade-cabinet/voxel-realms/compare/v0.5.0...v0.5.1) (2026-04-24)
 
 
