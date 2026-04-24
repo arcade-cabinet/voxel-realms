@@ -7,16 +7,6 @@ import { useEffect, useState } from "react";
  * or the Next button in the HUD lands directly on a readable splash.
  */
 
-type ArchetypeId = "jungle" | "ocean" | "steampunk" | "dinosaur" | "arctic";
-
-const ARCHETYPE_TEASERS: Record<ArchetypeId, string> = {
-  jungle: "Layered canopy routes. Creatures signal between the branches.",
-  ocean: "Floating platforms over open water. Tide sets the beat of the climb.",
-  steampunk: "Brass and pressure. Industrial platforms, timed hazard pulses.",
-  dinosaur: "Broad ledges. Heavier silhouettes, longer jumps, heavier falls.",
-  arctic: "Thin ice, low-key light. Sparse landings, narrow margin.",
-};
-
 const SPLASH_REVEAL_MS = 160;
 const SPLASH_HOLD_MS = 1_300;
 const SPLASH_EXIT_MS = 200;
@@ -27,9 +17,17 @@ interface NextRealmSplashProps {
   realmIndex: number;
   archetypeId: string;
   archetypeName: string;
+  archetypeVerb: string;
+  archetypeVerbDetail: string;
 }
 
-export function NextRealmSplash({ realmIndex, archetypeId, archetypeName }: NextRealmSplashProps) {
+export function NextRealmSplash({
+  realmIndex,
+  archetypeId: _archetypeId,
+  archetypeName,
+  archetypeVerb,
+  archetypeVerbDetail,
+}: NextRealmSplashProps) {
   const [phase, setPhase] = useState<SplashPhase>("hidden");
 
   // Deterministic: fires whenever realmIndex flips. Skips the initial
@@ -69,9 +67,7 @@ export function NextRealmSplash({ realmIndex, archetypeId, archetypeName }: Next
   if (phase === "hidden" || phase === "done") return null;
 
   const opacity = phase === "leaving" ? 0 : 1;
-  const teaser =
-    ARCHETYPE_TEASERS[archetypeId as ArchetypeId] ??
-    "A new realm. Read the route before it reads you.";
+  const teaser = archetypeVerbDetail;
 
   return (
     <div
@@ -128,6 +124,19 @@ export function NextRealmSplash({ realmIndex, archetypeId, archetypeName }: Next
           }}
         >
           {archetypeName}
+        </div>
+        <div
+          data-testid="next-realm-splash-verb"
+          style={{
+            fontSize: 12,
+            color: "#a3e635",
+            marginTop: 4,
+            letterSpacing: 0.3,
+            textTransform: "uppercase",
+            fontWeight: 800,
+          }}
+        >
+          {archetypeVerb}
         </div>
         <div
           style={{

@@ -108,6 +108,8 @@ function VoxelApp() {
             realmIndex={realmState.realmIndex}
             archetypeId={realmState.activeRealm.archetype.id}
             archetypeName={realmState.activeRealm.archetype.name}
+            archetypeVerb={realmState.activeRealm.archetype.verb}
+            archetypeVerbDetail={realmState.activeRealm.archetype.verbDetail}
           />
           <button
             type="button"

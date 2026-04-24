@@ -42,6 +42,10 @@ export interface RealmArchetype {
   id: RealmArchetypeId;
   name: string;
   description: string;
+  /** Short imperative the HUD prints next to the archetype name ("Swing", "Surf", "Vent"). */
+  verb: string;
+  /** One-line navigation hint surfaced by the next-realm splash and the HUD tooltip. */
+  verbDetail: string;
   accent: string;
   platformColor: string;
   restColor: string;
@@ -442,6 +446,8 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
     id: "jungle",
     name: "Jungle",
     description: "Tall vegetation, animal silhouettes, and vine-like side routes.",
+    verb: "Swing",
+    verbDetail: "Layered canopy routes. Creatures signal between the branches.",
     accent: "#84cc16",
     platformColor: "#2f7d3f",
     restColor: "#5c8f2f",
@@ -472,6 +478,8 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
     id: "ocean",
     name: "Ocean",
     description: "Floating ruins, tide gaps, and sea-life anomalies above the shoreline.",
+    verb: "Surf",
+    verbDetail: "Floating platforms over open water. Tide sets the beat of the climb.",
     accent: "#38bdf8",
     platformColor: "#0f7490",
     restColor: "#2dd4bf",
@@ -494,6 +502,8 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
     id: "steampunk",
     name: "Steampunk",
     description: "Pressure gates, brass machinery, and narrow mechanical climbs.",
+    verb: "Vent",
+    verbDetail: "Brass and pressure. Industrial platforms, timed hazard pulses.",
     accent: "#f59e0b",
     platformColor: "#8a5a2d",
     restColor: "#b7791f",
@@ -516,6 +526,8 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
     id: "dinosaur",
     name: "Dinosaur",
     description: "Large ancient platforms with heavy moving-threat lanes.",
+    verb: "Stomp",
+    verbDetail: "Broad ledges. Heavier silhouettes, longer jumps, heavier falls.",
     accent: "#bef264",
     platformColor: "#766141",
     restColor: "#9a7f4f",
@@ -538,6 +550,8 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
     id: "arctic",
     name: "Arctic",
     description: "Cold exposed landings, wind gaps, and readable ice rest points.",
+    verb: "Glide",
+    verbDetail: "Thin ice, low-key light. Sparse landings, narrow margin.",
     accent: "#dbeafe",
     platformColor: "#94a3b8",
     restColor: "#bfdbfe",
