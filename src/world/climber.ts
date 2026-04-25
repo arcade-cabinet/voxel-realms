@@ -1,5 +1,6 @@
 import type { Vec3 } from "@engine/types";
 import { getRealmAssetRuntimeModel } from "@world/asset-budget";
+import seedrandom from "seedrandom";
 
 export type RealmArchetypeId = "jungle" | "ocean" | "steampunk" | "dinosaur" | "arctic";
 export type RealmPlatformKind = "start" | "route" | "rest" | "branch" | "gate";
@@ -573,7 +574,7 @@ export const REALM_ARCHETYPES: Record<RealmArchetypeId, RealmArchetype> = {
 };
 
 export function pickRealmArchetype(seed: string): RealmArchetypeId {
-  return REALM_ARCHETYPE_IDS[hashString(seed) % REALM_ARCHETYPE_IDS.length];
+  return REALM_ARCHETYPE_IDS[seedToUint32(seed) % REALM_ARCHETYPE_IDS.length];
 }
 
 export function generateRealmClimb(options: GenerateRealmClimbOptions | string): RealmClimb {
@@ -1188,28 +1189,11 @@ function horizontalRadius(size: Vec3): number {
   return Math.min(size.x, size.z) / 2;
 }
 
-function createRng(seed: string) {
-  let state = hashString(seed);
-
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let value = state;
-    value = Math.imul(value ^ (value >>> 15), value | 1);
-    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function hashString(input: string): number {
-  let hash = 2166136261;
-
-  for (let index = 0; index < input.length; index++) {
-    hash ^= input.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return hash >>> 0;
-}
+// Deterministic [0,1) RNG seeded from a string. Backed by `seedrandom`
+// (alea variant, well-tested across vite/node, deterministic across
+// platforms). Replaces the hand-rolled mulberry32+FNV combo this
+// project carried prior to the JP port.
+const createRng = (seed: string): (() => number) => seedrandom(seed);
 
 function randomRange(rng: () => number, min: number, max: number) {
   return min + (max - min) * rng();
@@ -1237,7 +1221,16 @@ function slug(value: string) {
 }
 
 function shortSeed(seed: string) {
-  return hashString(seed).toString(36).slice(0, 5).toUpperCase();
+  return seedToUint32(seed).toString(36).slice(0, 5).toUpperCase();
+}
+
+// Deterministic uint32 from a string. seedrandom's alea variant exposes
+// .int32() on the underlying PRNG; we use that as our hash function.
+function seedToUint32(seed: string): number {
+  const rng = seedrandom(seed, { state: false });
+  // seedrandom returns a function, but the alea PRNG also exposes int32.
+  // Calling the function directly gives [0,1); we scale to uint32.
+  return Math.floor(rng() * 0x100000000) >>> 0;
 }
 
 function shadeColor(hex: string, percent: number) {

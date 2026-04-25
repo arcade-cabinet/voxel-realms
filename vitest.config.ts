@@ -60,5 +60,6 @@ export default defineConfig({
       "lucide-react",
       "@testing-library/jest-dom/vitest",
     ],
+    exclude: ["@dimforge/rapier3d"],
   },
 });

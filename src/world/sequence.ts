@@ -1,4 +1,5 @@
 import { REALM_ARCHETYPE_IDS, type RealmArchetypeId } from "@world/climber";
+import seedrandom from "seedrandom";
 
 export interface RealmSequenceEntry {
   baseSeed: string;
@@ -37,7 +38,7 @@ function createRealmSeed(baseSeed: string, realmIndex: number) {
 
 function createArchetypeDeck(baseSeed: string, cycle: number): RealmArchetypeId[] {
   const deck = [...REALM_ARCHETYPE_IDS];
-  const random = createRng(`${baseSeed}:realm-cycle:${cycle}`);
+  const random = seedrandom(`${baseSeed}:realm-cycle:${cycle}`);
 
   for (let index = deck.length - 1; index > 0; index--) {
     const swapIndex = Math.floor(random() * (index + 1));
@@ -45,27 +46,4 @@ function createArchetypeDeck(baseSeed: string, cycle: number): RealmArchetypeId[
   }
 
   return deck;
-}
-
-function createRng(seed: string) {
-  let state = hashString(seed);
-
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let value = state;
-    value = Math.imul(value ^ (value >>> 15), value | 1);
-    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
-    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
-  };
-}
-
-function hashString(input: string): number {
-  let hash = 2166136261;
-
-  for (let index = 0; index < input.length; index++) {
-    hash ^= input.charCodeAt(index);
-    hash = Math.imul(hash, 16777619);
-  }
-
-  return hash >>> 0;
 }

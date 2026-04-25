@@ -38,9 +38,10 @@ export class RouteBehavior extends ActorComponent {
 
   constructor(actor: Actor, options: RouteBehaviorOptions = {}) {
     super({ actor, typeName: "RouteBehavior" });
-    if (options.realm) {
+    const initialRealm = options.realm;
+    if (initialRealm) {
       // Defer placement until awake() so we can use addComponentAndGet.
-      queueMicrotask(() => this.setRealm(options.realm!));
+      queueMicrotask(() => this.setRealm(initialRealm));
     }
   }
 

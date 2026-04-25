@@ -114,5 +114,10 @@ export default defineConfig({
       "@jolly-pixel/runtime",
       "@jolly-pixel/voxel.renderer",
     ],
+    // rapier3d 0.19.x ships its WASM via a static bundler import
+    // (`import * as wasm from "./rapier_wasm3d_bg.wasm"`). Vite serves
+    // the .wasm file directly when the package is excluded from
+    // pre-bundling — that's the rapier-recommended setup.
+    exclude: ["@dimforge/rapier3d"],
   },
 });
