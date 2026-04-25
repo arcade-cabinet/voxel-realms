@@ -54,6 +54,8 @@ jobs:
 
       - name: Build
         run: pnpm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
   browser:
     runs-on: ubuntu-latest
@@ -78,6 +80,8 @@ jobs:
 
       - name: Vitest Browser
         run: xvfb-run -a pnpm run test:browser
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: Upload visual captures
         if: always()
@@ -116,6 +120,8 @@ jobs:
 
       - name: Build web assets
         run: pnpm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: Sync Capacitor
         run: pnpm exec cap sync android

@@ -91,6 +91,7 @@ jobs:
       - name: Build static site
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}
+          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm run build
 
       - name: Upload Pages artifact
@@ -135,6 +136,8 @@ jobs:
 
       - name: Build web assets
         run: pnpm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: Sync Capacitor
         run: pnpm exec cap sync android

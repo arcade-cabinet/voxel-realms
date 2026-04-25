@@ -8,8 +8,8 @@
     "pnpm": ">=10.0.0"
   },
   "scripts": {
-    "postinstall": "node scripts/prepare-web-sqlite.mjs",
-    "prebuild": "node scripts/prepare-web-sqlite.mjs",
+    "postinstall": "node scripts/prepare-web-wasm.mjs",
+    "prebuild": "node scripts/prepare-web-wasm.mjs",
     "dev": "vite --host 0.0.0.0",
     "build": "vite build && node scripts/copy-public-assets.mjs && tsx scripts/verify-runtime-assets.ts --dist && tsx scripts/verify-build-budget.ts",
     "preview": "vite preview --host 0.0.0.0",
