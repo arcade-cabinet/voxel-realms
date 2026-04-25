@@ -16,16 +16,18 @@ The current slice generates deterministic 3D realm routes, validates a
 golden path from spawn to exit gate, captures browser playthrough evidence,
 and ships Android debug APKs + iOS archives via CD.
 
-**Active migration (2026-04-24 →)**: the scene layer is moving off
-React-Three-Fiber onto **Jolly Pixel**
+**Active restructure + port (2026-04-24 →, single PR)**: one branch
+`feat/restructure-and-jp-port` flattens the module tree into domain
+folders and ports the scene layer onto **Jolly Pixel**
 (`@jolly-pixel/engine` + `@jolly-pixel/runtime` +
-`@jolly-pixel/voxel.renderer`). See
-`docs/plans/jolly-pixel-migration.prq.md` for the phase plan. The
-deterministic engine under `src/games/voxel-realms/engine/` is
-untouched by the port; the shell under `app/` is what gets rewritten.
-React stays for the DOM HUD overlay that sits above the JP canvas.
-Capacitor stays for mobile. Until phase 6 cutover, live Pages runs
-the current R3F build.
+`@jolly-pixel/voxel.renderer`) in the same pass. See
+`docs/plans/jolly-pixel-migration.prq.md` for the target layout,
+hard dependency rules, and execution plan. Until that PR merges,
+`main` runs the R3F scene and the old
+`app/games/voxel-realms/` + `src/games/voxel-realms/` layout; after
+it merges, the layout in the "Project Structure" section below is
+authoritative. React stays for the DOM HUD overlay above the JP
+canvas. Capacitor stays for mobile.
 
 **Doc pillars** — each file owns exactly one area:
 - `docs/DESIGN.md` — vision, product statement, creative pillars, non-goals
@@ -96,34 +98,56 @@ pnpm cap:open:android             # Open Android project
 pnpm cap:open:ios                 # Open iOS project
 ```
 
-## Project Structure
+## Project Structure (target — post restructure + JP port)
+
+Every domain exports through an `index.ts` barrel. Cross-domain imports
+only go through barrels — never reach into another domain's internals.
 
 ```
-app/
-  games/voxel-realms/
-    Game.tsx                     # phase switching, landing, game-over
-    r3f/                         # Player, World, SpawnCamp, TerrainManager, RealmClimbRoute
-    ui/                          # HUD, RealmLanding
-  shared/
-    platform/                    # Capacitor bootstrap, persistence, native shell
-    ui/                          # atoms, GameViewport, FloatingJoystick, Cartridge, GameOverScreen
-    hooks/                       # device / responsive / game-loop
-    styles/                      # globals.css, brand tokens
-src/
-  games/voxel-realms/
-    engine/                      # deterministic simulation + validation (voxelSimulation, realmClimber, realmValidation, realmPathfinding, realmSpatialValidation, realmFramingValidation, realmRuntimeTelemetry, realmYukaPlaythroughAgent, realmVisualManifest, realmAssetBudget, realmSequence, realmExitGate, realmSignals, realmClimber, realmRouteGuidance, realmInstability)
-    store/                       # traits.ts, world.ts (Koota)
-  shared/                        # eventBus, traits, testing helpers, shared types
+src/                        # game runtime (non-UI)
+  world/                    # realm generation, voxel bake, sequence, signals
+  engine/                   # deterministic simulation + validation
+  ai/                       # yuka playthrough agent, realm agent
+  assets/                   # render budget, visual manifest
+  scene/                    # JP scene (runtime, actors, behaviors, tilesets)
+  audio/                    # ambient music, SFX
+  store/                    # Koota world + traits (bridge between scene and UI)
+  platform/                 # Capacitor bootstrap, persistence, native shell
+  shared/                   # event bus, cross-domain types
+
+app/                        # React DOM overlay only (no three, no JP, no R3F)
+  main.tsx                  # bootstrap: platform → JP runtime → HUD overlay
+  views/                    # full-screen React views (landing, pause, game-over, realm-collapsed)
+  components/               # HUD widgets (hud, first-run-coach, extraction-beat, settings, ...)
+  atoms/                    # buttons, cartridge, circular-gallery, floating-joystick
+  hooks/                    # use-device, use-responsive, use-container-size, use-auto-pause
+  styles/                   # globals.css
+  test/                     # vitest setup
+
 public/
-  assets/models/                 # curated runtime catalog + static variants + manifest
-  assets/fonts/brand/            # Outfit, Boldonse, Red Hat Mono
-  assets/sql-wasm.wasm           # web SQLite wasm
-android/, ios/                   # first-class Capacitor shells (must stay buildable)
-scripts/                         # asset, budget, validation, manifest tooling
-e2e/                             # Playwright E2E specs (added in P1.7)
-raw-assets/                      # local-only vendor dumps (gitignored)
-docs/                            # doc pillars (see above)
+  assets/models/            # curated runtime catalog + static variants + manifest
+  assets/fonts/brand/       # Outfit, Boldonse, Red Hat Mono
+  assets/sql-wasm.wasm      # web SQLite wasm
+
+android/, ios/              # first-class Capacitor shells (must stay buildable)
+scripts/                    # asset, budget, validation, manifest tooling
+e2e/                        # Playwright E2E specs
+raw-assets/                 # local-only vendor dumps (gitignored)
+docs/                       # doc pillars (see above)
 ```
+
+Hard dependency rules:
+
+- `src/shared/` is a leaf (imports nothing from the repo).
+- `src/store/` imports `src/shared/` only.
+- `src/world|engine|ai|assets/` import `src/shared/` and each other's
+  barrels — never another domain's private files.
+- `src/scene/` is the only place `@jolly-pixel/*` and `three` appear.
+  Not React.
+- `src/audio/`, `src/platform/` import `src/shared/` only.
+- `app/` imports from `src/*/index.ts` barrels only — no three, no JP,
+  no R3F. React reads live scene state via Koota traits in `src/store`.
+- `app/main.tsx` is the only module that wires scene + UI + platform.
 
 ## Git Conventions
 

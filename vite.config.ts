@@ -28,27 +28,17 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
     copyPublicDir: false,
-    // Rapier's compat ESM bundle is a single ~2 MB module. Keep that as an
-    // explicit vendor budget so Vite warnings still catch growth beyond it.
     chunkSizeWarningLimit: 2200,
     outDir: "dist",
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes("node_modules")) {
-            if (id.includes("@dimforge") || id.includes("@react-three/rapier")) {
-              return "vendor-physics";
+            if (id.includes("@jolly-pixel")) {
+              return "vendor-jp";
             }
 
-            if (
-              id.includes("@react-three/fiber") ||
-              id.includes("@react-three/drei") ||
-              id.includes("three-stdlib")
-            ) {
-              return "vendor-r3f";
-            }
-
-            if (id.includes(`${path.sep}three${path.sep}`)) {
+            if (id.includes(`${path.sep}three${path.sep}`) || id.includes("three-stdlib")) {
               return "vendor-three";
             }
 
@@ -75,7 +65,12 @@ export default defineConfig({
             return "vendor-misc";
           }
 
-          if (id.includes(`${path.sep}src${path.sep}games${path.sep}voxel-realms${path.sep}`)) {
+          if (
+            id.includes(`${path.sep}src${path.sep}world${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}engine${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}ai${path.sep}`) ||
+            id.includes(`${path.sep}src${path.sep}assets${path.sep}`)
+          ) {
             return "realm-engine";
           }
         },
@@ -84,21 +79,28 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      "@world": path.resolve(__dirname, "src/world"),
+      "@engine": path.resolve(__dirname, "src/engine"),
+      "@ai": path.resolve(__dirname, "src/ai"),
+      "@assets": path.resolve(__dirname, "src/assets"),
+      "@scene": path.resolve(__dirname, "src/scene"),
+      "@audio": path.resolve(__dirname, "src/audio"),
+      "@store": path.resolve(__dirname, "src/store"),
+      "@platform": path.resolve(__dirname, "src/platform"),
+      "@workers": path.resolve(__dirname, "src/workers"),
+      "@shared": path.resolve(__dirname, "src/shared"),
+      "@views": path.resolve(__dirname, "app/views"),
+      "@components": path.resolve(__dirname, "app/components"),
+      "@atoms": path.resolve(__dirname, "app/atoms"),
+      "@hooks": path.resolve(__dirname, "app/hooks"),
       "@app": path.resolve(__dirname, "app"),
       "@logic": path.resolve(__dirname, "src"),
       react: path.resolve(__dirname, "node_modules/react"),
       "react-dom": path.resolve(__dirname, "node_modules/react-dom"),
+      "three/addons": path.resolve(__dirname, "node_modules/three/examples/jsm"),
       three: path.resolve(__dirname, "node_modules/three"),
     },
-    dedupe: [
-      "react",
-      "react-dom",
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
-      "koota",
-    ],
+    dedupe: ["react", "react-dom", "three", "koota"],
   },
   optimizeDeps: {
     include: [
@@ -106,11 +108,16 @@ export default defineConfig({
       "react-dom",
       "react-dom/client",
       "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@react-three/rapier",
       "koota",
       "lucide-react",
+      "@jolly-pixel/engine",
+      "@jolly-pixel/runtime",
+      "@jolly-pixel/voxel.renderer",
     ],
+    // rapier3d 0.19.x ships its WASM via a static bundler import
+    // (`import * as wasm from "./rapier_wasm3d_bg.wasm"`). Vite serves
+    // the .wasm file directly when the package is excluded from
+    // pre-bundling — that's the rapier-recommended setup.
+    exclude: ["@dimforge/rapier3d"],
   },
 });

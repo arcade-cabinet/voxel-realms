@@ -43,20 +43,6 @@ jobs:
       - name: Realm validation
         run: pnpm run realm:validate -- --sequence-count 10
 
-      - name: Install Playwright browser
-        run: pnpm exec playwright install chromium
-
-      - name: Smoke E2E
-        run: pnpm run test:e2e:ci
-
-      - name: Upload Playwright report
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: voxel-realms-cd-playwright-report
-          path: playwright-report
-          if-no-files-found: ignore
-
   realm-drift-smoke:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -105,6 +91,7 @@ jobs:
       - name: Build static site
         env:
           VITE_BASE_PATH: /${{ github.event.repository.name }}
+          NODE_OPTIONS: --max-old-space-size=6144
         run: pnpm run build
 
       - name: Upload Pages artifact
@@ -149,6 +136,8 @@ jobs:
 
       - name: Build web assets
         run: pnpm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
 
       - name: Sync Capacitor
         run: pnpm exec cap sync android

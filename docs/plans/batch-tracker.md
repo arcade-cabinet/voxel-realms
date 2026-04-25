@@ -5,28 +5,29 @@ status: current
 domain: plan
 ---
 
-> **Batch status (2026-04-24, pivot)**: the R3F-era 1.0 push is on
-> hold and will be completed from the Jolly Pixel rebuild. Pillars
-> 1–9 stay as-is for record-keeping; Pillar 10 (the migration) is
-> the only active lane. See
-> [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md)
-> for the why and the phase plan. `.claude/state/DONE` is *not*
-> set — the batch ends when the JP shell ships live-Pages-playable
-> on desktop + mobile.
+> **Batch status (2026-04-24, restructure + JP port bundled into one
+> PR)**: `feat/restructure-and-jp-port` ships the full restructure
+> (flat domain folders under `src/` and `app/`, every domain behind
+> an `index.ts` barrel), the Jolly Pixel scene port (`src/scene/`
+> on `@jolly-pixel/{engine,runtime,voxel.renderer}`, R3F deletion,
+> `@react-three/*` deps dropped), `src/world/voxel-bake.ts` (pure
+> RealmClimb → VoxelWorldJSON function), rewired `app/main.tsx`
+> bootstrap (platform → scene → HUD overlay), and every fix from
+> the pre-merge security + performance audit: 6 perf findings
+> (circular-gallery rAF setState, audio re-entrancy + onended +
+> dispose, sfx filter cleanup, use-auto-pause listener churn), 2
+> correctness findings (bootstrap order, script path rewrites), 6
+> security findings (android/ios keystore gitignore, preferences
+> validation + size cap, sqlite CHECK + size guard, fail-soft
+> getItem, closeDatabase cleanup). Tsc + biome clean locally; CI
+> runs vitest/playwright under xvfb.
 >
-> The shell stack (React + R3F + Vite+Capacitor + DOM/CSS layout)
-> produced a string of *CI-green / live-broken* bugs: #80 (BASE_URL
-> + R3F `data-*` crash), #81 (`#root` height cascade + mobile
-> `dvh=0`), plus every assertion I had to hand-roll to even see
-> them. That category is an engine-shape problem, not a test-cov
-> problem. Jolly Pixel (`@jolly-pixel/engine@2.5`,
-> `/runtime@3.3`, `/voxel.renderer@1.4`) gives us ECS +
-> actors/signals + a voxel renderer that takes
-> `{position, blockId}` + engine-resolved assets + a `Runtime`
-> that owns the main loop. Three.js stays the backend; React
-> stays for the flat-DOM HUD overlay; Capacitor stays for mobile.
-> The deterministic engine under `src/games/voxel-realms/engine/`
-> is untouched by the port.
+> `.claude/state/DONE` is written once this PR is merged, CI is
+> green across every job, and live Pages renders the JP scene on
+> desktop + mobile portrait.
+>
+> Pillars 1–9 are frozen as record-keeping of what the R3F build
+> shipped. Pillar 10 completes when this PR merges.
 
 # Voxel Realms 1.0 — Batch Tracker
 
@@ -71,7 +72,7 @@ not done — even if every sub-task below is checked.
 | 7 | Testing breadth | MOSTLY DONE | P7.1 subsumed by P4.6; P7.2/3/5/6 ✅; P7.4 visual manifest ≥12 captures deferred. Golden-path browser test deflaked via PR #78 (timer clamp + test-file split + unique screenshot paths). |
 | 8 | Release ops & store-readiness | MOSTLY DONE | Store listing, privacy, support, feedback, iOS + Android signing runbooks, store-screenshots harness, trailer capture ✅; icons/secrets provisioning deferred |
 | 9 | Telemetry & playtest ops | DONE | P9.1 error telemetry ✅, P9.2 Sentry strategy doc ✅, P9.3 feedback doc ✅, P9.4 digest workflow ✅ |
-| 10 | **Jolly Pixel migration (active)** | IN PROGRESS | Phase 0: PRD + tracker pivot (this PR). Phase 1: hello-JP scene at `app/jp/` with voxel platform + camera. Phase 2: realm→voxel baker. Phase 3: player+camera behaviors. Phase 4: React DOM HUD overlay above the JP canvas. Phase 5: GLTF anomalies via JP asset registry. Phase 6: cutover (delete `app/r3f/`, drop `@react-three/*` deps, single Vite entry). See [jolly-pixel-migration.prq.md](./jolly-pixel-migration.prq.md). |
+| 10 | **Restructure + JP port (single PR)** | READY TO MERGE | `feat/restructure-and-jp-port` PR. Flattens tree into flat domain folders with barrels. Adds `@jolly-pixel/{engine,runtime,voxel.renderer}`, drops `@react-three/*`. Builds `src/scene/` (runtime, terrain actor, camera) and `src/world/voxel-bake.ts`. Rewires `app/main.tsx` bootstrap order. Fixes audit findings: P1 (circular-gallery rAF), P2/P3/P4/P5 (audio leaks), P6 (use-auto-pause), C1 (bootstrap race), C2 (scripts paths), S1/S6 (keystores + dead config), S2 (preferences shape/size), S3/S4/S5 (SQLite hardening). `tsc --noEmit` + biome clean locally; CI validates runtime via xvfb-run. |
 
 ## Completed subtasks (quick index)
 
